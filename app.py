@@ -8,15 +8,14 @@ st.set_page_config(page_title="NBA Lineup-Based Model", layout="wide")
 # ---------------------------
 # 1. Paste your Google Sheet CSV links here
 # ---------------------------
-STATS_URL = "https://docs.google.com/spreadsheets/d/your_stats_sheet_id/export?format=csv"
-LINEUPS_URL = "https://docs.google.com/spreadsheets/d/your_lineups_sheet_id/export?format=csv"
+STATS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1849985721&single=true&output=csv"
+LINEUPS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv"
 
 # ---------------------------
 # 2. Column letter settings
 # ---------------------------
 # Stats tab
 STATS_PLAYER_COL = "B"
-STATS_TEAM_COL   = "A"
 STATS_GAMES_COL  = "F"
 STATS_MP_COL     = "H"
 STATS_PER_COL    = "I"
@@ -106,7 +105,6 @@ stats_df["__MPG__"] = [minutes_per_game(m, g) for m, g in zip(s_mp, s_games)]
 # ---------------------------
 cols = {
     "player": STATS_PLAYER_COL,
-    "team": STATS_TEAM_COL,
     "g": STATS_GAMES_COL,
     "mp": STATS_MP_COL,
     "per": STATS_PER_COL,
