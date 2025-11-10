@@ -1,28 +1,28 @@
 /****************************************************
  * NBA MODEL — column-letter only + editable lineups
+ * Uses PLAYER tab for player stats.
  * Works as a static site on Vercel (no build step).
- * Paste your Google Sheets CSV links below.
  ****************************************************/
 
 /* 1) PASTE YOUR CSV LINKS */
-const Player_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";
-const LINEUPS_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv";
-const OEFF_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1030421164&single=true&output=csv";
-const DEFF_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1401009495&single=true&output=csv";
-const PACE_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1579578655&single=true&output=csv";
-const OREB_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv";
-const OPP_OREB_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv";
-const DREB_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv";
-const OPP_DREB_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
-const LEAGUE_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv";
+const PLAYER_URL     = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=PLAYER";
+const LINEUPS_URL    = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=LINEUPS";
+const OEFF_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OEFF";
+const DEFF_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=DEFF";
+const PACE_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=PACE";
+const OREB_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OREB";
+const OPP_OREB_URL   = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OPP_OREB";
+const DREB_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=DREB";
+const OPP_DREB_URL   = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OPP_DREB";
+const LEAGUE_URL     = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=LEAGUE";
 
 /* 2) COLUMN LETTER MAP (no headers required) */
 const COLS = {
-  // Stats: if you don’t have a Team column in your stats, set team:null
-  player:  { team:"null", player:"B", g:"F", mp:"H", per:"I", usg:"T" },
+  // Player tab: if you don’t have a Team column, set team:null
+  player:  { team:"A", player:"B", g:"F", mp:"H", per:"I", usg:"T" },
 
   // Lineups tab (matches your screenshot)
-  lineups:{ team:"A", g1:"B", g2:"C", f1:"D", f2:"E", c:"F" },
+  lineups: { team:"A", g1:"B", g2:"C", f1:"D", f2:"E", c:"F" },
 
   // TeamRankings tabs
   oreb:   { team:"B", haF:"F", haG:"G", l3:"D" },
@@ -96,33 +96,33 @@ function buildPace(rows,map){
   } return out;
 }
 
-/* 7) Lineup + roster helpers */
-function lineupWeightedPER(playerNames, statsRows){
-  const pIdx=colLetterToIdx(COLS.stats.player);
-  const gIdx=colLetterToIdx(COLS.stats.g);
-  const mIdx=colLetterToIdx(COLS.stats.mp);
-  const rIdx=colLetterToIdx(COLS.stats.per);
-  const uIdx=colLetterToIdx(COLS.stats.usg);
+/* 7) Lineup + roster helpers (use PLAYER rows) */
+function lineupWeightedPER(playerNames, playerRows){
+  const pIdx=colLetterToIdx(COLS.player.player);
+  const gIdx=colLetterToIdx(COLS.player.g);
+  const mIdx=colLetterToIdx(COLS.player.mp);
+  const rIdx=colLetterToIdx(COLS.player.per);
+  const uIdx=colLetterToIdx(COLS.player.usg);
   let sumPM=0,sumM=0;
   for(const name of playerNames){
-    for(let i=1;i<statsRows.length;i++){
-      const pname=hardTrim(statsRows[i]?.[pIdx]); if(pname!==name) continue;
-      const mpg=minutesPerGame(statsRows[i]?.[mIdx], statsRows[i]?.[gIdx]);
-      const adj=usageAdjPER(statsRows[i]?.[rIdx], statsRows[i]?.[uIdx]);
+    for(let i=1;i<playerRows.length;i++){
+      const pname=hardTrim(playerRows[i]?.[pIdx]); if(pname!==name) continue;
+      const mpg=minutesPerGame(playerRows[i]?.[mIdx], playerRows[i]?.[gIdx]);
+      const adj=usageAdjPER(playerRows[i]?.[rIdx], playerRows[i]?.[uIdx]);
       if(!isNaN(mpg)&&!isNaN(adj)){ sumPM+=adj*mpg; sumM+=mpg; }
     }
   }
   return sumM>0 ? sumPM/sumM : NaN;
 }
 
-function rosterForTeam(team, statsRows){
-  const tIdx=colLetterToIdx(COLS.stats.team);
-  const pIdx=colLetterToIdx(COLS.stats.player);
+function rosterForTeam(team, playerRows){
+  const tIdx=colLetterToIdx(COLS.player.team);
+  const pIdx=colLetterToIdx(COLS.player.player);
   const out=[];
-  for(let i=1;i<statsRows.length;i++){
-    const name=hardTrim(statsRows[i]?.[pIdx]); if(!name) continue;
+  for(let i=1;i<playerRows.length;i++){
+    const name=hardTrim(playerRows[i]?.[pIdx]); if(!name) continue;
     if(tIdx<0){ out.push(name); continue; }
-    const tm=hardTrim(statsRows[i]?.[tIdx]);
+    const tm=hardTrim(playerRows[i]?.[tIdx]);
     if(tm===team) out.push(name);
   }
   return [...new Set(out)].sort();
@@ -143,7 +143,7 @@ function defaultLineupForTeam(team, lineupsRows){
 
 /* 8) Global state */
 const S = {
-  stats:null, lineups:null,
+  player:null, lineups:null,
   oeff:null, deff:null, pace:null,
   oreb:null, dreb:null, ooreb:null, odreb:null,
   league:{pace:105, ppg:115, oe:1.12, de:1.12},
@@ -154,15 +154,15 @@ const S = {
 async function init(){
   document.getElementById("status").textContent="Loading data…";
 
-  const [statsRows,lineupsRows,oeffRows,deffRows,paceRows,orebRows,oorebRows,drebRows,odrebRows,leagueRows] = await Promise.all([
-    loadCSV(STATS_URL), loadCSV(LINEUPS_URL),
+  const [playerRows,lineupsRows,oeffRows,deffRows,paceRows,orebRows,oorebRows,drebRows,odrebRows,leagueRows] = await Promise.all([
+    loadCSV(PLAYER_URL), loadCSV(LINEUPS_URL),
     loadCSV(OEFF_URL),  loadCSV(DEFF_URL),
     loadCSV(PACE_URL),  loadCSV(OREB_URL),
     loadCSV(OPP_OREB_URL), loadCSV(DREB_URL), loadCSV(OPP_DREB_URL),
     loadCSV(LEAGUE_URL)
   ]);
 
-  S.stats=statsRows; S.lineups=lineupsRows;
+  S.player=playerRows; S.lineups=lineupsRows;
   S.oeff=buildHA(oeffRows,COLS.oeff); S.deff=buildHA(deffRows,COLS.deff);
   S.pace=buildPace(paceRows,COLS.pace);
   S.oreb=buildHA(orebRows,COLS.oreb); S.dreb=buildHA(drebRows,COLS.dreb);
@@ -201,7 +201,7 @@ async function init(){
   S.teamPER={};
   for(const t of S.teams){
     const defLu=defaultLineupForTeam(t, S.lineups);
-    S.teamPER[t]=lineupWeightedPER(defLu, S.stats);
+    S.teamPER[t]=lineupWeightedPER(defLu, S.player);
     dlog(`[PER] ${t}:`, S.teamPER[t]);
   }
 
@@ -245,7 +245,7 @@ function renderEditors(){
 
 function renderOneEditor(side, team){
   const ids={ g1:`${side}_g1`, g2:`${side}_g2`, f1:`${side}_f1`, f2:`${side}_f2`, c:`${side}_c` };
-  const roster=rosterForTeam(team, S.stats);
+  const roster=rosterForTeam(team, S.player);
   const cur = (S.overrides[team] && S.overrides[team].length===5) ? S.overrides[team]
             : defaultLineupForTeam(team, S.lineups);
 
@@ -258,7 +258,7 @@ function renderOneEditor(side, team){
     });
   });
 
-  const per=lineupWeightedPER(getEditorLineup(side), S.stats);
+  const per=lineupWeightedPER(getEditorLineup(side), S.player);
   document.getElementById(side==="away"?"awayPER":"homePER").textContent=isNaN(per)?"—":per.toFixed(2);
 }
 
@@ -271,14 +271,14 @@ function saveEditor(side){
   const team=(side==="away"?document.getElementById("awayTeam").value:document.getElementById("homeTeam").value);
   const lu=getEditorLineup(side); if(lu.length===0) return;
   S.overrides[team]=lu;
-  S.teamPER[team]=lineupWeightedPER(lu, S.stats);
+  S.teamPER[team]=lineupWeightedPER(lu, S.player);
   document.getElementById(side==="away"?"awayPER":"homePER").textContent=isNaN(S.teamPER[team])?"—":S.teamPER[team].toFixed(2);
 }
 function resetEditor(side){
   const team=(side==="away"?document.getElementById("awayTeam").value:document.getElementById("homeTeam").value);
   delete S.overrides[team];
   const defLu=defaultLineupForTeam(team, S.lineups);
-  S.teamPER[team]=lineupWeightedPER(defLu, S.stats);
+  S.teamPER[team]=lineupWeightedPER(defLu, S.player);
   renderOneEditor(side, team);
 }
 
