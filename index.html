@@ -5,7 +5,6 @@
   <title>NBA Model — Lineups + Eff + Rebounds</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
-  <!-- PapaParse (CSV) -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
@@ -20,6 +19,41 @@
       <div class="col">
         <label>Home Team</label>
         <select id="homeTeam"></select>
+      </div>
+    </div>
+
+    <!-- Editable lineups appear after team selection -->
+    <div id="lineupEditors" class="row" style="display:none; gap:22px;">
+      <div class="col card">
+        <h3 id="awayEditorTitle">Away Lineup</h3>
+        <div class="grid2">
+          <label>Guard 1</label><select id="away_g1"></select>
+          <label>Guard 2</label><select id="away_g2"></select>
+          <label>Forward 1</label><select id="away_f1"></select>
+          <label>Forward 2</label><select id="away_f2"></select>
+          <label>Center</label><select id="away_c"></select>
+        </div>
+        <div class="minirow">
+          <button id="saveAway">Save Away Lineup</button>
+          <button id="resetAway" class="ghost">Reset</button>
+        </div>
+        <div class="muted">Lineup PER: <span id="awayPER">—</span></div>
+      </div>
+
+      <div class="col card">
+        <h3 id="homeEditorTitle">Home Lineup</h3>
+        <div class="grid2">
+          <label>Guard 1</label><select id="home_g1"></select>
+          <label>Guard 2</label><select id="home_g2"></select>
+          <label>Forward 1</label><select id="home_f1"></select>
+          <label>Forward 2</label><select id="home_f2"></select>
+          <label>Center</label><select id="home_c"></select>
+        </div>
+        <div class="minirow">
+          <button id="saveHome">Save Home Lineup</button>
+          <button id="resetHome" class="ghost">Reset</button>
+        </div>
+        <div class="muted">Lineup PER: <span id="homePER">—</span></div>
       </div>
     </div>
 
