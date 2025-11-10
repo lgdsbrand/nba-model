@@ -1,28 +1,27 @@
 /****************************************************
- * NBA MODEL — column-letter only + editable lineups
- * Uses PLAYER tab for player stats.
- * Works as a static site on Vercel (no build step).
+ * NBA MODEL — editable lineups + full player pool
+ * Uses PLAYER tab (no Team col needed).
+ * Static front-end friendly (Vercel/Netlify).
  ****************************************************/
 
 /* 1) PASTE YOUR CSV LINKS */
-const PLAYER_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";
-const LINEUPS_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv";
-const OEFF_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1030421164&single=true&output=csv";
-const DEFF_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1401009495&single=true&output=csv";
-const PACE_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1579578655&single=true&output=csv";
-const OREB_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv";
-const OPP_OREB_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv";
-const DREB_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv";
-const OPP_DREB_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
-const LEAGUE_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv";
-
+const PLAYER_URL     = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=PLAYER";
+const LINEUPS_URL    = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=LINEUPS";
+const OEFF_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OEFF";
+const DEFF_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=DEFF";
+const PACE_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=PACE";
+const OREB_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OREB";
+const OPP_OREB_URL   = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OPP_OREB";
+const DREB_URL       = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=DREB";
+const OPP_DREB_URL   = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=OPP_DREB";
+const LEAGUE_URL     = "https://docs.google.com/spreadsheets/d/REPLACE/export?format=csv&gid=LEAGUE";
 
 /* 2) COLUMN LETTER MAP (no headers required) */
 const COLS = {
-  // Player tab: if you don’t have a Team column, set team:null
+  // Player tab: NO team column (set to null)
   player:  { team: null, player:"B", g:"F", mp:"H", per:"I", usg:"T" },
 
-  // Lineups tab (matches your screenshot)
+  // Lineups tab (your screenshot)
   lineups: { team:"A", g1:"B", g2:"C", f1:"D", f2:"E", c:"F" },
 
   // TeamRankings tabs
@@ -35,44 +34,39 @@ const COLS = {
   pace:   { team:"B", haF:"F", haG:"G" }
 };
 
-/* 3) MODEL WEIGHTS */
-const BLEND_SZN = 0.70;  // H/A vs L3
-const PER_K = 0.10;      // PER influence
-const ORB_W = 60;        // points per pct-pt ORB edge
-const DRB_W = 40;        // points per pct-pt DRB edge
-const HCA_PTS = 2;       // home-court
-const WIN_SIGMA = 6.5;   // logistic steepness for win prob
+/* 3) MODEL WEIGHTS (tune later) */
+const BLEND_SZN = 0.70;
+const PER_K     = 0.10;
+const ORB_W     = 60;
+const DRB_W     = 40;
+const HCA_PTS   = 2;
+const WIN_SIGMA = 6.5;
 
-/* 4) INLINE DEBUG (open with ?debug=1) */
+/* 4) INLINE DEBUG (open app with ?debug=1) */
 const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
 function dshow(){ const w=document.getElementById("debugWrap"); if(w) w.style.display="block"; }
-function dlog(...args){
-  if(!DEBUG) return; dshow();
-  const el=document.getElementById("debug"); if(!el) return;
-  const line = args.map(a=>{ try{return typeof a==="string"?a:JSON.stringify(a);}catch{ return String(a);} }).join(" ");
+function dlog(...args){ if(!DEBUG) return; dshow(); const el=document.getElementById("debug"); if(!el) return;
+  const line=args.map(a=>{try{return typeof a==="string"?a:JSON.stringify(a);}catch{return String(a);}}).join(" ");
   el.textContent += line + "\n";
 }
 
 /* 5) Helpers */
 const colLetterToIdx = L => { L=L?.trim()?.toUpperCase(); if(!L) return -1; let v=0; for(const ch of L) v=v*26+(ch.charCodeAt(0)-65+1); return v-1; };
 const toFloat = v => { if(v==null) return NaN; if(typeof v==="number") return v; let s=String(v).trim().replace(/,/g,""); if(!s) return NaN; if(s.endsWith("%")) return parseFloat(s.slice(0,-1))/100; const x=parseFloat(s); return isNaN(x)?NaN:x; };
-const safe = (x,d)=> (isNaN(toFloat(x))?d:toFloat(x));
+const safe   = (x,d)=> (isNaN(toFloat(x))?d:toFloat(x));
 const minutesPerGame = (mp,g)=> (toFloat(g)>0?toFloat(mp)/toFloat(g):NaN);
-const usageAdjPER = (per,usg,base=20)=> Math.max(0.6,Math.min(1.4,toFloat(usg)/base))*toFloat(per);
-const pctEdge = (a,b)=> ((toFloat(a)-toFloat(b))*100);
-const blend = (a,b)=> BLEND_SZN*toFloat(a) + (1-BLEND_SZN)*toFloat(b);
-const logisticProb = (x,s=WIN_SIGMA)=> 1/(1+Math.exp(-x/s));
-const hardTrim = s => String(s ?? "").replace(/\uFEFF/g,"").replace(/\u00A0/g," ").replace(/\s+/g," ").trim();
+const usageAdjPER    = (per,usg,base=20)=> Math.max(0.6,Math.min(1.4,toFloat(usg)/base))*toFloat(per);
+const pctEdge        = (a,b)=> ((toFloat(a)-toFloat(b))*100);
+const blend          = (a,b)=> BLEND_SZN*toFloat(a) + (1-BLEND_SZN)*toFloat(b);
+const logisticProb   = (x,s=WIN_SIGMA)=> 1/(1+Math.exp(-x/s));
+const hardTrim       = s => String(s ?? "").replace(/\uFEFF/g,"").replace(/\u00A0/g," ").replace(/\s+/g," ").trim();
 
 async function loadCSV(url){
   return new Promise((resolve,reject)=>{
     Papa.parse(url,{download:true,skipEmptyLines:true,complete:r=>resolve(r.data),error:err=>{
-      const s = document.getElementById("status");
-      if (s) s.textContent = "Failed to load: " + url;
-      console.error("CSV load failed:", url, err);
-      reject(err);
-    }
-                   });
+      const s=document.getElementById("status"); if(s) s.textContent="Failed to load: "+url;
+      console.error("CSV load failed:", url, err); reject(err);
+    }});
   });
 }
 
@@ -83,7 +77,7 @@ function buildHA(rows,map){
     const t=hardTrim(rows[i]?.[colLetterToIdx(map.team)]); if(!t) continue;
     out[t]={ Home:toFloat(rows[i]?.[colLetterToIdx(map.haF)]),
              Away:toFloat(rows[i]?.[colLetterToIdx(map.haG)]),
-             L3:toFloat(rows[i]?.[colLetterToIdx(map.l3)]) };
+             L3:  toFloat(rows[i]?.[colLetterToIdx(map.l3)]) };
   } return out;
 }
 function buildSeasonL3(rows,map){
@@ -91,7 +85,7 @@ function buildSeasonL3(rows,map){
   for(let i=1;i<rows.length;i++){
     const t=hardTrim(rows[i]?.[colLetterToIdx(map.team)]); if(!t) continue;
     out[t]={ Season:toFloat(rows[i]?.[colLetterToIdx(map.season)]),
-             L3:toFloat(rows[i]?.[colLetterToIdx(map.l3)]) };
+             L3:     toFloat(rows[i]?.[colLetterToIdx(map.l3)]) };
   } return out;
 }
 function buildPace(rows,map){
@@ -103,7 +97,7 @@ function buildPace(rows,map){
   } return out;
 }
 
-/* 7) Lineup + roster helpers (use PLAYER rows) */
+/* 7) Lineup + roster helpers */
 function lineupWeightedPER(playerNames, playerRows){
   const pIdx=colLetterToIdx(COLS.player.player);
   const gIdx=colLetterToIdx(COLS.player.g);
@@ -120,19 +114,6 @@ function lineupWeightedPER(playerNames, playerRows){
     }
   }
   return sumM>0 ? sumPM/sumM : NaN;
-}
-
-function rosterForTeam(team, playerRows){
-  const tIdx=colLetterToIdx(COLS.player.team);
-  const pIdx=colLetterToIdx(COLS.player.player);
-  const out=[];
-  for(let i=1;i<playerRows.length;i++){
-    const name=hardTrim(playerRows[i]?.[pIdx]); if(!name) continue;
-    if(tIdx<0){ out.push(name); continue; }
-    const tm=hardTrim(playerRows[i]?.[tIdx]);
-    if(tm===team) out.push(name);
-  }
-  return [...new Set(out)].sort();
 }
 
 function defaultLineupForTeam(team, lineupsRows){
@@ -154,7 +135,8 @@ const S = {
   oeff:null, deff:null, pace:null,
   oreb:null, dreb:null, ooreb:null, odreb:null,
   league:{pace:105, ppg:115, oe:1.12, de:1.12},
-  teams:[], teamPER:{}, overrides:{}
+  teams:[], teamPER:{}, overrides:{},
+  allPlayers:[]
 };
 
 /* 9) Init */
@@ -181,28 +163,26 @@ async function init(){
   const getVal=k=>{ const i=labels.findIndex(x=>x===k.toLowerCase()); return (i>-1&&!isNaN(vals[i]))?vals[i]:NaN; };
   S.league={ pace:safe(getVal("pace"),105), ppg:safe(getVal("points"),115), oe:safe(getVal("off efficiency"),1.12), de:safe(getVal("def efficiency"),1.12) };
 
-  // Teams from Lineups (robust + debug)
-  const tIdx=colLetterToIdx(COLS.lineups.team);
-  const first6=(S.lineups||[]).slice(0,6).map((r,i)=>({row:i,teamCell:r?r[tIdx]:undefined}));
-  dlog("[Lineups] URL:", LINEUPS_URL);
-  dlog("[Lineups] rows:", (S.lineups||[]).length);
-  dlog("[Lineups] team col letter:", COLS.lineups.team, " index:", tIdx);
-  dlog("[Lineups] first 6 team cells:", JSON.stringify(first6,null,2));
+  // Build full player list from Player tab
+  (function buildAllPlayers(){
+    const pIdx=colLetterToIdx(COLS.player.player);
+    const names=[];
+    for(let i=1;i<S.player.length;i++){
+      const nm=hardTrim(S.player[i]?.[pIdx]); if(nm) names.push(nm);
+    }
+    S.allPlayers=[...new Set(names)].sort();
+    dlog("[Players] total:", S.allPlayers.length, "first 10:", S.allPlayers.slice(0,10));
+  })();
 
+  // Teams from Lineups
+  const tIdx=colLetterToIdx(COLS.lineups.team);
   let teams=[];
   for(let i=0;i<S.lineups.length;i++){
     const raw=S.lineups[i]?.[tIdx]; const t=hardTrim(raw);
     if(t && t.toLowerCase()!=="team") teams.push(t);
   }
-  teams=[...new Set(teams)].sort();
-  dlog("[Lineups] parsed teams:", teams.slice(0,40));
-
-  if(teams.length===0 && S.oeff){
-    teams=Object.keys(S.oeff).map(hardTrim).filter(Boolean).sort();
-    dlog("[Fallback] Using OEFF keys:", teams.slice(0,40));
-    document.getElementById("status").textContent="No teams found in Lineups; using OEFF list (check gid/column).";
-  }
-  S.teams=teams;
+  S.teams=[...new Set(teams)].sort();
+  dlog("[Lineups] teams:", S.teams.slice(0,40));
 
   // Baseline lineup PER from default lineups
   S.teamPER={};
@@ -212,21 +192,18 @@ async function init(){
     dlog(`[PER] ${t}:`, S.teamPER[t]);
   }
 
-  // Fill dropdowns
+  // Fill team dropdowns
   const awaySel=document.getElementById("awayTeam");
   const homeSel=document.getElementById("homeTeam");
   awaySel.innerHTML=""; homeSel.innerHTML="";
-  if(S.teams.length===0){
-    document.getElementById("status").textContent="No teams found. Verify Lineups CSV gid and team column letter.";
-  }else{
-    S.teams.forEach(t=>{
-      const a=document.createElement("option"); a.value=t; a.textContent=t; awaySel.appendChild(a);
-      const b=document.createElement("option"); b.value=t; b.textContent=t; homeSel.appendChild(b);
-    });
-    if(S.teams.length>1) homeSel.selectedIndex=1;
-    document.getElementById("status").textContent="Ready.";
-  }
+  S.teams.forEach(t=>{
+    const a=document.createElement("option"); a.value=t; a.textContent=t; awaySel.appendChild(a);
+    const b=document.createElement("option"); b.value=t; b.textContent=t; homeSel.appendChild(b);
+  });
+  if(S.teams.length>1) homeSel.selectedIndex=1;
+  document.getElementById("status").textContent="Ready.";
 
+  // Wire lineup editors
   awaySel.addEventListener("change", renderEditors);
   homeSel.addEventListener("change", renderEditors);
   document.getElementById("saveAway").addEventListener("click", ()=>saveEditor("away"));
@@ -250,9 +227,16 @@ function renderEditors(){
   renderOneEditor("home", homeTeam);
 }
 
+// Roster builder: starters (from Lineups) + full player pool
+function rosterForTeam(team){
+  const starters = defaultLineupForTeam(team, S.lineups);
+  const rest = S.allPlayers.filter(p => !starters.includes(p));
+  return [...starters, ...rest]; // starters first
+}
+
 function renderOneEditor(side, team){
   const ids={ g1:`${side}_g1`, g2:`${side}_g2`, f1:`${side}_f1`, f2:`${side}_f2`, c:`${side}_c` };
-  const roster=rosterForTeam(team, S.player);
+  const roster=rosterForTeam(team);
   const cur = (S.overrides[team] && S.overrides[team].length===5) ? S.overrides[team]
             : defaultLineupForTeam(team, S.lineups);
 
