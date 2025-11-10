@@ -1,1 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NBA Model — Lineups + Eff + Rebounds</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- PapaParse (CSV) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>NBA Game Predictor</h1>
 
+    <div class="row">
+      <div class="col">
+        <label>Away Team</label>
+        <select id="awayTeam"></select>
+      </div>
+      <div class="col">
+        <label>Home Team</label>
+        <select id="homeTeam"></select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Book Spread (Home = -)</label>
+        <input id="bookSpread" type="number" step="0.5" value="-3.5"/>
+      </div>
+      <div class="col">
+        <label>Book Total</label>
+        <input id="bookTotal" type="number" step="0.5" value="225.5"/>
+      </div>
+    </div>
+
+    <button id="predictBtn">Predict</button>
+
+    <div id="status" class="status">Loading data…</div>
+
+    <div id="results" class="card" style="display:none">
+      <h2>Game Prediction Results</h2>
+      <div class="scores">
+        <div><b id="awayName"></b>: <span id="awayScore"></span></div>
+        <div><b id="homeName"></b>: <span id="homeScore"></span></div>
+      </div>
+      <hr/>
+      <div><b>Predicted Winner:</b> <span id="winner"></span></div>
+      <div>
+        <b>Win Probability</b>
+        <ul>
+          <li><span id="awayProb"></span></li>
+          <li><span id="homeProb"></span></li>
+        </ul>
+      </div>
+      <hr/>
+      <div><b>Model Total:</b> <span id="modelTotal"></span> vs <b>Book Total</b> <span id="bookTotalOut"></span></div>
+      <div><b>Total Play:</b> <span id="totalPlay"></span></div>
+      <hr/>
+      <div><b>Model Spread (Home − Away):</b> <span id="modelSpread"></span> vs <b>Book Spread</b> <span id="bookSpreadOut"></span></div>
+      <div><b>Spread Play:</b> <span id="spreadPlay"></span></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
