@@ -8,23 +8,23 @@
    (Paste your real published CSV links below)
 */
 
-const PLAYER_URL   = "PASTE_PLAYER_CSV_HERE";     // Player PER/USG, etc.
-const LINEUPS_URL  = "PASTE_LINEUPS_CSV_HERE";    // Team lineups
-const LEAGUE_URL   = "PASTE_LEAGUE_AVG_CSV_HERE"; // League averages
+const PLAYER_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";     // Player PER/USG, etc.
+const LINEUPS_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv";    // Team lineups
+const LEAGUE_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv"; // League averages
 
 // Rebounding (TeamRankings)
-const OREB_URL      = "PASTE_OREB_CSV_HERE";
-const OPP_OREB_URL  = "PASTE_OPP_OREB_CSV_HERE";
-const DREB_URL      = "PASTE_DREB_CSV_HERE";
-const OPP_DREB_URL  = "PASTE_OPP_DREB_CSV_HERE";
+const OREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv";
+const OPP_OREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv";
+const DREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv";
+const OPP_DREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
 
 // NBAstuffer + extras
-const NBASTUFF_URL  = "PASTE_NBASTUFFER_L5_HA_CSV_HERE";
-const PPG_URL       = "PASTE_PPG_CSV_HERE";       // Season PPG/OPPG/Pace
-const ATS_URL       = "PASTE_ATS_CSV_HERE";       // ATS record
-const OU_URL        = "PASTE_OU_CSV_HERE";        // Over/Under record
-const RANK_URL      = "PASTE_RANKING_CSV_HERE";   // Predictive rating
-const NAMES_URL     = "PASTE_NAMES_CSV_HERE";     // TR name ↔ NBAstuffer name
+const NBASTUFF_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv";
+const PPG_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1145033141&single=true&output=csv";       // Season PPG/OPPG/Pace
+const ATS_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv";       // ATS record
+const OU_URL        = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv";        // Over/Under record
+const RANK_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";   // Predictive rating
+const NAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=19771105&single=true&output=csv";     // TR name ↔ NBAstuffer name
 
 /* 2) COLUMN LETTER MAP (no headers required) ---------------- */
 
@@ -79,16 +79,16 @@ const COLS = {
     offEffL5:    "J",
     defEffL5:    "K",
     paceL5:      "I",   // if present; else leave as "null"
-    offEffHome:  "AA",
-    defEffHome:  "AB",
+    offEffHome:  "BH",
+    defEffHome:  "BI",
     offEffAway:  "AI",
     defEffAway:  "AJ",
-    l5W:         "W",
+    l5W:         "R",
     l5L:         "S",
-    homeW:       "AR",
-    homeL:       "AS",
-    awayW:       "BP",
-    awayL:       "BQ"
+    homeW:       "BP",
+    homeL:       "BQ",
+    awayW:       "AQ",
+    awayL:       "AR"
   },
 
   // Season PPG tab (TR)
