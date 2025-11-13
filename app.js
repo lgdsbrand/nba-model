@@ -1,10 +1,5 @@
 /****************************************************
  * NBA Lineup Model - Static JS Version
- * - Reads CSVs from Google Sheets (published as CSV)
- * - Uses column LETTER mapping (no headers required)
- * - Uses Lineups tab for default starters
- * - Uses Player tab for G, MP, PER, Usage%
- * - Supports Back-to-Back penalty via checkboxes
  ****************************************************/
 
 /* 1) PASTE YOUR CSV LINKS */
@@ -19,39 +14,30 @@ const DREB_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlsk
 const OPP_DREB_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
 const LEAGUE_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv";
 
-/* 2) COLUMN LETTER MAP (no headers required) */
-// These match your handwritten notes.
+/* 2) COLUMN LETTER MAP */
 const COLS = {
-  player:  { player: "B", g: "F", mp: "H", per: "I", usg: "T" }, // no team col
+  player: { team: "null", player: "B", g: "F", mp: "H", per: "I", usg: "T" },
   lineups: { team: "A", g1: "B", g2: "C", f1: "D", f2: "E", c: "F" },
-
-  // TeamRankings tabs
-  // oreb / dreb / oeff / deff: Team in B, H/A in F/G, Last 3 in D
-  oreb: { team: "B", haF: "F", haG: "G", l3: "D" },
-  dreb: { team: "B", haF: "F", haG: "G", l3: "D" },
-  oeff: { team: "B", haF: "F", haG: "G", l3: "D" },
-  deff: { team: "B", haF: "F", haG: "G", l3: "D" },
-
-  // Opponent reb % tabs: Team in B, season % in C, L3 % in D
+  oreb:  { team: "B", haF: "F", haG: "G", l3: "D" },
+  dreb:  { team: "B", haF: "F", haG: "G", l3: "D" },
+  oeff:  { team: "B", haF: "F", haG: "G", l3: "D" },
+  deff:  { team: "B", haF: "F", haG: "G", l3: "D" },
   ooreb: { team: "B", season: "C", l3: "D" },
   odreb: { team: "B", season: "C", l3: "D" },
-
-  // Pace tab: Team in B, Home pace F, Away pace G
-  pace: { team: "B", haF: "F", haG: "G" }
+  pace:  { team: "B", haF: "F", haG: "G" }
 };
 
-/* 3) MODEL WEIGHTS (you can tweak these) */
-const BLEND_SZN   = 0.70;   // season vs last 3
-const PER_K       = 0.08;   // how much lineup PER matters
-const REB_K       = 0.25;   // how much rebounding edge matters
-const HCA_PTS     = 2.0;    // home court advantage (points)
-const B2B_PENALTY = 1.0;    // back-to-back penalty (points)
-const WIN_SIGMA   = 6.5;    // spread std dev for win prob
+/* 3) MODEL WEIGHTS */
+const BLEND_SZN   = 0.7;
+const PER_K       = 0.08;
+const REB_K       = 0.25;
+const HCA_PTS     = 2.0;
+const B2B_PENALTY = 1.0;
+const WIN_SIGMA   = 6.5;
 
 /*******************  HELPERS  *********************/
-
 function colLetterToIdx(L) {
-  if (!L) return -1;
+  if (!L || L === "null") return -1;
   L = L.trim().toUpperCase();
   let v = 0;
   for (const ch of L) v = v * 26 + (ch.charCodeAt(0) - 65 + 1);
@@ -63,7 +49,6 @@ function parseCSV(text) {
   const lines = text.split(/\r?\n/);
   for (let line of lines) {
     if (!line.trim()) continue;
-    // very simple parser (assumes no commas inside fields)
     rows.push(line.split(","));
   }
   return rows;
@@ -71,9 +56,7 @@ function parseCSV(text) {
 
 async function loadCSV(url) {
   const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error("Failed to load CSV: " + url + " (" + res.status + ")");
-  }
+  if (!res.ok) throw new Error("Failed CSV " + url + " " + res.status);
   const text = await res.text();
   return parseCSV(text);
 }
@@ -129,19 +112,16 @@ function usageAdjPER(per, usg, base = 20) {
 }
 
 function logisticProb(diff, sigma = WIN_SIGMA) {
-  // diff = homeScore - awayScore
   return 1 / (1 + Math.exp(-diff / sigma));
 }
 
 /*******************  BUILDERS  *********************/
-
 function buildHA(rows, map) {
   const out = {};
   const tIdx = colLetterToIdx(map.team);
   const fIdx = colLetterToIdx(map.haF);
   const gIdx = colLetterToIdx(map.haG);
   const lIdx = colLetterToIdx(map.l3);
-
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const t = hardTrim(row[tIdx]);
@@ -149,7 +129,7 @@ function buildHA(rows, map) {
     out[t] = {
       Home: toFloat(row[fIdx]),
       Away: toFloat(row[gIdx]),
-      L3: toFloat(row[lIdx])
+      L3:   toFloat(row[lIdx])
     };
   }
   return out;
@@ -160,14 +140,13 @@ function buildSeasonL3(rows, map) {
   const tIdx = colLetterToIdx(map.team);
   const sIdx = colLetterToIdx(map.season);
   const lIdx = colLetterToIdx(map.l3);
-
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const t = hardTrim(row[tIdx]);
     if (!t) continue;
     out[t] = {
       Season: toFloat(row[sIdx]),
-      L3: toFloat(row[lIdx])
+      L3:     toFloat(row[lIdx])
     };
   }
   return out;
@@ -178,7 +157,6 @@ function buildPace(rows, map) {
   const tIdx = colLetterToIdx(map.team);
   const fIdx = colLetterToIdx(map.haF);
   const gIdx = colLetterToIdx(map.haG);
-
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const t = hardTrim(row[tIdx]);
@@ -192,7 +170,6 @@ function buildPace(rows, map) {
 }
 
 /*******************  STATE  *********************/
-
 const S = {
   playerRows: null,
   lineupsRows: null,
@@ -204,15 +181,15 @@ const S = {
   ooreb: null,
   odreb: null,
   league: { pace: 105, ppg: 115, offEff: 1.12, defEff: 1.12 },
-
   teams: [],
   allPlayers: [],
-  teamBasePER: {},   // baseline lineup PER from default lineups
-  overrides: {}      // teamName -> [g1,g2,f1,f2,c]
+  teamBasePER: {},
+  overrides: {},
+  lastPrediction: null,
+  savedGames: []
 };
 
 /*******************  INIT  *********************/
-
 async function init() {
   try {
     const [
@@ -239,17 +216,17 @@ async function init() {
       loadCSV(LEAGUE_URL)
     ]);
 
-    S.playerRows = playerRows;
+    S.playerRows  = playerRows;
     S.lineupsRows = lineupsRows;
-    S.oeff = buildHA(oeffRows, COLS.oeff);
-    S.deff = buildHA(deffRows, COLS.deff);
-    S.pace = buildPace(paceRows, COLS.pace);
-    S.oreb = buildHA(orebRows, COLS.oreb);
-    S.dreb = buildHA(drebRows, COLS.dreb);
+    S.oeff  = buildHA(oeffRows, COLS.oeff);
+    S.deff  = buildHA(deffRows, COLS.deff);
+    S.pace  = buildPace(paceRows, COLS.pace);
+    S.oreb  = buildHA(orebRows, COLS.oreb);
+    S.dreb  = buildHA(drebRows, COLS.dreb);
     S.ooreb = buildSeasonL3(oorebRows, COLS.ooreb);
     S.odreb = buildSeasonL3(odrebRows, COLS.odreb);
 
-    // league averages sheet assumed as: label in col A, value in col B
+    // league averages: col A label, col B value
     if (leagueRows && leagueRows.length) {
       const labels = leagueRows.map(r => hardTrim(r[0]).toLowerCase());
       const vals   = leagueRows.map(r => toFloat(r[1]));
@@ -265,7 +242,7 @@ async function init() {
       };
     }
 
-    // build team list from Lineups tab
+    // teams from lineups
     const tIdx = colLetterToIdx(COLS.lineups.team);
     const teams = [];
     for (let i = 0; i < S.lineupsRows.length; i++) {
@@ -274,7 +251,7 @@ async function init() {
     }
     S.teams = [...new Set(teams)].sort();
 
-    // build full player list from Player tab
+    // players from player tab
     const pIdx = colLetterToIdx(COLS.player.player);
     const players = [];
     for (let i = 1; i < S.playerRows.length; i++) {
@@ -283,7 +260,16 @@ async function init() {
     }
     S.allPlayers = [...new Set(players)].sort();
 
-    // compute baseline lineup PER for each team from default lineups
+    // datalist
+    const dl = document.getElementById("playerList");
+    dl.innerHTML = "";
+    S.allPlayers.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      dl.appendChild(opt);
+    });
+
+    // baseline PER per team
     S.teamBasePER = {};
     for (const team of S.teams) {
       const lu = defaultLineupForTeam(team);
@@ -303,9 +289,8 @@ async function init() {
 }
 
 /*******************  LINEUPS  *********************/
-
 function defaultLineupForTeam(team) {
-  const tIdx = colLetterToIdx(COLS.lineups.team);
+  const tIdx  = colLetterToIdx(COLS.lineups.team);
   const g1Idx = colLetterToIdx(COLS.lineups.g1);
   const g2Idx = colLetterToIdx(COLS.lineups.g2);
   const f1Idx = colLetterToIdx(COLS.lineups.f1);
@@ -313,10 +298,9 @@ function defaultLineupForTeam(team) {
   const cIdx  = colLetterToIdx(COLS.lineups.c);
 
   const needle = hardTrim(team).toLowerCase();
-
   for (let i = 0; i < S.lineupsRows.length; i++) {
     const row = S.lineupsRows[i];
-    const t = hardTrim(row[tIdx]).toLowerCase();
+    const t   = hardTrim(row[tIdx]).toLowerCase();
     if (!t) continue;
     if (t === needle) {
       return [
@@ -340,18 +324,20 @@ function lineupWeightedPER(playerNames) {
   const rIdx = colLetterToIdx(COLS.player.per);
   const uIdx = colLetterToIdx(COLS.player.usg);
 
-  let sumPM = 0; // PER * minutes
+  let sumPM = 0;
   let sumM  = 0;
 
   for (const name of playerNames) {
     const target = hardTrim(name);
+    if (!target) continue;
+
     for (let i = 1; i < S.playerRows.length; i++) {
       const row = S.playerRows[i];
       const nm  = hardTrim(row[pIdx]);
       if (!nm || nm !== target) continue;
 
-      const mpg   = minutesPerGame(row[mIdx], row[gIdx]);
-      const adj   = usageAdjPER(row[rIdx], row[uIdx]);
+      const mpg = minutesPerGame(row[mIdx], row[gIdx]);
+      const adj = usageAdjPER(row[rIdx], row[uIdx]);
       if (!isNaN(mpg) && !isNaN(adj)) {
         sumPM += adj * mpg;
         sumM  += mpg;
@@ -359,13 +345,6 @@ function lineupWeightedPER(playerNames) {
     }
   }
   return sumM > 0 ? sumPM / sumM : NaN;
-}
-
-function rosterForTeam(team) {
-  // Start with that team's default starters, then all other players
-  const starters = defaultLineupForTeam(team);
-  const rest = S.allPlayers.filter(p => !starters.includes(p));
-  return [...starters, ...rest];
 }
 
 function getOverrideOrDefaultLineup(team) {
@@ -376,16 +355,12 @@ function getOverrideOrDefaultLineup(team) {
 }
 
 /*******************  UI SETUP  *********************/
-
 function setupUI() {
   const awaySel = document.getElementById("awayTeam");
   const homeSel = document.getElementById("homeTeam");
   const predictBtn = document.getElementById("predictBtn");
-
-  if (!awaySel || !homeSel || !predictBtn) return;
-
-  awaySel.innerHTML = "";
-  homeSel.innerHTML = "";
+  const compareBtn = document.getElementById("compareBtn");
+  const saveBtn    = document.getElementById("saveGameBtn");
 
   S.teams.forEach(t => {
     const o1 = document.createElement("option");
@@ -398,18 +373,17 @@ function setupUI() {
     o2.textContent = t;
     homeSel.appendChild(o2);
   });
-
   if (S.teams.length > 1) homeSel.selectedIndex = 1;
 
-  awaySel.addEventListener("change", () => renderLineupEditors());
-  homeSel.addEventListener("change", () => renderLineupEditors());
+  awaySel.addEventListener("change", renderLineupEditors);
+  homeSel.addEventListener("change", renderLineupEditors);
 
-  const saveAway = document.getElementById("saveAway");
-  const saveHome = document.getElementById("saveHome");
-  if (saveAway) saveAway.addEventListener("click", () => saveLineupFromUI("away"));
-  if (saveHome) saveHome.addEventListener("click", () => saveLineupFromUI("home"));
+  document.getElementById("saveAway").addEventListener("click", () => saveLineupFromUI("away"));
+  document.getElementById("saveHome").addEventListener("click", () => saveLineupFromUI("home"));
 
   predictBtn.addEventListener("click", predictGame);
+  compareBtn.addEventListener("click", compareStats);
+  saveBtn.addEventListener("click", saveGameToTable);
 
   renderLineupEditors();
 }
@@ -433,28 +407,16 @@ function renderOneEditor(side, team) {
     f2: `${side}_f2`,
     c:  `${side}_c`
   };
-
-  const roster = rosterForTeam(team);
   const lineup = getOverrideOrDefaultLineup(team);
-
   ["g1", "g2", "f1", "f2", "c"].forEach((slot, idx) => {
-    const sel = document.getElementById(ids[slot]);
-    if (!sel) return;
-    sel.innerHTML = "";
-
-    const empty = document.createElement("option");
-    empty.value = "";
-    empty.textContent = "—";
-    sel.appendChild(empty);
-
-    roster.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p;
-      opt.textContent = p;
-      if (lineup[idx] === p) opt.selected = true;
-      sel.appendChild(opt);
-    });
+    const el = document.getElementById(ids[slot]);
+    if (el) el.value = lineup[idx] || "";
   });
+
+  const per = lineupWeightedPER(lineup);
+  const labelId = side === "away" ? "awayPerLabel" : "homePerLabel";
+  const perLabel = document.getElementById(labelId);
+  if (perLabel) perLabel.textContent = `Lineup PER: ${isNaN(per) ? "—" : per.toFixed(2)}`;
 }
 
 function readLineupFromUI(side) {
@@ -472,35 +434,36 @@ function saveLineupFromUI(side) {
 
   if (!team) return;
   const lu = readLineupFromUI(side);
-  if (lu.length !== 5) return;
-
+  if (lu.length !== 5) {
+    alert("Please select 5 players for the lineup.");
+    return;
+  }
   S.overrides[team] = lu;
-  // also update baseline PER for this team
   S.teamBasePER[team] = lineupWeightedPER(lu);
+  renderOneEditor(side, team); // refresh PER label
   alert(`${team} lineup saved.`);
 }
 
-/*******************  MODEL LOGIC  *********************/
-
+/*******************  CONTEXT & MODEL  *********************/
 function teamContext(team, isHome) {
   const sideKey = isHome ? "Home" : "Away";
 
-  const oeff = S.oeff[team] || {};
-  const deff = S.deff[team] || {};
-  const oreb = S.oreb[team] || {};
-  const dreb = S.dreb[team] || {};
-  const pace = S.pace[team] || {};
+  const oeff  = S.oeff[team]  || {};
+  const deff  = S.deff[team]  || {};
+  const oreb  = S.oreb[team]  || {};
+  const dreb  = S.dreb[team]  || {};
+  const pace  = S.pace[team]  || {};
   const ooreb = S.ooreb[team] || {};
   const odreb = S.odreb[team] || {};
 
   return {
-    offEff: blend(oeff[sideKey], oeff.L3),
-    defEff: blend(deff[sideKey], deff.L3),
-    oreb:   blend(oreb[sideKey], oreb.L3),
-    dreb:   blend(dreb[sideKey], dreb.L3),
+    offEff:  blend(oeff[sideKey], oeff.L3),
+    defEff:  blend(deff[sideKey], deff.L3),
+    oreb:    blend(oreb[sideKey], oreb.L3),
+    dreb:    blend(dreb[sideKey], dreb.L3),
     oppOreb: blend(ooreb.Season, ooreb.L3),
     oppDreb: blend(odreb.Season, odreb.L3),
-    pace:   pace[sideKey]
+    pace:    pace[sideKey]
   };
 }
 
@@ -510,87 +473,60 @@ function predictScores(awayTeam, homeTeam, awayLineup, homeLineup, awayB2B, home
   const leagueOff  = S.league.offEff;
   const leagueDef  = S.league.defEff;
 
-  // base pace for game: blend of team paces
   const awayCtx = teamContext(awayTeam, false);
   const homeCtx = teamContext(homeTeam, true);
 
   const pace = (safe(awayCtx.pace, leaguePace) + safe(homeCtx.pace, leaguePace)) / 2;
-
-  // base points per possession from league
   const basePPP = leaguePPG / leaguePace;
 
-  // offensive and defensive multipliers (normalized to league)
   const awayOffMult = safe(awayCtx.offEff, leagueOff) / leagueOff;
   const homeOffMult = safe(homeCtx.offEff, leagueOff) / leagueOff;
 
-  const awayDefMult = leagueDef / safe(homeCtx.defEff, leagueDef); // opp defense
+  const awayDefMult = leagueDef / safe(homeCtx.defEff, leagueDef);
   const homeDefMult = leagueDef / safe(awayCtx.defEff, leagueDef);
 
-  // lineup PER multipliers (difference between lineups)
   const awayPER = lineupWeightedPER(awayLineup) || S.teamBasePER[awayTeam] || 15;
   const homePER = lineupWeightedPER(homeLineup) || S.teamBasePER[homeTeam] || 15;
-  const perDiff = awayPER - homePER; // >0 = away has better lineup
-
+  const perDiff = awayPER - homePER;
   const awayPERmult = 1 + (perDiff * PER_K) / 100;
   const homePERmult = 1 - (perDiff * PER_K) / 100;
 
-  // rebounding edges (off + def + opp allowed)
   const awayRebEdge =
-    safe(awayCtx.oreb, 0) -
-    safe(homeCtx.oppDreb, 0) +
-    safe(awayCtx.dreb, 0) -
-    safe(homeCtx.oppOreb, 0);
+    safe(awayCtx.oreb, 0) - safe(homeCtx.oppDreb, 0) +
+    safe(awayCtx.dreb, 0) - safe(homeCtx.oppOreb, 0);
 
   const homeRebEdge =
-    safe(homeCtx.oreb, 0) -
-    safe(awayCtx.oppDreb, 0) +
-    safe(homeCtx.dreb, 0) -
-    safe(awayCtx.oppOreb, 0);
+    safe(homeCtx.oreb, 0) - safe(awayCtx.oppDreb, 0) +
+    safe(homeCtx.dreb, 0) - safe(awayCtx.oppOreb, 0);
 
   const awayRebMult = 1 + (awayRebEdge * REB_K);
   const homeRebMult = 1 + (homeRebEdge * REB_K);
 
-  // raw expected points
   let awayScore =
-    pace *
-    basePPP *
-    awayOffMult *
-    awayDefMult *
-    awayPERmult *
-    awayRebMult;
-
+    pace * basePPP * awayOffMult * awayDefMult * awayPERmult * awayRebMult;
   let homeScore =
-    pace *
-    basePPP *
-    homeOffMult *
-    homeDefMult *
-    homePERmult *
-    homeRebMult;
+    pace * basePPP * homeOffMult * homeDefMult * homePERmult * homeRebMult;
 
-  // home court advantage: split points
   awayScore -= HCA_PTS / 2;
   homeScore += HCA_PTS / 2;
 
-  // back-to-back penalties
   if (awayB2B) awayScore -= B2B_PENALTY;
   if (homeB2B) homeScore -= B2B_PENALTY;
 
-  // clamp to sane range
   awayScore = Math.max(70, Math.min(150, awayScore));
   homeScore = Math.max(70, Math.min(150, homeScore));
 
   return { awayScore, homeScore };
 }
 
-/*******************  PREDICT BUTTON HANDLER  *********************/
-
+/*******************  PREDICTION & OUTPUT  *********************/
 function predictGame() {
   const awayTeam = document.getElementById("awayTeam").value;
   const homeTeam = document.getElementById("homeTeam").value;
   const bookSpread = toFloat(document.getElementById("bookSpread").value);
   const bookTotal  = toFloat(document.getElementById("bookTotal").value);
-  const awayB2B = document.getElementById("awayB2B")?.checked || false;
-  const homeB2B = document.getElementById("homeB2B")?.checked || false;
+  const awayB2B    = document.getElementById("awayB2B").checked;
+  const homeB2B    = document.getElementById("homeB2B").checked;
 
   if (!awayTeam || !homeTeam || awayTeam === homeTeam) {
     alert("Please select two different teams.");
@@ -609,25 +545,22 @@ function predictGame() {
     homeB2B
   );
 
-  const modelTotal = awayScore + homeScore;
-  const modelSpread = homeScore - awayScore; // home - away
+  const modelTotal  = awayScore + homeScore;
+  const modelSpread = homeScore - awayScore;
 
-  // total play
   let totalPlay = "NO BET";
   if (!isNaN(bookTotal)) {
     if (modelTotal >= bookTotal + 10) totalPlay = "BET OVER";
     else if (modelTotal <= bookTotal - 10) totalPlay = "BET UNDER";
   }
 
-  // spread play (bookSpread is home spread; negative = home favored)
   let spreadPlay = "NO BET";
   if (!isNaN(bookSpread)) {
-    const edge = modelSpread - (-bookSpread); // compare to model home fav
-    if (edge >= 2) spreadPlay = `BET ${homeTeam}`;
+    const edge = modelSpread - (-bookSpread);
+    if (edge >= 2)      spreadPlay = `BET ${homeTeam}`;
     else if (edge <= -2) spreadPlay = `BET ${awayTeam}`;
   }
 
-  // win probabilities
   const diff = homeScore - awayScore;
   const homeWinProb = logisticProb(diff);
   const awayWinProb = 1 - homeWinProb;
@@ -635,11 +568,9 @@ function predictGame() {
     awayScore > homeScore ? awayTeam :
     homeScore > awayScore ? homeTeam : "Push";
 
-  const resultsEl = document.getElementById("results");
-  if (!resultsEl) return;
-
-  resultsEl.style.display = "block";
-  resultsEl.innerHTML = `
+  const el = document.getElementById("results");
+  el.style.display = "block";
+  el.innerHTML = `
     <h2>Game Prediction Results</h2>
     <p><strong>${awayTeam}:</strong> ${awayScore.toFixed(1)}</p>
     <p><strong>${homeTeam}:</strong> ${homeScore.toFixed(1)}</p>
@@ -660,8 +591,146 @@ function predictGame() {
        <strong>Spread Play:</strong> ${spreadPlay}
     </p>
   `;
+
+  S.lastPrediction = {
+    awayTeam,
+    homeTeam,
+    awayScore,
+    homeScore,
+    bookSpread,
+    bookTotal,
+    modelTotal,
+    modelSpread,
+    totalPlay,
+    spreadPlay
+  };
+}
+
+/*******************  STATS COMPARISON  *********************/
+function compareStats() {
+  const awayTeam = document.getElementById("awayTeam").value;
+  const homeTeam = document.getElementById("homeTeam").value;
+  if (!awayTeam || !homeTeam || awayTeam === homeTeam) {
+    alert("Select two different teams first.");
+    return;
+  }
+
+  const awayCtx = teamContext(awayTeam, false);
+  const homeCtx = teamContext(homeTeam, true);
+
+  const awayLineup = getOverrideOrDefaultLineup(awayTeam);
+  const homeLineup = getOverrideOrDefaultLineup(homeTeam);
+  const awayPER = lineupWeightedPER(awayLineup) || S.teamBasePER[awayTeam] || 15;
+  const homePER = lineupWeightedPER(homeLineup) || S.teamBasePER[homeTeam] || 15;
+
+  const metrics = [
+    { name: "Off Efficiency", a: awayCtx.offEff, h: homeCtx.offEff, better: "higher" },
+    { name: "Def Efficiency", a: awayCtx.defEff, h: homeCtx.defEff, better: "lower"  },
+    { name: "Off Reb %",      a: awayCtx.oreb,   h: homeCtx.oreb,   better: "higher" },
+    { name: "Def Reb %",      a: awayCtx.dreb,   h: homeCtx.dreb,   better: "higher" },
+    { name: "Pace",           a: awayCtx.pace,   h: homeCtx.pace,   better: "higher" },
+    { name: "Lineup PER",     a: awayPER,        h: homePER,        better: "higher" }
+  ];
+
+  const box = document.getElementById("compareBox");
+  let rowsHtml = "";
+  const fmt = v => (isNaN(v) ? "—" : Math.abs(v) < 5 ? v.toFixed(3) : v.toFixed(1));
+
+  metrics.forEach(m => {
+    const a = m.a, h = m.h;
+    let favA = "", favH = "";
+    if (!isNaN(a) && !isNaN(h)) {
+      if (m.better === "higher") {
+        if (a > h) favA = "fav-away";
+        else if (h > a) favH = "fav-home";
+      } else {
+        if (a < h) favA = "fav-away";
+        else if (h < a) favH = "fav-home";
+      }
+    }
+    rowsHtml += `
+      <tr>
+        <td>${m.name}</td>
+        <td class="${favA}">${fmt(a)}</td>
+        <td class="${favH}">${fmt(h)}</td>
+      </tr>`;
+  });
+
+  box.style.display = "block";
+  box.innerHTML = `
+    <h2>Stats Comparison</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>${awayTeam}</th>
+          <th>${homeTeam}</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <p><span class="fav-away">Green</span> = favored side on that metric.</p>
+  `;
+}
+
+/*******************  SAVE GAME TABLE  *********************/
+function saveGameToTable() {
+  if (!S.lastPrediction) {
+    alert("Run a prediction first.");
+    return;
+  }
+  S.savedGames.push({ ts: new Date(), ...S.lastPrediction });
+  renderSavedTable();
+}
+
+function renderSavedTable() {
+  const box = document.getElementById("savedBox");
+  if (!S.savedGames.length) {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+
+  let rowsHtml = "";
+  S.savedGames.forEach(g => {
+    rowsHtml += `
+      <tr>
+        <td>${g.ts.toLocaleTimeString()}</td>
+        <td>${g.awayTeam}</td>
+        <td>${g.homeTeam}</td>
+        <td>${g.awayScore.toFixed(1)}</td>
+        <td>${g.homeScore.toFixed(1)}</td>
+        <td>${g.modelTotal.toFixed(1)}</td>
+        <td>${isNaN(g.bookTotal) ? "—" : g.bookTotal.toFixed(1)}</td>
+        <td>${g.totalPlay}</td>
+        <td>${g.modelSpread.toFixed(1)}</td>
+        <td>${isNaN(g.bookSpread) ? "—" : g.bookSpread.toFixed(1)}</td>
+        <td>${g.spreadPlay}</td>
+      </tr>`;
+  });
+
+  box.style.display = "block";
+  box.innerHTML = `
+    <h2>Saved Games</h2>
+    <table class="saved-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Away</th>
+          <th>Home</th>
+          <th>Away Score</th>
+          <th>Home Score</th>
+          <th>Model Total</th>
+          <th>Book Total</th>
+          <th>Total Play</th>
+          <th>Model Spread</th>
+          <th>Book Spread</th>
+          <th>Spread Play</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
 }
 
 /*******************  START  *********************/
-
 document.addEventListener("DOMContentLoaded", init);
