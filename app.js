@@ -185,9 +185,9 @@ const DOM_IDS = {
   spreadPlay:  "spread-play",
 
   // Stat comparison table body
-  statTableBody: "stat-table-body",
+  statTableBody: "stat-compare-body",
 
-  loadError: "load-error"
+  loadError: "global-error"
 };
 
 /* 5) GLOBAL STATE -------------------------------------------- */
