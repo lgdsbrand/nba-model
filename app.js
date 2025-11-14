@@ -1,8 +1,6 @@
-/* ===========================================================
-   NBA LINEUP-BASED MODEL - app.js
-   - Pure client-side JS, works on Vercel as static site
-   - Uses ONLY column letters; Sheets headers don't matter
-   =========================================================== */
+/* =======================
+   NBA Lineup Model - app.js
+   ======================= */
 
 /* 1) CSV URLS ------------------------------------------------
    (Paste your real published CSV links below)
@@ -26,17 +24,19 @@ const OU_URL        = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskm
 const RANK_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";   // Predictive rating
 const NAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=19771105&single=true&output=csv";     // TR name ↔ NBAstuffer name
 
-/* 2) COLUMN LETTER MAP (no headers required) ---------------- */
+
+/* 2) COLUMN LETTER MAP -------------------------------------- */
+/* Adjust letters to match your exact sheet layout            */
 
 const COLS = {
-  // Player stats tab
+  // Players tab
   player: {
-    team:   "null",   // no team column used
+    team:   "null", // no team column used
     player: "B",
-    g:      "F",      // games
-    mp:     "H",      // total minutes
-    per:    "I",      // PER
-    usg:    "T"       // usage %
+    g:      "F",
+    mp:     "H",
+    per:    "I",
+    usg:    "T"
   },
 
   // Lineups tab
@@ -49,12 +49,12 @@ const COLS = {
     c:    "F"
   },
 
-  // TeamRankings rebounding tabs
+  // Rebounding tabs (kept for future use)
   oreb: {
-    team: "B",   // Team
-    haf:  "F",   // Home/Away Off Reb% (H/A)
-    haG:  "G",   // (optional) extra H/A col
-    l3:   "D"    // Last 3 Off Reb%
+    team: "B",
+    haf:  "F",
+    haG:  "G",
+    l3:   "D"
   },
   dreb: {
     team: "B",
@@ -73,12 +73,13 @@ const COLS = {
     l3:     "D"
   },
 
-  // NBAstuffer L5 + H/A Off/Def Eff + records (adjust letters to your sheet)
+  // NBAstuffer L5 + H/A eff + records
+  // CHANGE these letters to match your nbastuffer sheet
   nbastuff: {
     team:        "B",
     offEffL5:    "J",
     defEffL5:    "K",
-    paceL5:      "I",   // if present; else leave as "null"
+    paceL5:      "I",   // if you have L5 pace
     offEffHome:  "BH",
     defEffHome:  "BI",
     offEffAway:  "AI",
@@ -91,12 +92,13 @@ const COLS = {
     awayL:       "AR"
   },
 
-  // Season PPG tab (TR)
+  // PPG tab (TeamRankings)
+  // MAKE SURE oppg letter matches your OPP PPG column
   ppg: {
     team: "B",
     pace: "F",
     ppg:  "G",
-    oppg: "H"
+    oppg: "H"   // <-- if OPP PPG is actually in I, change to "I"
   },
 
   // ATS tab
@@ -118,31 +120,31 @@ const COLS = {
     rating: "D"
   },
 
-  // Names mapping tab: TR name ↔ NBAstuffer name
+  // Names map: TR ↔ NBAstuffer team names
   names: {
     tr:   "A",
     nbas: "B"
   },
 
-  // League averages tab (simple: name + value)
+  // League averages tab
   league: {
     stat:  "A",
     value: "B"
   }
 };
 
-/* 3) MODEL WEIGHTS (tune these) ------------------------------ */
+/* 3) MODEL WEIGHTS (TUNE THESE) ----------------------------- */
 
-const W_LINEUP_PER   = 0.45; // lineup PER influence
-const W_EFF_L5       = 0.20; // last-5 off/def efficiency
-const W_EFF_HA       = 0.15; // home/away efficiency
+const W_LINEUP_PER   = 0.45; // lineup PER
+const W_EFF_L5       = 0.20; // L5 off/def eff
+const W_EFF_HA       = 0.15; // H/A eff
 const W_PACE         = 0.10; // pace vs league
 const W_PRED_RATING  = 0.08; // predictive rating
-const W_LAST5_REC    = 0.02; // last-5 win% bump
-const W_HOME_AWAY    = 0.02; // home/away win% bump
-const B2B_PENALTY    = 1.0;  // points to subtract for back-to-back
+const W_LAST5_REC    = 0.02; // last-5 win%
+const W_HOME_AWAY    = 0.02; // home/away win%
+const B2B_PENALTY    = 1.0;  // B2B penalty (points)
 
-/* 4) DOM ELEMENT IDS (change here if your HTML differs) ------ */
+/* 4) DOM IDS ------------------------------------------------ */
 
 const DOM_IDS = {
   awayTeam:   "away-team",
@@ -154,7 +156,6 @@ const DOM_IDS = {
   awayB2B: "away-b2b",
   homeB2B: "home-b2b",
 
-  // Lineup selects
   awayLineup: {
     g1: "away-g1",
     g2: "away-g2",
@@ -173,7 +174,9 @@ const DOM_IDS = {
   awayLineupPer: "away-lineup-per",
   homeLineupPer: "home-lineup-per",
 
-  // Output fields
+  awayLineupLabel: "away-lineup-team-label",
+  homeLineupLabel: "home-lineup-team-label",
+
   awayScore:   "away-score",
   homeScore:   "home-score",
   winner:      "predicted-winner",
@@ -184,27 +187,32 @@ const DOM_IDS = {
   modelSpread: "model-spread",
   spreadPlay:  "spread-play",
 
-  // Stat comparison table body
-  statTableBody: "stat-compare-body",
+  statComparisonContainer: "stat-comparison",
+  statTableBody:           "stat-compare-body",
+  statAwayLabel:           "stat-away-label",
+  statHomeLabel:           "stat-home-label",
 
-  loadError: "global-error"
+  savedGamesBody: "saved-games-body",
+
+  loadError: "global-error",
+  playerDatalist: "players-list"
 };
 
-/* 5) GLOBAL STATE -------------------------------------------- */
+/* 5) STATE -------------------------------------------------- */
 
 const S = {
-  players:   [],     // raw player rows
-  lineups:   {},     // team -> default lineup
-  playerMap: {},     // player name -> stats
-  teamStats: {},     // various team maps
-  namesMap: {},      // TR name -> NBAstuffer name
-  league:   {},      // league averages
-  loaded:   false
+  players:   [],
+  playerMap: {},
+  lineups:   {},
+  teamStats: {},
+  namesMap:  {},
+  league:    {},
+  loaded:    false
 };
 
-/* 6) UTILITIES ----------------------------------------------- */
+/* 6) UTILS -------------------------------------------------- */
 
-function colLetterToIndex(letter) {
+function colIndex(letter) {
   if (!letter || letter === "null") return null;
   return letter.toUpperCase().charCodeAt(0) - 65;
 }
@@ -214,7 +222,6 @@ function parseCSV(text) {
   const lines = text.replace(/\r/g, "").split("\n");
   for (const line of lines) {
     if (!line.trim()) continue;
-    // simple split, handles basic CSV; your data is simple
     rows.push(line.split(","));
   }
   return rows;
@@ -231,76 +238,59 @@ async function loadCSV(url) {
 function normalizeTeam(name) {
   return (name || "").toLowerCase().replace(/\s+/g, " ").trim();
 }
-
 function safeFloat(v) {
   if (v == null) return NaN;
   const x = parseFloat(String(v).replace(/[^0-9.+-]/g, ""));
   return isNaN(x) ? NaN : x;
 }
-
-function formatNumber(x, decimals = 1) {
-  if (isNaN(x)) return "—";
-  return x.toFixed(decimals);
+function fmtNum(x, d = 1) {
+  return isNaN(x) ? "—" : x.toFixed(d);
 }
-
 function getEl(id) {
   return document.getElementById(id);
 }
 
-/* 7) BUILDERS ------------------------------------------------ */
+/* 7) BUILDERS ----------------------------------------------- */
 
 function buildPlayerMap(rows) {
   const cfg = COLS.player;
   const idx = {
-    player: colLetterToIndex(cfg.player),
-    g:      colLetterToIndex(cfg.g),
-    mp:     colLetterToIndex(cfg.mp),
-    per:    colLetterToIndex(cfg.per),
-    usg:    colLetterToIndex(cfg.usg)
+    player: colIndex(cfg.player),
+    g:      colIndex(cfg.g),
+    mp:     colIndex(cfg.mp),
+    per:    colIndex(cfg.per),
+    usg:    colIndex(cfg.usg)
   };
-
   const map = {};
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     const name = (row[idx.player] || "").trim();
     if (!name) continue;
-
     const g   = safeFloat(row[idx.g]);
     const mp  = safeFloat(row[idx.mp]);
     const per = safeFloat(row[idx.per]);
     const usg = safeFloat(row[idx.usg]);
-
     const mpPerGame = g > 0 ? mp / g : 0;
-
-    map[name.toLowerCase()] = {
-      name,
-      g,
-      mp,
-      mpPerGame,
-      per,
-      usg
-    };
+    map[name.toLowerCase()] = { name, g, mp, mpPerGame, per, usg };
   }
   return map;
 }
 
 function buildLineupMap(rows, cfg) {
-  const idxTeam = colLetterToIndex(cfg.team);
+  const ti = colIndex(cfg.team);
   const idx = {
-    g1: colLetterToIndex(cfg.g1),
-    g2: colLetterToIndex(cfg.g2),
-    f1: colLetterToIndex(cfg.f1),
-    f2: colLetterToIndex(cfg.f2),
-    c:  colLetterToIndex(cfg.c)
+    g1: colIndex(cfg.g1),
+    g2: colIndex(cfg.g2),
+    f1: colIndex(cfg.f1),
+    f2: colIndex(cfg.f2),
+    c:  colIndex(cfg.c)
   };
-
   const map = {};
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
-    const team = (row[idxTeam] || "").trim();
+    const team = (row[ti] || "").trim();
     if (!team) continue;
     const key = normalizeTeam(team);
-
     map[key] = {
       team,
       g1: row[idx.g1] || "",
@@ -315,15 +305,13 @@ function buildLineupMap(rows, cfg) {
 
 function buildTeamMap(rows, cfg) {
   const idx = {};
-  for (const k in cfg) idx[k] = colLetterToIndex(cfg[k]);
-
+  for (const k in cfg) idx[k] = colIndex(cfg[k]);
   const map = {};
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     const rawTeam = (idx.team != null ? row[idx.team] : "").trim();
     if (!rawTeam) continue;
     const key = normalizeTeam(rawTeam);
-
     const obj = {};
     for (const k in idx) {
       if (k === "team") continue;
@@ -336,14 +324,13 @@ function buildTeamMap(rows, cfg) {
 }
 
 function buildNameMap(rows, cfg) {
-  const trIdx   = colLetterToIndex(cfg.tr);
-  const nbasIdx = colLetterToIndex(cfg.nbas);
+  const trIdx   = colIndex(cfg.tr);
+  const nIdx    = colIndex(cfg.nbas);
   const map = {};
-
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
-    const tr   = (row[trIdx]   || "").trim();
-    const nbas = (row[nbasIdx] || "").trim();
+    const tr   = (row[trIdx] || "").trim();
+    const nbas = (row[nIdx]  || "").trim();
     if (!tr || !nbas) continue;
     map[normalizeTeam(tr)] = normalizeTeam(nbas);
   }
@@ -351,10 +338,9 @@ function buildNameMap(rows, cfg) {
 }
 
 function buildLeagueAverages(rows) {
-  const statIdx  = colLetterToIndex(COLS.league.stat);
-  const valIdx   = colLetterToIndex(COLS.league.value);
+  const statIdx = colIndex(COLS.league.stat);
+  const valIdx  = colIndex(COLS.league.value);
   const map = {};
-
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     const stat  = (row[statIdx] || "").trim().toLowerCase();
@@ -362,23 +348,22 @@ function buildLeagueAverages(rows) {
     if (!stat) continue;
     map[stat] = value;
   }
-  // convenient aliases
   map.points = map.points || map["points"] || 118;
   map.pace   = map.pace   || map["pace"]   || 100;
   return map;
 }
 
-function mapToNBAStuffKey(teamName) {
-  const trKey  = normalizeTeam(teamName);
+function mapToNBAKey(teamName) {
+  const trKey = normalizeTeam(teamName);
   const mapped = S.namesMap[trKey];
   return mapped || trKey;
 }
 
-/* 8) TEAM CONTEXT & STRENGTH -------------------------------- */
+/* 8) TEAM CONTEXT + STRENGTH -------------------------------- */
 
 function getTeamContext(teamName, isHome) {
   const keyTR  = normalizeTeam(teamName);
-  const keyNBA = mapToNBAStuffKey(teamName);
+  const keyNBA = mapToNBAKey(teamName);
 
   const nb = (S.teamStats.nbastuff || {})[keyNBA] || {};
   const pp = (S.teamStats.ppg      || {})[keyTR]  || {};
@@ -398,21 +383,19 @@ function getTeamContext(teamName, isHome) {
   const awayL = safeFloat(nb.awayL);
   const awayWinPct = (awayW + awayL) > 0 ? awayW / (awayW + awayL) : NaN;
 
-  const offEffL5  = safeFloat(nb.offEffL5);
-  const defEffL5  = safeFloat(nb.defEffL5);
-  const offEffHA  = safeFloat(isHome ? nb.offEffHome : nb.offEffAway);
-  const defEffHA  = safeFloat(isHome ? nb.defEffHome : nb.defEffAway);
+  const offEffL5 = safeFloat(nb.offEffL5);
+  const defEffL5 = safeFloat(nb.defEffL5);
+  const offEffHA = safeFloat(isHome ? nb.offEffHome : nb.offEffAway);
+  const defEffHA = safeFloat(isHome ? nb.defEffHome : nb.defEffAway);
 
-  const paceSzn   = safeFloat(pp.pace);
-  const ppg       = safeFloat(pp.ppg);
-  const oppg      = safeFloat(pp.oppg);
+  const paceSzn = safeFloat(pp.pace);
+  const ppg     = safeFloat(pp.ppg);
+  const oppg    = safeFloat(pp.oppg);
 
   const predRating = safeFloat(rk.rating);
 
   return {
     teamName,
-    keyTR,
-    keyNBA,
     isHome,
     offEffL5,
     defEffL5,
@@ -426,65 +409,51 @@ function getTeamContext(teamName, isHome) {
     awayWinPct,
     predRating,
     atsRecord: at.record || "",
-    ouRecord:  ou.record  || ""
+    ouRecord:  ou.record || ""
   };
 }
 
-function computeTeamStrength(ctx, lineupPERAdj, isHome, isB2B) {
+function computeTeamStrength(ctx, lineupPER, isHome, isB2B) {
   const leaguePace = S.league.pace   || 100;
-  const leaguePts  = S.league.points || 118;
+  const effL5Score = W_EFF_L5 * ((ctx.offEffL5 || 0) - (ctx.defEffL5 || 0));
+  const effHAScore = W_EFF_HA * ((ctx.offEffHA || 0) - (ctx.defEffHA || 0));
+  const paceScore  = W_PACE   * ((ctx.paceSzn || leaguePace) - leaguePace);
+  const predScore  = W_PRED_RATING * (ctx.predRating || 0);
 
-  const effL5Score =
-    W_EFF_L5 * ((ctx.offEffL5 || 0) - (ctx.defEffL5 || 0));
-
-  const effHAScore =
-    W_EFF_HA * ((ctx.offEffHA || 0) - (ctx.defEffHA || 0));
-
-  const paceScore =
-    W_PACE * ((ctx.paceSzn || leaguePace) - leaguePace);
-
-  const predScore =
-    W_PRED_RATING * (ctx.predRating || 0);
-
-  const last5Score =
-    W_LAST5_REC * (((ctx.l5WinPct || 0.5) - 0.5) * 10);
+  const last5Score = W_LAST5_REC * (((ctx.l5WinPct || 0.5) - 0.5) * 10);
 
   const haWinPct = isHome ? ctx.homeWinPct : ctx.awayWinPct;
-  const haScore =
-    W_HOME_AWAY * (((haWinPct || 0.5) - 0.5) * 10);
+  const haScore  = W_HOME_AWAY * (((haWinPct || 0.5) - 0.5) * 10);
 
-  const lineupScore =
-    W_LINEUP_PER * (lineupPERAdj || 0);
+  const lineupScore = W_LINEUP_PER * (lineupPER || 0);
+  const b2bPenalty  = isB2B ? B2B_PENALTY : 0;
 
-  const b2bPenalty = isB2B ? B2B_PENALTY : 0;
-
-  return lineupScore + effL5Score + effHAScore + paceScore +
-         predScore + last5Score + haScore - b2bPenalty;
+  return lineupScore + effL5Score + effHAScore +
+         paceScore + predScore + last5Score +
+         haScore - b2bPenalty;
 }
 
-/* 9) LINEUP SCORING ------------------------------------------ */
+/* 9) LINEUP LOGIC ------------------------------------------- */
 
-function getLineupFromInputs(sideKey) {
+function getLineupNames(sideKey) {
   const ids = DOM_IDS[sideKey + "Lineup"];
-  const g1 = getEl(ids.g1).value.trim();
-  const g2 = getEl(ids.g2).value.trim();
-  const f1 = getEl(ids.f1).value.trim();
-  const f2 = getEl(ids.f2).value.trim();
-  const c  = getEl(ids.c).value.trim();
-  return [g1, g2, f1, f2, c].filter(Boolean);
+  return [
+    getEl(ids.g1).value.trim(),
+    getEl(ids.g2).value.trim(),
+    getEl(ids.f1).value.trim(),
+    getEl(ids.f2).value.trim(),
+    getEl(ids.c).value.trim()
+  ].filter(Boolean);
 }
 
-function computeLineupPER(lineupNames) {
+function computeLineupPER(names) {
   let totalWeightedPER = 0;
   let totalWeight = 0;
-
-  for (const name of lineupNames) {
+  for (const name of names) {
     const p = S.playerMap[name.toLowerCase()];
     if (!p || isNaN(p.per)) continue;
-    const mp = p.mpPerGame || 0;
+    const mp  = p.mpPerGame || 0;
     const usg = isNaN(p.usg) ? 0 : p.usg;
-
-    // weight by minutes with a small boost from usage
     const weight = mp * (0.5 + 0.5 * (usg / 100));
     totalWeightedPER += p.per * weight;
     totalWeight += weight;
@@ -493,176 +462,180 @@ function computeLineupPER(lineupNames) {
   return totalWeightedPER / totalWeight;
 }
 
-/* 10) STAT COMPARISON TABLE --------------------------------- */
+function applyDefaultLineup(sideKey, teamName) {
+  const key = normalizeTeam(teamName);
+  const lineup = S.lineups[key];
+  if (!lineup) return;
+  const ids = DOM_IDS[sideKey + "Lineup"];
+  getEl(ids.g1).value = lineup.g1 || "";
+  getEl(ids.g2).value = lineup.g2 || "";
+  getEl(ids.f1).value = lineup.f1 || "";
+  getEl(ids.f2).value = lineup.f2 || "";
+  getEl(ids.c).value  = lineup.c  || "";
+
+  const labelId = sideKey === "away"
+    ? DOM_IDS.awayLineupLabel
+    : DOM_IDS.homeLineupLabel;
+  const labelEl = getEl(labelId);
+  if (labelEl) labelEl.textContent = teamName || "—";
+}
+
+/* 10) STAT COMPARISON TABLE -------------------------------- */
 
 function buildStatComparisonTable(awayCtx, homeCtx) {
   const tbody = getEl(DOM_IDS.statTableBody);
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  function addRow(label, awayVal, homeVal, higherIsBetter) {
+  function addRow(label, aNum, hNum, fmt, higherIsBetter) {
     const tr = document.createElement("tr");
     const tdLabel = document.createElement("td");
-    const tdAway  = document.createElement("td");
-    const tdHome  = document.createElement("td");
+    const tdA = document.createElement("td");
+    const tdH = document.createElement("td");
 
     tdLabel.textContent = label;
-    tdAway.textContent  = awayVal;
-    tdHome.textContent  = homeVal;
+    tdA.textContent = fmt(aNum);
+    tdH.textContent = fmt(hNum);
 
-    if (higherIsBetter != null) {
-      const aNum = parseFloat(awayVal);
-      const hNum = parseFloat(homeVal);
-      if (!isNaN(aNum) && !isNaN(hNum) && aNum !== hNum) {
-        if ((higherIsBetter && aNum > hNum) ||
-            (!higherIsBetter && aNum < hNum)) {
-          tdAway.classList.add("stat-better");
-        } else {
-          tdHome.classList.add("stat-better");
-        }
+    if (higherIsBetter != null &&
+        !isNaN(aNum) && !isNaN(hNum) &&
+        aNum !== hNum) {
+      const awayBetter = higherIsBetter ? aNum > hNum : aNum < hNum;
+      if (awayBetter) {
+        tdA.classList.add("stat-better");
+      } else {
+        tdH.classList.add("stat-better");
       }
     }
 
     tr.appendChild(tdLabel);
-    tr.appendChild(tdAway);
-    tr.appendChild(tdHome);
+    tr.appendChild(tdA);
+    tr.appendChild(tdH);
     tbody.appendChild(tr);
   }
 
+  const fmtPct = v => isNaN(v) ? "—" : (v * 100).toFixed(1) + "%";
+
   // PPG / OPPG
-  addRow("PPG",
-    formatNumber(awayCtx.ppg),
-    formatNumber(homeCtx.ppg),
-    true
-  );
-  addRow("OPPG",
-    formatNumber(awayCtx.oppg),
-    formatNumber(homeCtx.oppg),
-    false
-  );
+  addRow("PPG",   awayCtx.ppg,  homeCtx.ppg,  v => fmtNum(v,1),  true);
+  addRow("OPPG",  awayCtx.oppg, homeCtx.oppg, v => fmtNum(v,1),  false);
 
-  // L5 & Home/Away win%
-  const l5Away = isNaN(awayCtx.l5WinPct) ? "—" :
-                 (awayCtx.l5WinPct * 100).toFixed(1) + "%";
-  const l5Home = isNaN(homeCtx.l5WinPct) ? "—" :
-                 (homeCtx.l5WinPct * 100).toFixed(1) + "%";
-  addRow("Last 5 Win%",
-    l5Away,
-    l5Home,
-    true
-  );
+  // Last 5 win%
+  addRow("Last 5 Win%", awayCtx.l5WinPct, homeCtx.l5WinPct, fmtPct, true);
 
-  const haAway = isNaN(awayCtx.awayWinPct) ? "—" :
-                 (awayCtx.awayWinPct * 100).toFixed(1) + "%";
-  const haHome = isNaN(homeCtx.homeWinPct) ? "—" :
-                 (homeCtx.homeWinPct * 100).toFixed(1) + "%";
+  // Road / Home win%
   addRow("Road/Home Win%",
-    haAway,
-    haHome,
+    awayCtx.awayWinPct,
+    homeCtx.homeWinPct,
+    fmtPct,
     true
   );
 
-  // Off/Def Eff
-  addRow("Off Eff (L5)",
-    formatNumber(awayCtx.offEffL5),
-    formatNumber(homeCtx.offEffL5),
-    true
-  );
-  addRow("Def Eff (L5)",
-    formatNumber(awayCtx.defEffL5),
-    formatNumber(homeCtx.defEffL5),
-    false
-  );
+  // Off/Def Eff (L5)
+  addRow("Off Eff (L5)", awayCtx.offEffL5, homeCtx.offEffL5, v => fmtNum(v,1), true);
+  addRow("Def Eff (L5)", awayCtx.defEffL5, homeCtx.defEffL5, v => fmtNum(v,1), false);
 
-  // Predictive rating
-  addRow("Pred Rating",
-    formatNumber(awayCtx.predRating, 2),
-    formatNumber(homeCtx.predRating, 2),
-    true
-  );
+  // Predictive Rating
+  addRow("Pred Rating", awayCtx.predRating, homeCtx.predRating, v => fmtNum(v,2), true);
 
-  // Records as text
-  addRow("ATS Record",
-    awayCtx.atsRecord || "—",
-    homeCtx.atsRecord || "—",
-    null
-  );
-  addRow("O/U Record",
-    awayCtx.ouRecord || "—",
-    homeCtx.ouRecord || "—",
-    null
-  );
+  // ATS / O/U text rows
+  function addTextRow(label, aTxt, hTxt) {
+    const tr = document.createElement("tr");
+    const tdLabel = document.createElement("td");
+    const tdA = document.createElement("td");
+    const tdH = document.createElement("td");
+    tdLabel.textContent = label;
+    tdA.textContent = aTxt || "—";
+    tdH.textContent = hTxt || "—";
+    tr.appendChild(tdLabel);
+    tr.appendChild(tdA);
+    tr.appendChild(tdH);
+    tbody.appendChild(tr);
+  }
+
+  addTextRow("ATS Record", awayCtx.atsRecord, homeCtx.atsRecord);
+  addTextRow("O/U Record", awayCtx.ouRecord,  homeCtx.ouRecord);
 }
 
-/* 11) PREDICTION PIPELINE ----------------------------------- */
+function showStatComparison() {
+  if (!S.loaded) return;
+  const awayTeamEl = getEl(DOM_IDS.awayTeam);
+  const homeTeamEl = getEl(DOM_IDS.homeTeam);
+  if (!awayTeamEl || !homeTeamEl) return;
+  const awayTeam = awayTeamEl.value;
+  const homeTeam = homeTeamEl.value;
+  if (!awayTeam || !homeTeam || awayTeam === homeTeam) return;
+
+  const awayCtx = getTeamContext(awayTeam, false);
+  const homeCtx = getTeamContext(homeTeam, true);
+
+  const awayLabelEl = getEl(DOM_IDS.statAwayLabel);
+  const homeLabelEl = getEl(DOM_IDS.statHomeLabel);
+  if (awayLabelEl) awayLabelEl.textContent = awayTeam || "Away";
+  if (homeLabelEl) homeLabelEl.textContent = homeTeam || "Home";
+
+  buildStatComparisonTable(awayCtx, homeCtx);
+
+  const container = getEl(DOM_IDS.statComparisonContainer);
+  if (container) container.style.display = "block";
+}
+
+/* 11) PREDICTION + SAVE GAME -------------------------------- */
 
 function predictGame() {
   if (!S.loaded) return;
-
-  const awayTeamSel = getEl(DOM_IDS.awayTeam);
-  const homeTeamSel = getEl(DOM_IDS.homeTeam);
-  const awayTeam = awayTeamSel.value;
-  const homeTeam = homeTeamSel.value;
+  const awayTeamEl = getEl(DOM_IDS.awayTeam);
+  const homeTeamEl = getEl(DOM_IDS.homeTeam);
+  const awayTeam = awayTeamEl.value;
+  const homeTeam = homeTeamEl.value;
   if (!awayTeam || !homeTeam || awayTeam === homeTeam) return;
 
-  // Lineups
-  const awayLineupNames = getLineupFromInputs("away");
-  const homeLineupNames = getLineupFromInputs("home");
-  const awayLineupPER   = computeLineupPER(awayLineupNames);
-  const homeLineupPER   = computeLineupPER(homeLineupNames);
+  const awayNames = getLineupNames("away");
+  const homeNames = getLineupNames("home");
+  const awayPER   = computeLineupPER(awayNames);
+  const homePER   = computeLineupPER(homeNames);
 
   const awayPerEl = getEl(DOM_IDS.awayLineupPer);
   const homePerEl = getEl(DOM_IDS.homeLineupPer);
-  if (awayPerEl) awayPerEl.textContent = formatNumber(awayLineupPER, 2);
-  if (homePerEl) homePerEl.textContent = formatNumber(homeLineupPER, 2);
+  if (awayPerEl) awayPerEl.textContent = fmtNum(awayPER,2);
+  if (homePerEl) homePerEl.textContent = fmtNum(homePER,2);
 
-  // Contexts
   const awayCtx = getTeamContext(awayTeam, false);
   const homeCtx = getTeamContext(homeTeam, true);
 
   const awayB2B = getEl(DOM_IDS.awayB2B)?.checked || false;
   const homeB2B = getEl(DOM_IDS.homeB2B)?.checked || false;
 
-  const awayStrength = computeTeamStrength(
-    awayCtx, awayLineupPER, false, awayB2B
-  );
-  const homeStrength = computeTeamStrength(
-    homeCtx, homeLineupPER, true, homeB2B
-  );
+  const awayStr = computeTeamStrength(awayCtx, awayPER, false, awayB2B);
+  const homeStr = computeTeamStrength(homeCtx, homePER, true,  homeB2B);
 
-  const marginAwayMinusHome = awayStrength - homeStrength;
-
-  // Base total -> use PPG & league as fallback
+  const marginAway = awayStr - homeStr;
   const baseTotal = (
     (awayCtx.ppg || S.league.points / 2) +
     (homeCtx.ppg || S.league.points / 2)
   ) / 2;
 
-  const awayScore = baseTotal + marginAwayMinusHome / 2;
-  const homeScore = baseTotal - marginAwayMinusHome / 2;
+  let awayScore = baseTotal + marginAway / 2;
+  let homeScore = baseTotal - marginAway / 2;
 
-  // Clamp scores to a sane range
-  const awayScoreClamped = Math.max(70, Math.min(150, awayScore));
-  const homeScoreClamped = Math.max(70, Math.min(150, homeScore));
+  awayScore = Math.max(70, Math.min(150, awayScore));
+  homeScore = Math.max(70, Math.min(150, homeScore));
 
-  // Win probability (logistic on margin)
-  const k = 6; // scaling
-  const probAway = 1 / (1 + Math.exp(-marginAwayMinusHome / k));
+  const k = 6;
+  const probAway = 1 / (1 + Math.exp(-marginAway / k));
   const probHome = 1 - probAway;
 
-  // Book numbers
-  const bookSpread = parseFloat(getEl(DOM_IDS.bookSpread).value || "0"); // home = -
+  const bookSpread = parseFloat(getEl(DOM_IDS.bookSpread).value || "0");
   const bookTotal  = parseFloat(getEl(DOM_IDS.bookTotal).value || "0");
 
-  const modelSpread = homeScoreClamped - awayScoreClamped; // home - away
-  const modelTotal  = awayScoreClamped + homeScoreClamped;
+  const modelSpread = homeScore - awayScore; // home - away
+  const modelTotal  = homeScore + awayScore;
 
-  // Decide plays
   let spreadPlay = "NO BET";
   if (!isNaN(bookSpread)) {
     const diff = modelSpread - bookSpread;
-    if (diff > 1.5) spreadPlay = `Bet Home ${modelSpread.toFixed(1)}`;
-    else if (diff < -1.5) spreadPlay = `Bet Away ${(-modelSpread).toFixed(1)}`;
+    if (diff > 1.5) spreadPlay = `Bet Home`;
+    else if (diff < -1.5) spreadPlay = `Bet Away`;
   }
 
   let totalPlay = "NO BET";
@@ -672,37 +645,61 @@ function predictGame() {
     else if (diffT < -8) totalPlay = "BET UNDER";
   }
 
-  // Write outputs
-  const awayScoreEl = getEl(DOM_IDS.awayScore);
-  const homeScoreEl = getEl(DOM_IDS.homeScore);
-  const winnerEl    = getEl(DOM_IDS.winner);
-  const awayProbEl  = getEl(DOM_IDS.awayWinProb);
-  const homeProbEl  = getEl(DOM_IDS.homeWinProb);
-  const modelTotEl  = getEl(DOM_IDS.modelTotal);
-  const totalPlayEl = getEl(DOM_IDS.totalPlay);
-  const modelSprEl  = getEl(DOM_IDS.modelSpread);
-  const spreadPlayEl= getEl(DOM_IDS.spreadPlay);
+  // fill outputs
+  getEl(DOM_IDS.awayScore).textContent = fmtNum(awayScore,1);
+  getEl(DOM_IDS.homeScore).textContent = fmtNum(homeScore,1);
+  getEl(DOM_IDS.winner).textContent =
+    awayScore > homeScore ? awayTeam : homeTeam;
 
-  if (awayScoreEl) awayScoreEl.textContent = formatNumber(awayScoreClamped, 1);
-  if (homeScoreEl) homeScoreEl.textContent = formatNumber(homeScoreClamped, 1);
+  getEl(DOM_IDS.awayWinProb).textContent = (probAway*100).toFixed(1) + "%";
+  getEl(DOM_IDS.homeWinProb).textContent = (probHome*100).toFixed(1) + "%";
 
-  const winnerName = awayScoreClamped > homeScoreClamped ? awayTeam : homeTeam;
-  if (winnerEl) winnerEl.textContent = winnerName;
-
-  if (awayProbEl) awayProbEl.textContent = (probAway * 100).toFixed(1) + "%";
-  if (homeProbEl) homeProbEl.textContent = (probHome * 100).toFixed(1) + "%";
-
-  if (modelTotEl)  modelTotEl.textContent  = formatNumber(modelTotal, 1);
-  if (totalPlayEl) totalPlayEl.textContent = totalPlay;
-
-  if (modelSprEl)  modelSprEl.textContent  = formatNumber(modelSpread, 1);
-  if (spreadPlayEl)spreadPlayEl.textContent= spreadPlay;
-
-  // Stat comparison table
-  buildStatComparisonTable(awayCtx, homeCtx);
+  getEl(DOM_IDS.modelTotal).textContent  = fmtNum(modelTotal,1);
+  getEl(DOM_IDS.totalPlay).textContent   = totalPlay;
+  getEl(DOM_IDS.modelSpread).textContent = fmtNum(modelSpread,1);
+  getEl(DOM_IDS.spreadPlay).textContent  = spreadPlay;
 }
 
-/* 12) UI INIT ------------------------------------------------ */
+function saveGameToTable() {
+  const body = getEl(DOM_IDS.savedGamesBody);
+  if (!body) return;
+
+  const awayTeam = getEl(DOM_IDS.awayTeam)?.value || "";
+  const homeTeam = getEl(DOM_IDS.homeTeam)?.value || "";
+  if (!awayTeam || !homeTeam || awayTeam === homeTeam) return;
+
+  const awayScore = getEl(DOM_IDS.awayScore)?.textContent || "—";
+  const homeScore = getEl(DOM_IDS.homeScore)?.textContent || "—";
+  const modelTotal = getEl(DOM_IDS.modelTotal)?.textContent || "—";
+  const totalPlay  = getEl(DOM_IDS.totalPlay)?.textContent || "—";
+  const modelSpread = getEl(DOM_IDS.modelSpread)?.textContent || "—";
+  const spreadPlay  = getEl(DOM_IDS.spreadPlay)?.textContent || "—";
+  const bookTotal   = getEl(DOM_IDS.bookTotal)?.value || "";
+  const bookSpread  = getEl(DOM_IDS.bookSpread)?.value || "";
+
+  const tr = document.createElement("tr");
+  function td(text) {
+    const cell = document.createElement("td");
+    cell.textContent = text;
+    return cell;
+  }
+
+  const matchup = `${awayTeam} @ ${homeTeam}`;
+  const scoreStr = `${awayScore} - ${homeScore}`;
+
+  tr.appendChild(td(matchup));
+  tr.appendChild(td(scoreStr));
+  tr.appendChild(td(modelTotal));
+  tr.appendChild(td(bookTotal));
+  tr.appendChild(td(totalPlay));
+  tr.appendChild(td(modelSpread));
+  tr.appendChild(td(bookSpread));
+  tr.appendChild(td(spreadPlay));
+
+  body.appendChild(tr);
+}
+
+/* 12) UI INIT ----------------------------------------------- */
 
 function initTeamDropdowns() {
   const teams = Object.values(S.lineups).map(l => l.team).sort();
@@ -713,69 +710,50 @@ function initTeamDropdowns() {
   awaySel.innerHTML = "";
   homeSel.innerHTML = "";
 
-  const blankOpt1 = document.createElement("option");
-  blankOpt1.value = "";
-  blankOpt1.textContent = "Select team…";
-  const blankOpt2 = blankOpt1.cloneNode(true);
-  awaySel.appendChild(blankOpt1);
-  homeSel.appendChild(blankOpt2);
+  const mkBlank = () => {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Select team…";
+    return opt;
+  };
+  awaySel.appendChild(mkBlank());
+  homeSel.appendChild(mkBlank());
 
   for (const t of teams) {
-    const optA = document.createElement("option");
-    const optH = document.createElement("option");
-    optA.value = optH.value = t;
-    optA.textContent = optH.textContent = t;
-    awaySel.appendChild(optA);
-    homeSel.appendChild(optH);
+    const oA = document.createElement("option");
+    const oH = document.createElement("option");
+    oA.value = oH.value = t;
+    oA.textContent = oH.textContent = t;
+    awaySel.appendChild(oA);
+    homeSel.appendChild(oH);
   }
 
   awaySel.addEventListener("change", () => {
     applyDefaultLineup("away", awaySel.value);
+    predictGame();
   });
   homeSel.addEventListener("change", () => {
     applyDefaultLineup("home", homeSel.value);
+    predictGame();
   });
 }
 
-function initLineupDropdowns() {
-  // Build list of all player names for dropdowns (optional; you already had this)
-  const allNames = Object.values(S.playerMap).map(p => p.name).sort();
-
-  function fillSelect(id) {
-    const sel = getEl(id);
-    if (!sel) return;
-    sel.innerHTML = "";
-    const blank = document.createElement("option");
-    blank.value = "";
-    blank.textContent = "";
-    sel.appendChild(blank);
-    for (const name of allNames) {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      sel.appendChild(opt);
-    }
+function initPlayerDatalist() {
+  const dl = getEl(DOM_IDS.playerDatalist);
+  if (!dl) return;
+  dl.innerHTML = "";
+  const names = Object.values(S.playerMap).map(p => p.name).sort();
+  for (const name of names) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    dl.appendChild(opt);
   }
 
-  const awayIds = DOM_IDS.awayLineup;
-  const homeIds = DOM_IDS.homeLineup;
-  for (const key in awayIds) fillSelect(awayIds[key]);
-  for (const key in homeIds) fillSelect(homeIds[key]);
-}
-
-function applyDefaultLineup(sideKey, teamName) {
-  const key = normalizeTeam(teamName);
-  const lineup = S.lineups[key];
-  if (!lineup) return;
-
-  const ids = DOM_IDS[sideKey + "Lineup"];
-  getEl(ids.g1).value = lineup.g1 || "";
-  getEl(ids.g2).value = lineup.g2 || "";
-  getEl(ids.f1).value = lineup.f1 || "";
-  getEl(ids.f2).value = lineup.f2 || "";
-  getEl(ids.c).value  = lineup.c  || "";
-
-  predictGame(); // auto-update when lineups change
+  // When player inputs change, recompute lineup PER & prediction
+  const inputs = document.querySelectorAll(".player-input");
+  inputs.forEach(inp => {
+    inp.addEventListener("change", () => predictGame());
+  });
 }
 
 /* 13) LOAD ALL CSVs ----------------------------------------- */
@@ -787,9 +765,9 @@ async function loadAll() {
       lineupRows,
       leagueRows,
       orebRows,
-      oppOrebRows,
+      orebOppRows,
       drebRows,
-      oppDrebRows,
+      drebOppRows,
       nbastRows,
       ppgRows,
       atsRows,
@@ -815,31 +793,44 @@ async function loadAll() {
     S.players   = playerRows;
     S.playerMap = buildPlayerMap(playerRows);
     S.lineups   = buildLineupMap(lineupRows, COLS.lineups);
-
+    S.league    = buildLeagueAverages(leagueRows);
     S.teamStats = {
-      oreb:     buildTeamMap(orebRows,    COLS.oreb),
-      orebOpp:  buildTeamMap(oppOrebRows, COLS.orebOpp),
-      dreb:     buildTeamMap(drebRows,    COLS.dreb),
-      drebOpp:  buildTeamMap(oppDrebRows, COLS.drebOpp),
-      nbastuff: buildTeamMap(nbastRows,  COLS.nbastuff),
-      ppg:      buildTeamMap(ppgRows,    COLS.ppg),
-      ats:      buildTeamMap(atsRows,    COLS.ats),
-      ou:       buildTeamMap(ouRows,     COLS.ou),
-      ranking:  buildTeamMap(rankRows,   COLS.ranking)
+      oreb:     buildTeamMap(orebRows,     COLS.oreb),
+      orebOpp:  buildTeamMap(orebOppRows,  COLS.orebOpp),
+      dreb:     buildTeamMap(drebRows,     COLS.dreb),
+      drebOpp:  buildTeamMap(drebOppRows,  COLS.drebOpp),
+      nbastuff: buildTeamMap(nbastRows,   COLS.nbastuff),
+      ppg:      buildTeamMap(ppgRows,     COLS.ppg),
+      ats:      buildTeamMap(atsRows,     COLS.ats),
+      ou:       buildTeamMap(ouRows,      COLS.ou),
+      ranking:  buildTeamMap(rankRows,    COLS.ranking)
     };
-
-    S.namesMap = buildNameMap(namesRows, COLS.names);
-    S.league   = buildLeagueAverages(leagueRows);
-    S.loaded   = true;
+    S.namesMap  = buildNameMap(namesRows, COLS.names);
+    S.loaded    = true;
 
     initTeamDropdowns();
-    initLineupDropdowns();
+    initPlayerDatalist();
 
+    // buttons
     const predictBtn = getEl(DOM_IDS.predictBtn);
     if (predictBtn) {
       predictBtn.addEventListener("click", (e) => {
         e.preventDefault();
         predictGame();
+      });
+    }
+    const compareBtn = getEl("compare-btn");
+    if (compareBtn) {
+      compareBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        showStatComparison();
+      });
+    }
+    const saveGameBtn = getEl("save-game-btn");
+    if (saveGameBtn) {
+      saveGameBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        saveGameToTable();
       });
     }
 
@@ -849,12 +840,13 @@ async function loadAll() {
     console.error("Load error", err);
     const loadError = getEl(DOM_IDS.loadError);
     if (loadError) {
-      loadError.textContent = "Load error — check CSV links/permissions in app.js";
+      loadError.textContent =
+        "Load error — check CSV links and sharing (must be public output=csv).";
     }
   }
 }
 
-/* 14) BOOT --------------------------------------------------- */
+/* 14) BOOT -------------------------------------------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
   loadAll();
