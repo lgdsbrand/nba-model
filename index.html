@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NBA Game Predictor</title>
+  <title>NBA Lineup Model</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
       --bg: #05070c;
       --card: #121826;
-      --card-alt: #151b2b;
       --accent: #3b82f6;
       --accent-soft: rgba(59,130,246,0.18);
       --accent-strong: rgba(59,130,246,0.35);
@@ -19,9 +18,7 @@
       --radius-card: 18px;
       --radius-input: 10px;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
@@ -59,12 +56,6 @@
       align-items: baseline;
       gap: 10px;
       margin-bottom: 10px;
-    }
-    .card-header h2 span {
-      font-weight: 400;
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-left: 6px;
     }
     .pill {
       padding: 4px 11px;
@@ -116,9 +107,6 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent-soft);
     }
-    select {
-      appearance: none;
-    }
     .btn-row {
       display: flex;
       flex-wrap: wrap;
@@ -142,9 +130,7 @@
       color: white;
       box-shadow: 0 10px 25px rgba(37,99,235,0.45);
     }
-    .btn-primary:hover {
-      filter: brightness(1.08);
-    }
+    .btn-primary:hover { filter: brightness(1.08); }
     .btn-ghost {
       background: transparent;
       color: var(--muted);
@@ -154,10 +140,7 @@
       border-color: var(--accent-soft);
       background: rgba(15,23,42,0.9);
     }
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 0.8rem;
-    }
+    .btn-small { padding: 6px 12px; font-size: 0.8rem; }
     .tiny-label {
       font-size: 0.75rem;
       color: var(--muted);
@@ -205,15 +188,10 @@
       border: 2px solid var(--accent);
       appearance: none;
       background: transparent;
-      display: inline-block;
-      position: relative;
     }
     .toggle input[type="checkbox"]:checked {
       background: var(--accent);
       box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-    .toggle span {
-      user-select: none;
     }
     .meta-row {
       display: flex;
@@ -223,10 +201,7 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
-    .meta-row strong {
-      color: var(--text);
-      font-weight: 600;
-    }
+    .meta-row strong { color: var(--text); }
     .pill-mini {
       padding: 2px 8px;
       border-radius: 999px;
@@ -234,28 +209,14 @@
       background: rgba(15,23,42,0.9);
       border: 1px solid var(--border);
     }
-    .pill-mini.good {
-      border-color: var(--accent-soft);
-      background: var(--accent-strong);
-    }
-    .pill-mini.bad {
-      border-color: rgba(248,113,113,0.35);
-      background: rgba(127,29,29,0.6);
-      color: #fee2e2;
-    }
     #prediction-results {
       margin-top: 12px;
       padding-top: 10px;
       border-top: 1px dashed #1f2937;
       font-size: 0.9rem;
     }
-    #prediction-results h3 {
-      margin: 0 0 6px;
-      font-size: 1rem;
-    }
-    #prediction-results p {
-      margin: 2px 0;
-    }
+    #prediction-results h3 { margin: 0 0 6px; font-size: 1rem; }
+    #prediction-results p { margin: 2px 0; }
     #stat-comparison {
       margin-top: 12px;
       border-top: 1px dashed #1f2937;
@@ -284,13 +245,9 @@
     #stat-compare-table tr:nth-child(even) {
       background: rgba(15,23,42,0.6);
     }
-    #stat-compare-table tr.highlight-away td:nth-child(2),
-    #stat-compare-table tr.highlight-away td:nth-child(3) {
-      background: rgba(52,211,153,0.12);
-    }
-    #stat-compare-table tr.highlight-home td:nth-child(2),
-    #stat-compare-table tr.highlight-home td:nth-child(3) {
-      background: rgba(96,165,250,0.12);
+    #stat-compare-table td.stat-better {
+      background: rgba(34,197,94,0.18);
+      font-weight: 600;
     }
     #saved-games {
       margin-top: 16px;
@@ -323,12 +280,8 @@
       margin-top: 4px;
     }
     @media (min-width: 720px) {
-      .lineup-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-      }
-      .lineup-grid .full {
-        grid-column: span 2;
-      }
+      .lineup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .lineup-grid .full { grid-column: span 2; }
     }
   </style>
 </head>
@@ -336,13 +289,13 @@
   <div class="page">
     <h1>NBA Game Predictor</h1>
 
-    <!-- SELECT TEAMS + BOOK ODDS -->
-    <div class="card" id="top-card">
+    <!-- TOP CARD: TEAMS + BOOK ODDS + BUTTONS -->
+    <div class="card">
       <div class="card-header">
         <h2>Select Teams</h2>
         <div class="pill">
           <span class="pill-dot"></span>
-          Lineup-based model · PER + efficiency + pace
+          Lineup-based · PER + pace + efficiency
         </div>
       </div>
 
@@ -364,69 +317,55 @@
       <div class="row" style="margin-top:10px;">
         <div class="col-6">
           <label for="book-spread">Book Spread (Home = −)</label>
-          <input
-            id="book-spread"
-            class="input"
-            type="number"
-            step="0.5"
-            placeholder="-3.5"
-          />
+          <input id="book-spread" class="input" type="number" step="0.5" placeholder="-3.5" />
           <div class="tiny-label">Use home spread (e.g. -6.5 = home fav by 6.5)</div>
         </div>
         <div class="col-6">
           <label for="book-total">Book Total</label>
-          <input
-            id="book-total"
-            class="input"
-            type="number"
-            step="0.5"
-            placeholder="225.5"
-          />
+          <input id="book-total" class="input" type="number" step="0.5" placeholder="225.5" />
         </div>
       </div>
 
       <div class="btn-row">
-        <button id="predict-btn" class="btn-primary">
-          🔮 Predict Game
-        </button>
-        <button id="save-game-btn" class="btn-ghost">
-          💾 Save Game to Table
-        </button>
+        <button id="predict-btn" class="btn-primary">🔮 Predict Game</button>
+        <button id="compare-btn" class="btn-ghost">📊 Stat Comparison</button>
+        <button id="save-game-btn" class="btn-ghost">💾 Save Game to Table</button>
       </div>
 
-  <div id="prediction-results">
-  <h3>Prediction</h3>
-  <p>
-    <strong>Score:</strong>
-    Away <span id="away-score">—</span>
-    @ Home <span id="home-score">—</span>
-  </p>
-  <p>
-    <strong>Winner:</strong>
-    <span id="predicted-winner">—</span>
-  </p>
-  <p>
-    <strong>Win Prob:</strong>
-    Away <span id="away-win-prob">—</span> ·
-    Home <span id="home-win-prob">—</span>
-  </p>
-  <p>
-    <strong>Total:</strong>
-    Model <span id="model-total">—</span> ·
-    <span id="total-play">NO BET</span>
-  </p>
-  <p>
-    <strong>Spread:</strong>
-    Model <span id="model-spread">—</span> ·
-    <span id="spread-play">NO BET</span>
-  </p>
-</div>
+      <!-- Prediction output -->
+      <div id="prediction-results">
+        <h3>Prediction</h3>
+        <p>
+          <strong>Score:</strong>
+          Away <span id="away-score">—</span>
+          @ Home <span id="home-score">—</span>
+        </p>
+        <p>
+          <strong>Winner:</strong>
+          <span id="predicted-winner">—</span>
+        </p>
+        <p>
+          <strong>Win Prob:</strong>
+          Away <span id="away-win-prob">—</span> ·
+          Home <span id="home-win-prob">—</span>
+        </p>
+        <p>
+          <strong>Total:</strong>
+          Model <span id="model-total">—</span> ·
+          <span id="total-play">NO BET</span>
+        </p>
+        <p>
+          <strong>Spread:</strong>
+          Model <span id="model-spread">—</span> ·
+          <span id="spread-play">NO BET</span>
+        </p>
+      </div>
 
-      <!-- STAT COMPARISON -->
-      <div id="stat-comparison">
+      <!-- STAT COMPARISON (hidden until button clicked) -->
+      <div id="stat-comparison" style="display:none;">
         <div class="card-header" style="padding:0; margin-bottom:4px;">
-          <h3 style="font-size:0.95rem; margin:0;">Stat Comparison</h3>
-          <span class="tiny-label">Last 5 · Home/Away · ATS · O/U · Rankings</span>
+          <h3>Stat Comparison</h3>
+          <span class="tiny-label">Last 5 · Home/Away · PPG/OPPG · ATS · O/U · Rating</span>
         </div>
         <table id="stat-compare-table">
           <thead>
@@ -437,7 +376,7 @@
             </tr>
           </thead>
           <tbody id="stat-compare-body">
-            <!-- Filled by app.js -->
+            <!-- filled by app.js -->
           </tbody>
         </table>
       </div>
@@ -450,8 +389,8 @@
             <tr>
               <th>Matchup</th>
               <th>Model Score</th>
-              <th>Model Tot</th>
-              <th>Book Tot</th>
+              <th>Model Total</th>
+              <th>Book Total</th>
               <th>Total Play</th>
               <th>Model Spread</th>
               <th>Book Spread</th>
@@ -459,7 +398,7 @@
             </tr>
           </thead>
           <tbody id="saved-games-body">
-            <!-- Rows appended by app.js -->
+            <!-- rows appended by app.js -->
           </tbody>
         </table>
       </div>
@@ -469,98 +408,49 @@
     <div class="card">
       <div class="card-header">
         <h2>Away Lineup — <span id="away-lineup-team-label">—</span></h2>
-        <span class="tiny-label">Edit any spot to swap players; PER uses minutes &amp; usage.</span>
+        <span class="tiny-label">Type or pick any player; PER uses minutes + usage.</span>
       </div>
-
       <div class="lineup-grid">
         <div>
           <div class="pos-label">Guard 1</div>
-          <input
-            id="away-g1"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="away"
-            data-slot="g1"
-            placeholder="Type or pick player…"
-          />
+          <input id="away-g1" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Guard 2</div>
-          <input
-            id="away-g2"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="away"
-            data-slot="g2"
-            placeholder="Type or pick player…"
-          />
+          <input id="away-g2" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Forward 1</div>
-          <input
-            id="away-f1"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="away"
-            data-slot="f1"
-            placeholder="Type or pick player…"
-          />
+          <input id="away-f1" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Forward 2</div>
-          <input
-            id="away-f2"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="away"
-            data-slot="f2"
-            placeholder="Type or pick player…"
-          />
+          <input id="away-f2" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div class="full">
           <div class="pos-label">Center</div>
-          <input
-            id="away-c"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="away"
-            data-slot="c"
-            placeholder="Type or pick player…"
-          />
+          <input id="away-c" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
       </div>
-
       <div class="line"></div>
-
       <div class="btn-row">
-        <button id="save-away-lineup" class="btn-primary btn-small">
-          💾 Save Away Lineup
-        </button>
-        <button id="reset-away-lineup" class="btn-ghost btn-small">
-          ⟳ Reset
-        </button>
+        <button id="save-away-lineup" class="btn-primary btn-small">💾 Save Away Lineup</button>
+        <button id="reset-away-lineup" class="btn-ghost btn-small">⟳ Reset</button>
       </div>
-
       <div class="toggle-row">
         <label class="toggle">
           <input type="checkbox" id="away-b2b" />
           <span>Away Back-to-Back</span>
         </label>
       </div>
-
       <div class="meta-row">
         <div>Lineup PER: <strong id="away-lineup-per">—</strong></div>
-        <div class="pill-mini" id="away-depth-note">Usage-weighted</div>
+        <div class="pill-mini">Usage-weighted</div>
       </div>
     </div>
 
@@ -570,102 +460,53 @@
         <h2>Home Lineup — <span id="home-lineup-team-label">—</span></h2>
         <span class="tiny-label">Swaps here auto-recalculate model strength.</span>
       </div>
-
       <div class="lineup-grid">
         <div>
           <div class="pos-label">Guard 1</div>
-          <input
-            id="home-g1"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="home"
-            data-slot="g1"
-            placeholder="Type or pick player…"
-          />
+          <input id="home-g1" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Guard 2</div>
-          <input
-            id="home-g2"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="home"
-            data-slot="g2"
-            placeholder="Type or pick player…"
-          />
+          <input id="home-g2" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Forward 1</div>
-          <input
-            id="home-f1"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="home"
-            data-slot="f1"
-            placeholder="Type or pick player…"
-          />
+          <input id="home-f1" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div>
           <div class="pos-label">Forward 2</div>
-          <input
-            id="home-f2"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="home"
-            data-slot="f2"
-            placeholder="Type or pick player…"
-          />
+          <input id="home-f2" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
         <div class="full">
           <div class="pos-label">Center</div>
-          <input
-            id="home-c"
-            class="input player-input"
-            type="text"
-            list="players-list"
-            autocomplete="off"
-            data-side="home"
-            data-slot="c"
-            placeholder="Type or pick player…"
-          />
+          <input id="home-c" class="input player-input" type="text"
+                 list="players-list" autocomplete="off" />
         </div>
       </div>
-
       <div class="line"></div>
-
       <div class="btn-row">
-        <button id="save-home-lineup" class="btn-primary btn-small">
-          💾 Save Home Lineup
-        </button>
-        <button id="reset-home-lineup" class="btn-ghost btn-small">
-          ⟳ Reset
-        </button>
+        <button id="save-home-lineup" class="btn-primary btn-small">💾 Save Home Lineup</button>
+        <button id="reset-home-lineup" class="btn-ghost btn-small">⟳ Reset</button>
       </div>
-
       <div class="toggle-row">
         <label class="toggle">
           <input type="checkbox" id="home-b2b" />
           <span>Home Back-to-Back</span>
         </label>
       </div>
-
       <div class="meta-row">
         <div>Lineup PER: <strong id="home-lineup-per">—</strong></div>
-        <div class="pill-mini" id="home-depth-note">Usage-weighted</div>
+        <div class="pill-mini">Usage-weighted</div>
       </div>
     </div>
 
     <!-- Shared datalist for all player inputs -->
     <datalist id="players-list">
-      <!-- options get injected by app.js from Player CSV -->
+      <!-- options filled by app.js -->
     </datalist>
 
     <div id="global-error" class="error"></div>
