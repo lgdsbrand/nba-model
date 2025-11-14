@@ -96,9 +96,9 @@ const COLS = {
   // MAKE SURE oppg letter matches your OPP PPG column
   ppg: {
     team: "B",
-    pace: "F",
-    ppg:  "G",
-    oppg: "H"   // <-- if OPP PPG is actually in I, change to "I"
+    pace: "I",
+    ppg:  "F",
+    oppg: "G"   // <-- if OPP PPG is actually in I, change to "I"
   },
 
   // ATS tab
