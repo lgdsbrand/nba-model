@@ -2,23 +2,23 @@
  * 1) CSV URLS – FILL THESE IN
  *************************************************/
 
-const GAMES_URL     = "PASTE_GAMES_CSV_URL_HERE";
+const GAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=66182824&single=true&output=csv";
 
-const PLAYER_URL    = "PASTE_PLAYER_CSV_URL_HERE";
-const LINEUPS_URL   = "PASTE_LINEUPS_CSV_URL_HERE";
-const LEAGUE_URL    = "PASTE_LEAGUE_AVG_CSV_URL_HERE";
+const PLAYER_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";
+const LINEUPS_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv";
+const LEAGUE_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv";
 
-const OREB_URL      = "PASTE_OREB_CSV_URL_HERE";
-const DREB_URL      = "PASTE_DREB_CSV_URL_HERE";
-const OPP_OREB_URL  = "PASTE_OPP_OREB_CSV_URL_HERE";
-const OPP_DREB_URL  = "PASTE_OPP_DREB_CSV_URL_HERE";
+const OREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv";
+const DREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv";
+const OPP_OREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv";
+const OPP_DREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
 
-const ATS_URL       = "PASTE_ATS_CSV_URL_HERE";
-const OU_URL        = "PASTE_OU_CSV_URL_HERE";
-const RATING_URL    = "PASTE_RATING_CSV_URL_HERE";
-const PPG_URL       = "PASTE_PPG_CSV_URL_HERE";
-const NBASTUFF_URL  = "PASTE_NBASTUFFER_CSV_URL_HERE";
-const NAMES_URL     = "PASTE_NAMES_CSV_URL_HERE";
+const ATS_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv";
+const OU_URL        = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv";
+const RATING_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";
+const PPG_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1145033141&single=true&output=csv";
+const NBASTUFF_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv";
+const NAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=19771105&single=true&output=csv";
 
 /*************************************************
  * 2) COLUMN LETTER MAP – EDIT THESE ONLY
@@ -587,39 +587,68 @@ function hookUI() {
  * 12) PREDICTION WRAPPER
  *************************************************/
 
-function runPrediction() {
-  const errEl = document.getElementById("prediction-error");
-  if (errEl) errEl.textContent = "";
+function predictGame() {
+  if (!S.loaded) return;
+  const awayTeamEl = getEl(DOM_IDS.awayTeam);
+  const homeTeamEl = getEl(DOM_IDS.homeTeam);
+  const awayTeam = awayTeamEl.value;
+  const homeTeam = homeTeamEl.value;
+  if (!awayTeam || !homeTeam || awayTeam === homeTeam) return;
 
-  if (!selectedGame) {
-    if (errEl) errEl.textContent = "Select a game first.";
-    return;
+  const awayNames = getLineupNames("away");
+  const homeNames = getLineupNames("home");
+  const awayPER   = computeLineupPER(awayNames);
+  const homePER   = computeLineupPER(homeNames);
+
+  const awayPerEl = getEl(DOM_IDS.awayLineupPer);
+  const homePerEl = getEl(DOM_IDS.homeLineupPer);
+  if (awayPerEl) awayPerEl.textContent = fmtNum(awayPER,2);
+  if (homePerEl) homePerEl.textContent = fmtNum(homePER,2);
+
+  const awayCtx = getTeamContext(awayTeam, false);
+  const homeCtx = getTeamContext(homeTeam, true);
+
+  const awayB2B = getEl(DOM_IDS.awayB2B)?.checked || false;
+  const homeB2B = getEl(DOM_IDS.homeB2B)?.checked || false;
+
+  const awayStr = computeTeamStrength(awayCtx, awayPER, false, awayB2B);
+  const homeStr = computeTeamStrength(homeCtx, homePER, true,  homeB2B);
+
+  const marginAway = awayStr - homeStr;
+  const baseTotal = (
+    (awayCtx.ppg || S.league.points / 2) +
+    (homeCtx.ppg || S.league.points / 2)
+  ) / 2;
+
+  let awayScore = baseTotal + marginAway / 2;
+  let homeScore = baseTotal - marginAway / 2;
+
+  awayScore = Math.max(70, Math.min(150, awayScore));
+  homeScore = Math.max(70, Math.min(150, homeScore));
+
+  const k = 6;
+  const probAway = 1 / (1 + Math.exp(-marginAway / k));
+  const probHome = 1 - probAway;
+
+  const bookSpread = parseFloat(getEl(DOM_IDS.bookSpread).value || "0");
+  const bookTotal  = parseFloat(getEl(DOM_IDS.bookTotal).value || "0");
+
+  const modelSpread = homeScore - awayScore; // home - away
+  const modelTotal  = homeScore + awayScore;
+
+  let spreadPlay = "NO BET";
+  if (!isNaN(bookSpread)) {
+    const diff = modelSpread - bookSpread;
+    if (diff > 1.5) spreadPlay = `Bet Home`;
+    else if (diff < -1.5) spreadPlay = `Bet Away`;
   }
 
-  const bookSpread = Number(document.getElementById("book-spread")?.value || 0);
-  const bookTotal  = Number(document.getElementById("book-total") ?.value || 0);
-  const awayB2B    = !!document.getElementById("away-b2b")?.checked;
-  const homeB2B    = !!document.getElementById("home-b2b")?.checked;
-
-  const awayLineupPer = parseFloat(
-    document.getElementById("away-lineup-per")?.textContent || 0
-  );
-  const homeLineupPer = parseFloat(
-    document.getElementById("home-lineup-per")?.textContent || 0
-  );
-
-  const result = predictGame({
-    game: selectedGame,
-    awayLineupPer,
-    homeLineupPer,
-    bookSpread,
-    bookTotal,
-    awayB2B,
-    homeB2B,
-  });
-
-  showPrediction(result);
-}
+  let totalPlay = "NO BET";
+  if (!isNaN(bookTotal)) {
+    const diffT = modelTotal - bookTotal;
+    if (diffT > 8) totalPlay = "BET OVER";
+    else if (diffT < -8) totalPlay = "BET UNDER";
+  }
 
 /*************************************************
  * 13) CORE PREDICTION LOGIC
