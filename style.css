@@ -1,20 +1,326 @@
-*{box-sizing:border-box}
-body{font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0f1115;color:#eaeef3;margin:0}
-.wrap{max-width:980px;margin:36px auto;padding:0 18px}
-h1{margin:0 0 14px}
-h3{margin:0 0 8px}
-.row{display:flex;gap:16px;margin:10px 0;flex-wrap:wrap}
-.col{flex:1;min-width:300px}
-.grid2{display:grid;grid-template-columns:120px 1fr;gap:8px 12px}
-label{font-size:13px;color:#a7b0be}
-select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #2a2f37;background:#161b22;color:#eaeef3}
-button{padding:10px 14px;border-radius:8px;background:#5b8cff;border:0;color:#fff;cursor:pointer}
-button:hover{opacity:.95}
-button.ghost{background:transparent;border:1px solid #3a4150;color:#c9d1d9}
-.minirow{display:flex;gap:10px;margin:8px 0}
-.status{color:#9aa7b3;margin:8px 0}
-.card{background:#131922;border:1px solid #2b2f39;border-radius:12px;padding:14px}
-.scores{display:flex;gap:22px;font-size:20px}
-hr{border:0;border-top:1px solid #272d37;margin:12px 0}
-.muted{color:#9aa7b3;margin-top:6px}
-b{color:#fff}
+:root {
+  --bg: #050a10;
+  --card: #111827;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --danger: #f97373;
+  --good: #4ade80;
+  --border: #1f2933;
+  --chip: #1f2937;
+  --chip-active: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top, #111827 0, #020617 60%);
+  color: var(--text);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.header {
+  margin-bottom: 1.25rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.9rem;
+}
+
+.games-bar-section h2,
+.card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.games-bar-section {
+  margin-bottom: 1.25rem;
+}
+
+.games-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.game-chip {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.9rem;
+  background: var(--chip);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.game-chip-time {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.game-chip.active {
+  background: var(--chip-active);
+  border-color: var(--accent);
+}
+
+.card {
+  background: var(--card);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+}
+
+.selected-game-panel {
+  background: var(--card);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+}
+
+.selected-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.sg-time {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.sg-matchup {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.sg-odds {
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.primary-btn,
+.secondary-btn {
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.primary-btn.small,
+.secondary-btn.small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.book-input-row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: #020617;
+  color: var(--text);
+}
+
+.lineup-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.lineup-card {
+  background: #020617;
+  border-radius: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border);
+}
+
+.lineup-card h3 {
+  margin-top: 0;
+}
+
+.lineup-form label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+}
+
+.lineup-form input {
+  width: 100%;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: #020617;
+  color: var(--text);
+}
+
+.lineup-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.b2b-row {
+  margin-bottom: 0.35rem;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.toggle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+.lineup-per {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.prediction-scores {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0.75rem;
+}
+
+.team-name {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.team-score {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.prediction-details p {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+}
+
+.edge-text {
+  font-weight: 600;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 0.4rem 0.45rem;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.stats-table th {
+  text-align: left;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.stats-row-label {
+  text-align: left;
+}
+
+.stats-better {
+  background: rgba(74, 222, 128, 0.13);
+}
+
+.error-msg {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#saved-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+#saved-table th,
+#saved-table td {
+  padding: 0.35rem 0.45rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .selected-game-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sg-odds {
+    text-align: left;
+  }
+}
