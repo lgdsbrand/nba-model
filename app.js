@@ -227,13 +227,13 @@ async function init() {
       leagueRows
     ] = await Promise.all([
       loadCsv(GAMES_URL),
-      loadCsv(PLAYERS_URL),
+      loadCsv(PLAYER_URL),
       loadCsv(LINEUPS_URL),
       loadCsv(NBASTUFF_URL),
       loadCsv(PPG_URL),
       loadCsv(ATS_URL),
       loadCsv(OU_URL),
-      loadCsv(RANK_URL),
+      loadCsv(RATING_URL),
       loadCsv(LEAGUE_URL)
     ]);
 
