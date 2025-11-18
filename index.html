@@ -2,514 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NBA Lineup Model</title>
+  <title>NBA Game Predictor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #05070c;
-      --card: #121826;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59,130,246,0.18);
-      --accent-strong: rgba(59,130,246,0.35);
-      --text: #f9fafb;
-      --muted: #9ca3af;
-      --danger: #f97373;
-      --border: #1f2937;
-      --radius-card: 18px;
-      --radius-input: 10px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111827 0, #020617 50%, #000 100%);
-      color: var(--text);
-      padding: 16px 10px 40px;
-    }
-    .page {
-      max-width: 980px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 2.1rem;
-      margin: 4px 0 20px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-    h2 {
-      font-size: 1.2rem;
-      margin: 0 0 14px;
-      font-weight: 600;
-    }
-    .card {
-      background: radial-gradient(circle at top left, #1f2937 0, #020617 60%);
-      border-radius: var(--radius-card);
-      padding: 16px 16px 18px;
-      margin-bottom: 16px;
-      border: 1px solid #111827;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.48);
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .pill {
-      padding: 4px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--accent-soft);
-      background: rgba(15,23,42,0.85);
-      font-size: 0.75rem;
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
-    }
-    label {
-      display: block;
-      font-size: 0.8rem;
-      margin-bottom: 4px;
-      color: var(--muted);
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .col-6 {
-      flex: 1 1 160px;
-      min-width: 0;
-    }
-    .input,
-    select {
-      width: 100%;
-      padding: 9px 10px;
-      border-radius: var(--radius-input);
-      border: 1px solid var(--border);
-      background: rgba(15,23,42,0.95);
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-    }
-    .input:focus,
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-soft);
-    }
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    button {
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      padding: 8px 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      box-shadow: 0 10px 25px rgba(37,99,235,0.45);
-    }
-    .btn-primary:hover { filter: brightness(1.08); }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      border-color: var(--accent-soft);
-      background: rgba(15,23,42,0.9);
-    }
-    .btn-small { padding: 6px 12px; font-size: 0.8rem; }
-    .tiny-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .lineup-grid {
-      display: grid;
-      grid-template-columns: repeat(1, minmax(0,1fr));
-      gap: 8px;
-    }
-    .pos-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-    .line {
-      height: 1px;
-      background: radial-gradient(
-        90deg,
-        transparent 0,
-        #1f2937 25%,
-        #1f2937 75%,
-        transparent 100%
-      );
-      margin: 8px 0 10px;
-    }
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .toggle input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      appearance: none;
-      background: transparent;
-    }
-    .toggle input[type="checkbox"]:checked {
-      background: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-    .meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .meta-row strong { color: var(--text); }
-    .pill-mini {
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid var(--border);
-    }
-    #prediction-results {
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px dashed #1f2937;
-      font-size: 0.9rem;
-    }
-    #prediction-results h3 { margin: 0 0 6px; font-size: 1rem; }
-    #prediction-results p { margin: 2px 0; }
-    #stat-comparison {
-      margin-top: 12px;
-      border-top: 1px dashed #1f2937;
-      padding-top: 10px;
-    }
-    #stat-comparison h3 {
-      margin: 0 0 6px;
-      font-size: 0.95rem;
-    }
-    #stat-compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-      margin-top: 4px;
-    }
-    #stat-compare-table th,
-    #stat-compare-table td {
-      padding: 4px 6px;
-      text-align: left;
-    }
-    #stat-compare-table th {
-      color: var(--muted);
-      font-weight: 500;
-      border-bottom: 1px solid #1f2937;
-    }
-    #stat-compare-table tr:nth-child(even) {
-      background: rgba(15,23,42,0.6);
-    }
-    #stat-compare-table td.stat-better {
-      background: rgba(34,197,94,0.18);
-      font-weight: 600;
-    }
-    #saved-games {
-      margin-top: 16px;
-    }
-    #saved-games h3 {
-      margin: 0 0 6px;
-      font-size: 0.95rem;
-    }
-    #saved-games-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-    #saved-games-table th,
-    #saved-games-table td {
-      padding: 4px 6px;
-      text-align: left;
-    }
-    #saved-games-table th {
-      color: var(--muted);
-      font-weight: 500;
-      border-bottom: 1px solid #111827;
-    }
-    #saved-games-table tr:nth-child(even) {
-      background: rgba(15,23,42,0.5);
-    }
-    .error {
-      color: var(--danger);
-      font-size: 0.75rem;
-      margin-top: 4px;
-    }
-    @media (min-width: 720px) {
-      .lineup-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .lineup-grid .full { grid-column: span 2; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="page">
-    <h1>NBA Game Predictor</h1>
+    <header class="header">
+      <h1>NBA Game Predictor</h1>
+    </header>
 
-    <!-- TOP CARD: TEAMS + BOOK ODDS + BUTTONS -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Select Teams</h2>
-        <div class="pill">
-          <span class="pill-dot"></span>
-          Lineup-based · PER + pace + efficiency
+    <!-- TODAY'S GAMES BAR -->
+    <section class="games-bar-section">
+      <h2>Today&#39;s Games</h2>
+      <div id="games-bar" class="games-bar">
+        <!-- game chips injected by app.js -->
+      </div>
+      <div id="games-error" class="error-msg"></div>
+    </section>
+
+    <!-- SELECTED GAME PANEL -->
+    <section id="selected-game-panel" class="selected-game-panel hidden">
+      <div class="selected-game-header">
+        <div>
+          <div id="sg-time" class="sg-time"></div>
+          <div id="sg-matchup" class="sg-matchup"></div>
+        </div>
+        <div class="sg-odds">
+          <div>Book Spread (Home = -): <span id="sg-spread"></span></div>
+          <div>Book Total: <span id="sg-total"></span></div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-6">
-          <label for="away-team">Away Team</label>
-          <select id="away-team">
-            <option value="">Select away team…</option>
-          </select>
-        </div>
-        <div class="col-6">
-          <label for="home-team">Home Team</label>
-          <select id="home-team">
-            <option value="">Select home team…</option>
-          </select>
-        </div>
+      <!-- ACTION BUTTONS -->
+      <div class="action-buttons">
+        <button id="btn-predict" class="primary-btn">Predict Game</button>
+        <button id="btn-lineups" class="secondary-btn">Lineups</button>
+        <button id="btn-stats" class="secondary-btn">Stat Comparison</button>
+        <button id="btn-save" class="secondary-btn">Save Game to Table</button>
       </div>
 
-      <div class="row" style="margin-top:10px;">
-        <div class="col-6">
-          <label for="book-spread">Book Spread (Home = −)</label>
-          <input id="book-spread" class="input" type="number" step="0.5" placeholder="-3.5" />
-          <div class="tiny-label">Use home spread (e.g. -6.5 = home fav by 6.5)</div>
+      <!-- BOOK INPUTS (OVERRIDE / EDIT) -->
+      <div class="book-input-row">
+        <div class="field">
+          <label for="book-spread">Book Spread (Home = -)</label>
+          <input id="book-spread" type="number" step="0.5" />
         </div>
-        <div class="col-6">
+        <div class="field">
           <label for="book-total">Book Total</label>
-          <input id="book-total" class="input" type="number" step="0.5" placeholder="225.5" />
+          <input id="book-total" type="number" step="0.5" />
+        </div>
+      </div>
+    </section>
+
+    <!-- LINEUPS SECTION -->
+    <section id="lineups-section" class="card hidden">
+      <h2>Lineups &amp; Back-to-Back</h2>
+
+      <div class="lineup-columns">
+        <!-- Away -->
+        <div class="lineup-card">
+          <h3>Away Lineup &mdash; <span id="away-team-label">Away</span></h3>
+          <div class="lineup-form">
+            <label>Guard 1
+              <input list="players-list" id="away-g1" />
+            </label>
+            <label>Guard 2
+              <input list="players-list" id="away-g2" />
+            </label>
+            <label>Forward 1
+              <input list="players-list" id="away-f1" />
+            </label>
+            <label>Forward 2
+              <input list="players-list" id="away-f2" />
+            </label>
+            <label>Center
+              <input list="players-list" id="away-c" />
+            </label>
+          </div>
+          <div class="lineup-actions">
+            <button id="btn-save-away" class="primary-btn small">Save Away Lineup</button>
+            <button id="btn-reset-away" class="secondary-btn small">Reset</button>
+          </div>
+          <div class="b2b-row">
+            <label class="toggle">
+              <input type="checkbox" id="away-b2b" />
+              <span class="toggle-label">Away Back-to-Back</span>
+            </label>
+          </div>
+          <div class="lineup-per">Lineup PER: <span id="away-lineup-per">—</span></div>
+        </div>
+
+        <!-- Home -->
+        <div class="lineup-card">
+          <h3>Home Lineup &mdash; <span id="home-team-label">Home</span></h3>
+          <div class="lineup-form">
+            <label>Guard 1
+              <input list="players-list" id="home-g1" />
+            </label>
+            <label>Guard 2
+              <input list="players-list" id="home-g2" />
+            </label>
+            <label>Forward 1
+              <input list="players-list" id="home-f1" />
+            </label>
+            <label>Forward 2
+              <input list="players-list" id="home-f2" />
+            </label>
+            <label>Center
+              <input list="players-list" id="home-c" />
+            </label>
+          </div>
+          <div class="lineup-actions">
+            <button id="btn-save-home" class="primary-btn small">Save Home Lineup</button>
+            <button id="btn-reset-home" class="secondary-btn small">Reset</button>
+          </div>
+          <div class="b2b-row">
+            <label class="toggle">
+              <input type="checkbox" id="home-b2b" />
+              <span class="toggle-label">Home Back-to-Back</span>
+            </label>
+          </div>
+          <div class="lineup-per">Lineup PER: <span id="home-lineup-per">—</span></div>
         </div>
       </div>
 
-      <div class="btn-row">
-        <button id="predict-btn" class="btn-primary">🔮 Predict Game</button>
-        <button id="compare-btn" class="btn-ghost">📊 Stat Comparison</button>
-        <button id="save-game-btn" class="btn-ghost">💾 Save Game to Table</button>
+      <!-- shared datalist for type-ahead player search -->
+      <datalist id="players-list"></datalist>
+    </section>
+
+    <!-- PREDICTION RESULTS -->
+    <section id="prediction-section" class="card hidden">
+      <h2>Game Prediction Results</h2>
+      <div id="prediction-error" class="error-msg"></div>
+      <div class="prediction-scores">
+        <div>
+          <div class="team-name" id="pred-away-name"></div>
+          <div class="team-score" id="pred-away-score"></div>
+        </div>
+        <div>
+          <div class="team-name" id="pred-home-name"></div>
+          <div class="team-score" id="pred-home-score"></div>
+        </div>
       </div>
 
-      <!-- Prediction output -->
-      <div id="prediction-results">
-        <h3>Prediction</h3>
-        <p>
-          <strong>Score:</strong>
-          Away <span id="away-score">—</span>
-          @ Home <span id="home-score">—</span>
-        </p>
-        <p>
-          <strong>Winner:</strong>
-          <span id="predicted-winner">—</span>
-        </p>
-        <p>
-          <strong>Win Prob:</strong>
-          Away <span id="away-win-prob">—</span> ·
-          Home <span id="home-win-prob">—</span>
-        </p>
-        <p>
-          <strong>Total:</strong>
-          Model <span id="model-total">—</span> ·
-          <span id="total-play">NO BET</span>
-        </p>
-        <p>
-          <strong>Spread:</strong>
-          Model <span id="model-spread">—</span> ·
-          <span id="spread-play">NO BET</span>
-        </p>
-      </div>
+      <div class="prediction-details">
+        <p>Predicted Winner: <span id="pred-winner"></span></p>
+        <p>Win Probability:</p>
+        <ul>
+          <li><span id="pred-away-winprob"></span></li>
+          <li><span id="pred-home-winprob"></span></li>
+        </ul>
 
-      <!-- STAT COMPARISON (hidden until button clicked) -->
-      <div id="stat-comparison" style="display:none;">
-        <div class="card-header" style="padding:0; margin-bottom:4px;">
-          <h3>Stat Comparison</h3>
-          <span class="tiny-label">Last 5 · Home/Away · PPG/OPPG · ATS · O/U · Rating</span>
-        </div>
-        <table id="stat-compare-table">
-          <thead>
-            <tr>
-              <th>Stat</th>
-              <th id="stat-away-label">Away</th>
-              <th id="stat-home-label">Home</th>
-            </tr>
-          </thead>
-          <tbody id="stat-compare-body">
-            <!-- filled by app.js -->
-          </tbody>
-        </table>
+        <p id="pred-total-line"></p>
+        <p id="pred-total-play" class="edge-text"></p>
+        <p id="pred-spread-line"></p>
+        <p id="pred-spread-play" class="edge-text"></p>
       </div>
+    </section>
 
-      <!-- SAVED GAMES TABLE -->
-      <div id="saved-games">
-        <h3>Saved Games</h3>
-        <table id="saved-games-table">
-          <thead>
-            <tr>
-              <th>Matchup</th>
-              <th>Model Score</th>
-              <th>Model Total</th>
-              <th>Book Total</th>
-              <th>Total Play</th>
-              <th>Model Spread</th>
-              <th>Book Spread</th>
-              <th>Spread Play</th>
-            </tr>
-          </thead>
-          <tbody id="saved-games-body">
-            <!-- rows appended by app.js -->
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- STAT COMPARISON TABLE -->
+    <section id="stats-section" class="card hidden">
+      <h2>Stat Comparison</h2>
+      <div id="stats-error" class="error-msg"></div>
+      <table id="stats-table" class="stats-table">
+        <!-- filled dynamically -->
+      </table>
+    </section>
 
-    <!-- AWAY LINEUP CARD -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Away Lineup — <span id="away-lineup-team-label">—</span></h2>
-        <span class="tiny-label">Type or pick any player; PER uses minutes + usage.</span>
-      </div>
-      <div class="lineup-grid">
-        <div>
-          <div class="pos-label">Guard 1</div>
-          <input id="away-g1" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Guard 2</div>
-          <input id="away-g2" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Forward 1</div>
-          <input id="away-f1" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Forward 2</div>
-          <input id="away-f2" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div class="full">
-          <div class="pos-label">Center</div>
-          <input id="away-c" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-      </div>
-      <div class="line"></div>
-      <div class="btn-row">
-        <button id="save-away-lineup" class="btn-primary btn-small">💾 Save Away Lineup</button>
-        <button id="reset-away-lineup" class="btn-ghost btn-small">⟳ Reset</button>
-      </div>
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="away-b2b" />
-          <span>Away Back-to-Back</span>
-        </label>
-      </div>
-      <div class="meta-row">
-        <div>Lineup PER: <strong id="away-lineup-per">—</strong></div>
-        <div class="pill-mini">Usage-weighted</div>
-      </div>
-    </div>
-
-    <!-- HOME LINEUP CARD -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Home Lineup — <span id="home-lineup-team-label">—</span></h2>
-        <span class="tiny-label">Swaps here auto-recalculate model strength.</span>
-      </div>
-      <div class="lineup-grid">
-        <div>
-          <div class="pos-label">Guard 1</div>
-          <input id="home-g1" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Guard 2</div>
-          <input id="home-g2" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Forward 1</div>
-          <input id="home-f1" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div>
-          <div class="pos-label">Forward 2</div>
-          <input id="home-f2" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-        <div class="full">
-          <div class="pos-label">Center</div>
-          <input id="home-c" class="input player-input" type="text"
-                 list="players-list" autocomplete="off" />
-        </div>
-      </div>
-      <div class="line"></div>
-      <div class="btn-row">
-        <button id="save-home-lineup" class="btn-primary btn-small">💾 Save Home Lineup</button>
-        <button id="reset-home-lineup" class="btn-ghost btn-small">⟳ Reset</button>
-      </div>
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="home-b2b" />
-          <span>Home Back-to-Back</span>
-        </label>
-      </div>
-      <div class="meta-row">
-        <div>Lineup PER: <strong id="home-lineup-per">—</strong></div>
-        <div class="pill-mini">Usage-weighted</div>
-      </div>
-    </div>
-
-    <!-- Shared datalist for all player inputs -->
-    <datalist id="players-list">
-      <!-- options filled by app.js -->
-    </datalist>
-
-    <div id="global-error" class="error"></div>
+    <!-- SAVED GAMES TABLE -->
+    <section id="saved-section" class="card">
+      <h2>Saved Games</h2>
+      <table id="saved-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Matchup</th>
+            <th>Model Away</th>
+            <th>Model Home</th>
+            <th>Model Total</th>
+            <th>Book Total</th>
+            <th>Total Edge</th>
+            <th>Model Spread (Home)</th>
+            <th>Book Spread</th>
+            <th>Spread Edge</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
   </div>
 
   <script src="app.js" defer></script>
