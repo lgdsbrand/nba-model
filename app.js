@@ -496,32 +496,26 @@ function computeLineupPer(side, team) {
   return per;
 }
 
+// ==== OLD-STYLE FORMULA VERSION ====
+
+// simpler team strength: mostly lineup PER + season PPG/OPPG + pace + rating
 function computeTeamStrength(teamName, side, lineupPer, b2b) {
   const stats = state.teamStats[teamName] || {};
 
-  // Off/def efficiencies (use L5 if present, else seasonish ≈1.1)
-  const oEff = stats.oeff_l5 || 1.1;
-  const dEff = stats.deff_l5 || 1.1;
-
-  // Pace
-  const pace = stats.pace_l5 || stats.pace_szn || 100;
-
-  // Predictive rating (centered around 0)
-  const rating = (stats.rating || 0);
-
-  // Lineup baseline: around league-average PER 15
-  const perDelta = (lineupPer || 15) - 15;
+  const per   = lineupPer || 15;                           // lineup PER
+  const off   = stats.ppg_szn  || state.leagueAvgPts;      // season PPG
+  const def   = stats.oppg_szn || state.leagueAvgPts;      // season OPPG
+  const pace  = stats.pace_l5  || stats.pace_szn || 100;   // pace
+  const rating = stats.rating || 0;                        // predictive rating
 
   let strength =
-    WEIGHTS.lineupPer * perDelta +
-    WEIGHTS.oEff      * (oEff - 1.1) * 10 +
-    WEIGHTS.dEff      * (1.1 - dEff) * 10 + // better defense (lower dEff) adds
-    WEIGHTS.pace      * (pace - 100) / 4 +
-    WEIGHTS.rank      * rating;
+    0.40 * (per - 15) +                    // PER above/below league-avg 15
+    0.25 * ((off - state.leagueAvgPts) / 5) +
+    0.20 * ((state.leagueAvgPts - def) / 5) +
+    0.10 * ((pace - 100) / 3) +
+    0.15 * rating;
 
-  if (b2b) {
-    strength -= WEIGHTS.b2bPenalty;
-  }
+  if (b2b) strength -= 1.5;               // back-to-back penalty
 
   return strength;
 }
@@ -552,7 +546,6 @@ function predictCurrentGame() {
     awayLineupPer,
     awayB2B
   );
-
   const homeStrength = computeTeamStrength(
     game.home,
     "home",
@@ -562,35 +555,34 @@ function predictCurrentGame() {
 
   const strengthDiff = homeStrength - awayStrength; // home minus away
 
-  // Convert strength diff into spread (roughly 1 point per 0.8 strength units)
-  const modelSpread = strengthDiff * 1.1; // home negative if favoured
+  // convert strength diff into spread (home negative when favored)
+  const modelSpread = strengthDiff * 1.1;
 
-  // Total scoring baseline around league average + pace signal
+  // --- total + scores ---
   const awayStats = state.teamStats[game.away] || {};
   const homeStats = state.teamStats[game.home] || {};
-  const paceAvg =
-    (awayStats.pace_l5 || 100) * 0.5 +
-    (homeStats.pace_l5 || 100) * 0.5;
 
+  // base around season PPG, blended a bit
+  const baseTotal =
+    ((awayStats.ppg_szn || state.leagueAvgPts / 2) +
+     (homeStats.ppg_szn || state.leagueAvgPts / 2));
+
+  const paceAvg =
+    ((awayStats.pace_l5 || awayStats.pace_szn || 100) +
+     (homeStats.pace_l5 || homeStats.pace_szn || 100)) / 2;
   const paceAdj = (paceAvg - 100) * 0.5;
 
-  const baseTotal =
-    ((awayStats.ppg_l5 || awayStats.ppg_szn || state.leagueAvgPts / 2) +
-      (homeStats.ppg_l5 || homeStats.ppg_szn || state.leagueAvgPts / 2)) *
-    0.5;
+  let modelTotal = baseTotal / 2 + paceAdj;
 
-  let modelTotal = baseTotal + paceAdj;
-
-  // Split total by strength (simple logistic)
+  // split total by strength
   const homeShare = 1 / (1 + Math.exp(-strengthDiff / 5)); // 0–1
   const awayShare = 1 - homeShare;
 
   const awayScore = modelTotal * awayShare;
   const homeScore = modelTotal * homeShare;
 
-  // Win probabilities from spread
-  const spreadForProb = modelSpread;
-  const homeWinProb = 1 / (1 + Math.exp(-spreadForProb / 5));
+  // win probabilities from spread
+  const homeWinProb = 1 / (1 + Math.exp(-modelSpread / 5));
   const awayWinProb = 1 - homeWinProb;
 
   return {
