@@ -24,7 +24,7 @@ const OPP_DREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskm
 
 const ATS_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv";
 const OU_URL        = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv";
-const RATING_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";
+const RANKING_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";
 const PPG_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1145033141&single=true&output=csv";
 const NBASTUFF_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv";
 const NAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=19771105&single=true&output=csv";
@@ -75,11 +75,11 @@ const COLS = {
     team:  "B",
     ppg:   "F",
     oppg:  "G",
-    pace:  "H",
+    pace:  "I",
     oeff:  "J",
     deff:  "K",
-    l5w:   "L",
-    l5l:   "M"
+    l5w:   "R",
+    l5l:   "S"
   },
 
   // Season PPG / OPPG tab
@@ -267,7 +267,7 @@ async function init() {
       loadCsv(OPP_DREB_URL),
       loadCsv(ATS_URL),
       loadCsv(OU_URL),
-      loadCsv(RATING_URL),
+      loadCsv(RANKING_URL),
       loadCsv(PPG_URL),
       loadCsv(NBASTUFF_URL),
       loadCsv(NAMES_URL),
@@ -376,7 +376,7 @@ async function init() {
     mapTable(ratingRows, COLS.ranking).forEach(r => {
       const t = ensureTeam(r.team);
       if (!t) return;
-      t.rating = parseNumber(r.rating);
+      t.ranking = parseNumber(r.ranking);
     });
 
     // League avg points
