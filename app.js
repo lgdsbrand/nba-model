@@ -1,12 +1,16 @@
-/***************************************************
- * NBA GAME PREDICTOR - BROWSER-ONLY APP
- * - Works as a static Vercel site (no build step)
- * - Uses Google Sheets CSV exports
- ***************************************************/
+/***********************************************************
+ * NBA LINEUP MODEL — static app.js for Vercel
+ * - Uses column letters only (no header names required)
+ * - Supports:
+ *   • Games bar from Apps Script sheet
+ *   • Editable lineups with PER/USG weighting
+ *   • Back-to-back toggles
+ *   • Stat comparison table
+ *   • Save Game to Table
+ *   • Name mapping via "names" tab (TR / nbastuffer → ESPN)
+ ***********************************************************/
 
-/* 1) PASTE YOUR CSV EXPORT URLS HERE
-   (each must end in &output=csv and be "Anyone with link" viewable)
-*/
+/* 1) PASTE YOUR CSV LINKS HERE */
 const GAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=66182824&single=true&output=csv";
 
 const PLAYER_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";
@@ -40,7 +44,7 @@ const COLS = {
     away:  "D",
     home:  "E",
     label: "F",
-    spread: "G",
+    spread:"G",
     total: "H"
   },
 
@@ -54,7 +58,7 @@ const COLS = {
     usg:  "T"
   },
 
-  // Lineups tab (matches your screenshot: A team, B–F positions)
+  // Lineups tab (your screenshot: A team, B–F positions)
   lineups: {
     team: "A",
     g1:   "B",
@@ -64,7 +68,7 @@ const COLS = {
     c:    "F"
   },
 
-  // NBA Stuffer L5 / H/A tab (you can tweak these letters as needed)
+  // NBA Stuffer L5 / H/A tab (adjust letters if needed)
   // B: Team, F: PPG, G: OPPG, H: Pace, J: oEff, K: dEff,
   // L: W (last 5), M: L (last 5)
   nbastuff: {
@@ -80,9 +84,9 @@ const COLS = {
 
   // Season PPG / OPPG tab
   ppg: {
-    team:  "B",
-    ppg:   "F",
-    oppg:  "G"
+    team: "B",
+    ppg:  "F",
+    oppg: "G"
   },
 
   // ATS tab: A = Team, B = Record (e.g. 8-3-0), C = Cover%
@@ -104,24 +108,31 @@ const COLS = {
     rating: "D"
   },
 
-  // League averages (optional): put Points and maybe Pace
+  // Names tab: A = TeamRankings, B = nbastuffer, C = ESPN/mascot
+  names: {
+    tr:     "A",
+    stuffer:"B",
+    espn:   "C"
+  },
+
+  // League averages tab (optional): put "Points" in O, value in P
   league: {
-    label: "O", // e.g. "Points"
-    value: "P"  // e.g. 118.2
+    label: "O",
+    value: "P"
   }
 };
 
 /* 3) MODEL WEIGHTS (tweak later) */
 const WEIGHTS = {
-  lineupPer:  0.40, // PER / usage / minutes
-  oEff:       0.30,
-  dEff:       0.25,
+  lineupPer:  0.40,  // PER / usage / minutes
+  oEff:       0.30,  // offensive efficiency
+  dEff:       0.25,  // defensive efficiency (lower is better)
   pace:       0.10,
   rank:       0.15,
-  b2bPenalty: 1.5    // points deducted if B2B toggle ON
+  b2bPenalty: 1.5    // points deducted if back-to-back toggle ON
 };
 
-const LEAGUE_DEFAULT_POINTS = 118; // used if league avg not loaded
+const LEAGUE_DEFAULT_POINTS = 118; // fallback if league avg not loaded
 
 /************** UTILITIES ****************/
 
@@ -196,14 +207,30 @@ function parseNumber(v, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/************** NAME MAPPING (TR / STUFFER → ESPN) *************/
+
+let nameMapTrToEspn = {};
+let nameMapStuffToEspn = {};
+
+function canonName(raw) {
+  if (!raw) return "";
+  const s = String(raw).trim();
+  return (
+    nameMapTrToEspn[s] ||
+    nameMapStuffToEspn[s] ||
+    s
+  );
+}
+
 /************** GLOBAL STATE ****************/
 
 const state = {
-  games: [],        // array of game objects
-  players: {},      // name -> { per, mp, usg }
-  defaultLineups: {}, // team -> { g1, g2, f1, f2, c }
-  teamStats: {},    // team -> big merged stats
+  games: [],           // array of game objects
+  players: {},         // name -> { per, mp, usg }
+  defaultLineups: {},  // team -> { g1, g2, f1, f2, c }
+  teamStats: {},       // team -> merged stats
   leagueAvgPts: LEAGUE_DEFAULT_POINTS,
+
   selectedGame: null,
   currentPrediction: null
 };
@@ -219,27 +246,49 @@ async function init() {
       gamesRows,
       playerRows,
       lineupRows,
-      nbastuffRows,
-      ppgRows,
+      orebRows,
+      drebRows,
+      oppOrebRows,
+      oppDrebRows,
       atsRows,
       ouRows,
-      rankRows,
+      ratingRows,
+      ppgRows,
+      nbastuffRows,
+      namesRows,
       leagueRows
     ] = await Promise.all([
       loadCsv(GAMES_URL),
       loadCsv(PLAYER_URL),
       loadCsv(LINEUPS_URL),
-      loadCsv(NBASTUFF_URL),
-      loadCsv(PPG_URL),
+      loadCsv(OREB_URL),
+      loadCsv(DREB_URL),
+      loadCsv(OPP_OREB_URL),
+      loadCsv(OPP_DREB_URL),
       loadCsv(ATS_URL),
       loadCsv(OU_URL),
       loadCsv(RATING_URL),
+      loadCsv(PPG_URL),
+      loadCsv(NBASTUFF_URL),
+      loadCsv(NAMES_URL),
       loadCsv(LEAGUE_URL)
     ]);
 
-    // Games
+    /* --- build name maps first --- */
+    nameMapTrToEspn = {};
+    nameMapStuffToEspn = {};
+    mapTable(namesRows, COLS.names).forEach(row => {
+      const espn = row.espn || row.tr || row.stuffer;
+      if (!espn) return;
+      if (row.tr)      nameMapTrToEspn[row.tr]       = espn;
+      if (row.stuffer) nameMapStuffToEspn[row.stuffer] = espn;
+    });
+
+    /* --- games --- */
     state.games = mapTable(gamesRows, COLS.games).map(g => ({
       ...g,
+      away:   canonName(g.away),
+      home:   canonName(g.home),
       spread: parseNumber(g.spread, 0),
       total:  parseNumber(g.total, 0)
     }));
@@ -250,7 +299,7 @@ async function init() {
       gamesErrorEl.textContent = "";
     }
 
-    // Players
+    /* --- players --- */
     const players = mapTable(playerRows, COLS.players);
     players.forEach(p => {
       const name = p.name;
@@ -258,16 +307,16 @@ async function init() {
       state.players[name] = {
         name,
         g:   parseNumber(p.g, 1),
-        mp:  parseNumber(p.mp, 20),
+        mp:  parseNumber(p.mp, 24),
         per: parseNumber(p.per, 15),
         usg: parseNumber(p.usg, 20)
       };
     });
 
-    // Lineups
+    /* --- lineups (team name through mapping) --- */
     const lineups = mapTable(lineupRows, COLS.lineups);
     lineups.forEach(l => {
-      const team = l.team;
+      const team = canonName(l.team);
       if (!team) return;
       state.defaultLineups[team] = {
         g1: l.g1,
@@ -278,16 +327,16 @@ async function init() {
       };
     });
 
-    // Team stats merged
+    /* --- merged team stats --- */
     const statsByTeam = {};
-
     function ensureTeam(team) {
       if (!team) return;
-      if (!statsByTeam[team]) statsByTeam[team] = { team };
-      return statsByTeam[team];
+      const key = canonName(team);
+      if (!statsByTeam[key]) statsByTeam[key] = { team: key };
+      return statsByTeam[key];
     }
 
-    // NBA Stuffer
+    // NBA Stuffer (L5 stats)
     mapTable(nbastuffRows, COLS.nbastuff).forEach(r => {
       const t = ensureTeam(r.team);
       if (!t) return;
@@ -300,7 +349,7 @@ async function init() {
       t.l5l      = parseNumber(r.l5l);
     });
 
-    // Season PPG
+    // Season PPG / OPPG
     mapTable(ppgRows, COLS.ppg).forEach(r => {
       const t = ensureTeam(r.team);
       if (!t) return;
@@ -323,17 +372,17 @@ async function init() {
       t.ou_record = r.record;
     });
 
-    // Predictive ranking
-    mapTable(rankRows, COLS.ranking).forEach(r => {
+    // Predictive rating
+    mapTable(ratingRows, COLS.ranking).forEach(r => {
       const t = ensureTeam(r.team);
       if (!t) return;
       t.rating = parseNumber(r.rating);
     });
 
-    // League avg
+    // League avg points
     const league = mapTable(leagueRows, COLS.league, { skipHeader: false });
     league.forEach(row => {
-      const label = row.label?.toLowerCase?.() || "";
+      const label = (row.label || "").toLowerCase();
       if (label.includes("point")) {
         state.leagueAvgPts = parseNumber(row.value, LEAGUE_DEFAULT_POINTS);
       }
@@ -341,13 +390,9 @@ async function init() {
 
     state.teamStats = statsByTeam;
 
-    // Populate players datalist
+    /* --- UI setup --- */
     populatePlayerList();
-
-    // Render games bar
     renderGamesBar();
-
-    // Wire buttons
     wireUiHandlers();
   } catch (err) {
     console.error("NBA init error:", err);
@@ -359,6 +404,7 @@ async function init() {
 
 function populatePlayerList() {
   const dl = document.getElementById("players-list");
+  if (!dl) return;
   dl.innerHTML = "";
   const names = Object.keys(state.players).sort();
   names.forEach(name => {
@@ -370,6 +416,7 @@ function populatePlayerList() {
 
 function renderGamesBar() {
   const bar = document.getElementById("games-bar");
+  if (!bar) return;
   bar.innerHTML = "";
   if (!state.games.length) return;
 
@@ -396,7 +443,7 @@ function renderGamesBar() {
     bar.appendChild(chip);
   });
 
-  // Auto select first
+  // auto-select first game
   selectGame(0);
 }
 
@@ -405,13 +452,12 @@ function selectGame(idx) {
   state.selectedGame = game;
   state.currentPrediction = null;
 
-  // Highlight chip
   document.querySelectorAll(".game-chip").forEach(chip => {
     chip.classList.toggle("active", Number(chip.dataset.index) === idx);
   });
 
-  // Fill selected panel
   const panel = document.getElementById("selected-game-panel");
+  if (!panel) return;
   panel.classList.remove("hidden");
 
   document.getElementById("sg-matchup").textContent =
@@ -419,23 +465,21 @@ function selectGame(idx) {
   document.getElementById("sg-time").textContent = game.time || "";
 
   document.getElementById("sg-spread").textContent =
-    game.spread ? game.spread.toFixed(1) : "—";
+    game.spread || game.spread === 0 ? game.spread.toFixed(1) : "—";
   document.getElementById("sg-total").textContent =
-    game.total ? game.total.toFixed(1) : "—";
+    game.total || game.total === 0 ? game.total.toFixed(1) : "—";
 
   const spreadInput = document.getElementById("book-spread");
   const totalInput  = document.getElementById("book-total");
-  spreadInput.value = game.spread || "";
-  totalInput.value  = game.total || "";
+  if (spreadInput) spreadInput.value = game.spread ?? "";
+  if (totalInput)  totalInput.value  = game.total ?? "";
 
-  // Update lineup labels and load defaults
   document.getElementById("away-team-label").textContent = game.away;
   document.getElementById("home-team-label").textContent = game.home;
 
   loadDefaultLineup("away", game.away);
   loadDefaultLineup("home", game.home);
 
-  // Hide sections until user clicks
   document.getElementById("lineups-section").classList.add("hidden");
   document.getElementById("prediction-section").classList.add("hidden");
   document.getElementById("stats-section").classList.add("hidden");
@@ -459,7 +503,7 @@ function loadDefaultLineup(side, team) {
 
   document.getElementById(`${side}-b2b`).checked = false;
 
-  const per = computeLineupPer(side, team);
+  const per = computeLineupPer(side);
   document.getElementById(`${side}-lineup-per`).textContent =
     per ? per.toFixed(2) : "—";
 }
@@ -476,7 +520,7 @@ function getLineupPlayers(side) {
   ].filter(Boolean);
 }
 
-function computeLineupPer(side, team) {
+function computeLineupPer(side) {
   const playerNames = getLineupPlayers(side);
   let totalWeighted = 0;
   let totalWeight = 0;
@@ -484,38 +528,34 @@ function computeLineupPer(side, team) {
   playerNames.forEach(name => {
     const p = state.players[name];
     if (!p) return;
-    const minutes = p.mp || 20;
+    const minutes = p.mp || 24;
     const usage   = p.usg || 20;
-    const weight  = minutes * (usage / 20); // simple combo
+    const weight  = minutes * (usage / 20);
     totalWeighted += p.per * weight;
     totalWeight   += weight;
   });
 
-  if (!totalWeight) return 0;
-  const per = totalWeighted / totalWeight;
-  return per;
+  if (!totalWeight) return 15; // fallback league-avg PER
+  return totalWeighted / totalWeight;
 }
 
-// ==== OLD-STYLE FORMULA VERSION ====
-
-// simpler team strength: mostly lineup PER + season PPG/OPPG + pace + rating
-function computeTeamStrength(teamName, side, lineupPer, b2b) {
+function computeTeamStrength(teamName, side, lineupPer, isB2B) {
   const stats = state.teamStats[teamName] || {};
+  const oEff = stats.oeff_l5 || 1.1;
+  const dEff = stats.deff_l5 || 1.1;
+  const pace = stats.pace_l5 || stats.pace_szn || 100;
+  const rating = stats.rating || 0;
 
-  const per   = lineupPer || 15;                           // lineup PER
-  const off   = stats.ppg_szn  || state.leagueAvgPts;      // season PPG
-  const def   = stats.oppg_szn || state.leagueAvgPts;      // season OPPG
-  const pace  = stats.pace_l5  || stats.pace_szn || 100;   // pace
-  const rating = stats.rating || 0;                        // predictive rating
+  const perDelta = (lineupPer || 15) - 15;
 
   let strength =
-    0.40 * (per - 15) +                    // PER above/below league-avg 15
-    0.25 * ((off - state.leagueAvgPts) / 5) +
-    0.20 * ((state.leagueAvgPts - def) / 5) +
-    0.10 * ((pace - 100) / 3) +
-    0.15 * rating;
+    WEIGHTS.lineupPer * perDelta +
+    WEIGHTS.oEff      * (oEff - 1.1) * 10 +
+    WEIGHTS.dEff      * (1.1 - dEff) * 10 +  // lower dEff = better
+    WEIGHTS.pace      * (pace - 100) / 4 +
+    WEIGHTS.rank      * rating;
 
-  if (b2b) strength -= 1.5;               // back-to-back penalty
+  if (isB2B) strength -= WEIGHTS.b2bPenalty;
 
   return strength;
 }
@@ -530,58 +570,54 @@ function predictCurrentGame() {
   const bookSpread = parseNumber(spreadInput.value, game.spread);
   const bookTotal  = parseNumber(totalInput.value, game.total);
 
-  const awayLineupPer = computeLineupPer("away", game.away);
-  const homeLineupPer = computeLineupPer("home", game.home);
-  document.getElementById("away-lineup-per").textContent =
-    awayLineupPer ? awayLineupPer.toFixed(2) : "—";
-  document.getElementById("home-lineup-per").textContent =
-    homeLineupPer ? homeLineupPer.toFixed(2) : "—";
+  const awayPer = computeLineupPer("away");
+  const homePer = computeLineupPer("home");
+  document.getElementById("away-lineup-per").textContent = awayPer.toFixed(2);
+  document.getElementById("home-lineup-per").textContent = homePer.toFixed(2);
 
   const awayB2B = document.getElementById("away-b2b").checked;
   const homeB2B = document.getElementById("home-b2b").checked;
 
-  const awayStrength = computeTeamStrength(
-    game.away,
-    "away",
-    awayLineupPer,
-    awayB2B
-  );
-  const homeStrength = computeTeamStrength(
-    game.home,
-    "home",
-    homeLineupPer,
-    homeB2B
-  );
+  const awayStrength = computeTeamStrength(game.away, "away", awayPer, awayB2B);
+  const homeStrength = computeTeamStrength(game.home, "home", homePer, homeB2B);
 
   const strengthDiff = homeStrength - awayStrength; // home minus away
 
-  // convert strength diff into spread (home negative when favored)
+  // Convert strength diff into spread (home negative when favored)
   const modelSpread = strengthDiff * 1.1;
 
-  // --- total + scores ---
+  // Baseline total from team PPG (L5 > season > league avg)
   const awayStats = state.teamStats[game.away] || {};
   const homeStats = state.teamStats[game.home] || {};
 
-  // base around season PPG, blended a bit
-  const baseTotal =
-    ((awayStats.ppg_szn || state.leagueAvgPts / 2) +
-     (homeStats.ppg_szn || state.leagueAvgPts / 2));
+  const awayPpgBase =
+    awayStats.ppg_l5 ||
+    awayStats.ppg_szn ||
+    state.leagueAvgPts;
 
+  const homePpgBase =
+    homeStats.ppg_l5 ||
+    homeStats.ppg_szn ||
+    state.leagueAvgPts;
+
+  // Combined scoring baseline (no extra /2 here)
+  let modelTotal = awayPpgBase + homePpgBase;
+
+  // Pace adjustment (centered at 100)
   const paceAvg =
-    ((awayStats.pace_l5 || awayStats.pace_szn || 100) +
-     (homeStats.pace_l5 || homeStats.pace_szn || 100)) / 2;
+    (awayStats.pace_l5 || 100) * 0.5 +
+    (homeStats.pace_l5 || 100) * 0.5;
   const paceAdj = (paceAvg - 100) * 0.5;
+  modelTotal += paceAdj;
 
-  let modelTotal = baseTotal / 2 + paceAdj;
-
-  // split total by strength
-  const homeShare = 1 / (1 + Math.exp(-strengthDiff / 5)); // 0–1
+  // Split points between teams via logistic on strength
+  const homeShare = 1 / (1 + Math.exp(-strengthDiff / 5));
   const awayShare = 1 - homeShare;
 
   const awayScore = modelTotal * awayShare;
   const homeScore = modelTotal * homeShare;
 
-  // win probabilities from spread
+  // Win probabilities from spread proxy
   const homeWinProb = 1 / (1 + Math.exp(-modelSpread / 5));
   const awayWinProb = 1 - homeWinProb;
 
@@ -598,7 +634,7 @@ function predictCurrentGame() {
   };
 }
 
-/************** STAT TABLE ****************/
+/************** STAT COMPARISON TABLE ****************/
 
 function buildStatComparison(game) {
   const table = document.getElementById("stats-table");
@@ -633,7 +669,10 @@ function buildStatComparison(game) {
     row("Def Eff (Last 5)", away.deff_l5, home.deff_l5, false),
     row("Season PPG", away.ppg_szn, home.ppg_szn, true),
     row("Season OPPG", away.oppg_szn, home.oppg_szn, false),
-    row("Last 5 Record", `${away.l5w || 0}-${away.l5l || 0}`, `${home.l5w || 0}-${home.l5l || 0}`, true),
+    row("Last 5 Record",
+        `${away.l5w || 0}-${away.l5l || 0}`,
+        `${home.l5w || 0}-${home.l5l || 0}`,
+        true),
     row("ATS Record", away.ats_record, home.ats_record, true),
     row("O/U Record", away.ou_record, home.ou_record, true),
     row("Predictive Rating", away.rating, home.rating, true)
@@ -662,6 +701,7 @@ function buildStatComparison(game) {
   const tbody = document.createElement("tbody");
   rows.forEach(r => {
     const tr = document.createElement("tr");
+
     const tdLabel = document.createElement("td");
     tdLabel.className = "stats-row-label";
     tdLabel.textContent = r.label;
@@ -679,14 +719,15 @@ function buildStatComparison(game) {
 
     tbody.appendChild(tr);
   });
+
   table.appendChild(tbody);
 }
 
-/************** SAVED TABLE ****************/
+/************** SAVED GAMES TABLE ****************/
 
 function appendSavedGame(pred) {
   const tbody = document.querySelector("#saved-table tbody");
-  const tr = document.createElement("tr");
+  if (!tbody) return;
 
   const today = new Date();
   const dateStr = today.toISOString().slice(0, 10);
@@ -698,16 +739,13 @@ function appendSavedGame(pred) {
     pred.homeScore.toFixed(1),
     pred.modelTotal.toFixed(1),
     pred.bookTotal ? pred.bookTotal.toFixed(1) : "—",
-    pred.bookTotal
-      ? (pred.modelTotal - pred.bookTotal).toFixed(1)
-      : "—",
+    pred.bookTotal ? (pred.modelTotal - pred.bookTotal).toFixed(1) : "—",
     pred.modelSpread.toFixed(1),
     pred.bookSpread ? pred.bookSpread.toFixed(1) : "—",
-    pred.bookSpread
-      ? (pred.modelSpread - pred.bookSpread).toFixed(1)
-      : "—"
+    pred.bookSpread ? (pred.modelSpread - pred.bookSpread).toFixed(1) : "—"
   ];
 
+  const tr = document.createElement("tr");
   cells.forEach(v => {
     const td = document.createElement("td");
     td.textContent = v;
@@ -717,7 +755,7 @@ function appendSavedGame(pred) {
   tbody.appendChild(tr);
 }
 
-/************** WIRING BUTTONS ****************/
+/************** BUTTON WIRING ****************/
 
 function wireUiHandlers() {
   document.getElementById("btn-lineups").addEventListener("click", () => {
@@ -744,14 +782,14 @@ function wireUiHandlers() {
 
   document.getElementById("btn-save").addEventListener("click", () => {
     if (!state.currentPrediction) {
-      const err = document.getElementById("prediction-error");
-      err.textContent = "Run a prediction first before saving.";
+      document.getElementById("prediction-error").textContent =
+        "Run a prediction first before saving.";
       return;
     }
     appendSavedGame(state.currentPrediction);
   });
 
-  // Save / reset lineups buttons
+  // lineup save/reset
   document.getElementById("btn-save-away").addEventListener("click", () => {
     if (!state.selectedGame) return;
     const team = state.selectedGame.away;
@@ -762,9 +800,8 @@ function wireUiHandlers() {
       f2: document.getElementById("away-f2").value.trim(),
       c:  document.getElementById("away-c").value.trim()
     };
-    const per = computeLineupPer("away", team);
-    document.getElementById("away-lineup-per").textContent =
-      per ? per.toFixed(2) : "—";
+    const per = computeLineupPer("away");
+    document.getElementById("away-lineup-per").textContent = per.toFixed(2);
   });
 
   document.getElementById("btn-reset-away").addEventListener("click", () => {
@@ -782,9 +819,8 @@ function wireUiHandlers() {
       f2: document.getElementById("home-f2").value.trim(),
       c:  document.getElementById("home-c").value.trim()
     };
-    const per = computeLineupPer("home", team);
-    document.getElementById("home-lineup-per").textContent =
-      per ? per.toFixed(2) : "—";
+    const per = computeLineupPer("home");
+    document.getElementById("home-lineup-per").textContent = per.toFixed(2);
   });
 
   document.getElementById("btn-reset-home").addEventListener("click", () => {
@@ -816,13 +852,13 @@ function showPrediction(pred) {
   const totalLine = `Model Total: ${pred.modelTotal.toFixed(
     1
   )} vs Book Total ${
-    pred.bookTotal ? pred.bookTotal.toFixed(1) : "—"
+    pred.bookTotal || pred.bookTotal === 0 ? pred.bookTotal.toFixed(1) : "—"
   }`;
   document.getElementById("pred-total-line").textContent = totalLine;
 
   let totalPlayText = "NO BET";
   let totalPillClass = "pill-nobet";
-  if (pred.bookTotal) {
+  if (pred.bookTotal || pred.bookTotal === 0) {
     const diff = pred.modelTotal - pred.bookTotal;
     if (diff >= 4) {
       totalPlayText = "BET OVER";
@@ -839,13 +875,15 @@ function showPrediction(pred) {
   const spreadLine = `Model Spread (Home = -): ${pred.modelSpread.toFixed(
     1
   )} vs Book Spread ${
-    pred.bookSpread ? pred.bookSpread.toFixed(1) : "—"
+    pred.bookSpread || pred.bookSpread === 0
+      ? pred.bookSpread.toFixed(1)
+      : "—"
   }`;
   document.getElementById("pred-spread-line").textContent = spreadLine;
 
   let spreadPlayText = "NO BET";
   let spreadPillClass = "pill-nobet";
-  if (pred.bookSpread) {
+  if (pred.bookSpread || pred.bookSpread === 0) {
     const diff = pred.modelSpread - pred.bookSpread;
     if (diff <= -2) {
       spreadPlayText = `BET ${pred.game.home}`;
@@ -861,5 +899,4 @@ function showPrediction(pred) {
 }
 
 /************* STARTUP *************/
-
 document.addEventListener("DOMContentLoaded", init);
