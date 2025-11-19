@@ -320,14 +320,14 @@ function saveGameToTable() {
 
 async function loadAllCsvs() {
   const urls = {
-    trgames: document.getElementById("url-trgames").value.trim(),
-    nbastuff: document.getElementById("url-nbastuff").value.trim(),
-    lineups: document.getElementById("url-lineups").value.trim(),
-    player: document.getElementById("url-player").value.trim(),
-    league: document.getElementById("url-league").value.trim(),
-    ranking: document.getElementById("url-ranking").value.trim(),
-    ats: document.getElementById("url-ats").value.trim(),
-    ou: document.getElementById("url-ou").value.trim(),
+    trgames: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=100967704&single=true&output=csv").value.trim(),
+    nbastuff: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv").value.trim(),
+    lineups: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv").value.trim(),
+    player: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv").value.trim(),
+    league: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv").value.trim(),
+    ranking: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv").value.trim(),
+    ats: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv").value.trim(),
+    ou: document.getElementById("https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv").value.trim(),
   };
 
   const missing = Object.entries(urls).filter(([, u]) => !u).map(([k]) => k);
