@@ -117,8 +117,8 @@ const COLS = {
 
   // League averages tab (optional): put "Points" in O, value in P
   league: {
-    label: "O",
-    value: "P"
+    label: "A",
+    value: "B"
   }
 };
 
