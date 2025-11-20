@@ -3,20 +3,20 @@
    ========================= */
 const CSV_URLS = {
   // Core 8 tabs
-  trgames:   "https://docs.google.com/spreadsheets/d/TRGAMES_ID/export?format=csv&gid=0",
-  nbastuff:  "https://docs.google.com/spreadsheets/d/NBASTUFF_ID/export?format=csv&gid=0",
-  lineups:   "https://docs.google.com/spreadsheets/d/LINEUPS_ID/export?format=csv&gid=0",
-  player:    "https://docs.google.com/spreadsheets/d/PLAYER_ID/export?format=csv&gid=0",
-  league:    "https://docs.google.com/spreadsheets/d/LEAGUE_ID/export?format=csv&gid=0",
-  ranking:   "https://docs.google.com/spreadsheets/d/RANKING_ID/export?format=csv&gid=0",
-  ats:       "https://docs.google.com/spreadsheets/d/ATS_ID/export?format=csv&gid=0",
-  ou:        "https://docs.google.com/spreadsheets/d/OU_ID/export?format=csv&gid=0",
+  trgames:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=100967704&single=true&output=csv",
+  nbastuff:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv",
+  lineups:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv",
+  player:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv",
+  league:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv",
+  ranking:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv",
+  ats:       "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv",
+  ou:        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv",
 
   // TeamRankings rebounding feeds
-  teamOffReb: "https://docs.google.com/spreadsheets/d/OFFREB_ID/export?format=csv&gid=0",
-  teamDefReb: "https://docs.google.com/spreadsheets/d/DEFREB_ID/export?format=csv&gid=0",
-  oppOffReb:  "https://docs.google.com/spreadsheets/d/OPPOFFREB_ID/export?format=csv&gid=0",
-  oppDefReb:  "https://docs.google.com/spreadsheets/d/OPPDEFREB_ID/export?format=csv&gid=0",
+  teamOffReb: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv",
+  teamDefReb: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv",
+  oppOffReb:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv",
+  oppDefReb:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv",
 };
 
 /* =========================
