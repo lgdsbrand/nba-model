@@ -1,58 +1,49 @@
-/* app.js — NBA Lineup Model (updated)
- *
- * Loads CSVs from Google Sheets export URLs (core 8 + 4 TeamRankings rebounding feeds)
- * Lineup-driven outcome using PER, USG, GP, MIN
- * Team nudges using pace, efficiency, and rebounding (own + opponent)
- * Outputs: projected scores, model spread, model total, win probabilities, ML winner,
- * model vs book edges, and bet signals for spread and total
- */
-
 /* =========================
-   CONFIG: CSV URLs
+   UPLOAD CSV URLS (Google Sheets export links)
    ========================= */
 const CSV_URLS = {
   // Core 8 tabs
-  trgames:   "",
-  nbastuff:  "",
-  lineups:   "",
-  player:    "",
-  league:    "",
-  ranking:   "",
-  ats:       "",
-  ou:        "",
+  trgames:   "https://docs.google.com/spreadsheets/d/TRGAMES_ID/export?format=csv&gid=0",
+  nbastuff:  "https://docs.google.com/spreadsheets/d/NBASTUFF_ID/export?format=csv&gid=0",
+  lineups:   "https://docs.google.com/spreadsheets/d/LINEUPS_ID/export?format=csv&gid=0",
+  player:    "https://docs.google.com/spreadsheets/d/PLAYER_ID/export?format=csv&gid=0",
+  league:    "https://docs.google.com/spreadsheets/d/LEAGUE_ID/export?format=csv&gid=0",
+  ranking:   "https://docs.google.com/spreadsheets/d/RANKING_ID/export?format=csv&gid=0",
+  ats:       "https://docs.google.com/spreadsheets/d/ATS_ID/export?format=csv&gid=0",
+  ou:        "https://docs.google.com/spreadsheets/d/OU_ID/export?format=csv&gid=0",
 
   // TeamRankings rebounding feeds
-  teamOffReb: "",
-  teamDefReb: "",
-  oppOffReb:  "",
-  oppDefReb:  "",
+  teamOffReb: "https://docs.google.com/spreadsheets/d/OFFREB_ID/export?format=csv&gid=0",
+  teamDefReb: "https://docs.google.com/spreadsheets/d/DEFREB_ID/export?format=csv&gid=0",
+  oppOffReb:  "https://docs.google.com/spreadsheets/d/OPPOFFREB_ID/export?format=csv&gid=0",
+  oppDefReb:  "https://docs.google.com/spreadsheets/d/OPPDEFREB_ID/export?format=csv&gid=0",
 };
 
 /* =========================
-   MODEL WEIGHTS
+   TUNING WEIGHTS
    ========================= */
 const WEIGHTS = {
-  perDiff: 4.0,
-  usg: 1.0,
+  perDiff: 4.0,          // lineup PER difference multiplier
+  usg: 1.0,              // usage multiplier in lineup PER weighting
 
-  rebToPoints: 0.25,
-  perToPoints: 0.9,
+  rebToPoints: 0.25,     // rebounding % diffs → point adjustments
+  perToPoints: 0.9,      // PER diff → point diff
 
-  baseTotal: 200,
-  paceToTotal: 1.2,
-  effToTotal: 0.6,
+  baseTotal: 200,        // baseline total
+  paceToTotal: 1.2,      // pace contribution to total
+  effToTotal: 0.6,       // efficiency contribution to total
 
-  b2bPenaltyAway: -0.7,
-  b2bPenaltyHome: -0.5,
+  b2bPenaltyAway: -0.7,  // away back-to-back penalty
+  b2bPenaltyHome: -0.5,  // home back-to-back penalty
 
-  logisticScale: 8.0,
+  logisticScale: 8.0,    // scale for win probability logistic
 
   baseConf: 60,
   minConf: 50,
   maxConf: 95,
 
-  atsMinEdge: 0.7,
-  totalMinEdge: 2.0,
+  atsMinEdge: 0.7,       // min spread edge to bet
+  totalMinEdge: 2.0,     // min total edge to bet
 };
 
 /* =========================
@@ -70,7 +61,7 @@ const COLS = {
 };
 
 /* =========================
-   Global state
+   State
    ========================= */
 const state = {
   trgames: [], nbastuff: [], lineups: [], player: [], league: [], ranking: [], ats: [], ou: [],
@@ -93,12 +84,6 @@ function fetchCsvFromUrl(url) {
       return obj;
     });
   });
-}
-
-function urlFor(key) {
-  const el = document.getElementById(`url-${key}`);
-  if (el && el.value && el.value.trim()) return el.value.trim();
-  return CSV_URLS[key];
 }
 
 /* =========================
@@ -158,23 +143,4 @@ function computeConfidence(awayPER, homePER, awayStats, homeStats, awayB2B, home
   const rebAdj =
     (homeStats.offRebPct - awayStats.offRebPct) * WEIGHTS.rebToPoints +
     (homeStats.defRebPct - awayStats.defRebPct) * WEIGHTS.rebToPoints +
-    (homeStats.oppOffRebPct - awayStats.oppOffRebPct) * (WEIGHTS.rebToPoints/2) +
-    (homeStats.oppDefRebPct - awayStats.oppDefRebPct) * (WEIGHTS.rebToPoints/2);
-  const effAdj = (homeStats.offEff - awayStats.offEff) * (WEIGHTS.effToTotal/10);
-  const paceAdj = (homeStats.pace - awayStats.pace) * (WEIGHTS.paceToTotal/10);
-  const b2bPenalty = (awayB2B ? WEIGHTS.b2bPenaltyAway : 0) + (homeB2B ? WEIGHTS.b2bPenaltyHome : 0);
-  const confRaw = WEIGHTS.baseConf + diffPER + rebAdj + effAdj + paceAdj + b2bPenalty;
-  return Math.max(WEIGHTS.minConf, Math.min(WEIGHTS.maxConf, confRaw));
-}
-
-/* =========================
-   Win probabilities
-   ========================= */
-function diffToWinProb(pointDiff) {
-  const s = WEIGHTS.logisticScale;
-  const pHome = 1 / (1 + Math.exp(-pointDiff / s));
-  const pAway = 1 - pHome;
-  return { pHome, pAway };
-}
-
-/*
+    (homeStats.
