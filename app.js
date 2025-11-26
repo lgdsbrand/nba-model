@@ -123,9 +123,7 @@ const COLS = {
   }
 };
 
-/* =========================
-   TUNING WEIGHTS
-   ========================= */
+/* 3) MODEL WEIGHTS (tweak later) */
 const WEIGHTS = {
   lineupPer:  1.00,  // PER / usage / minutes
   oEff:       0.70,  // offensive efficiency
@@ -144,44 +142,97 @@ const leagueAvgOffEff = 1.0;
 const leagueAvgDefEff = 1.0;
 const leagueAvgPace   = 100;
 
-  baseTotal: 200,        // baseline total
-  paceToTotal: 1.2,      // pace contribution to total
-  effToTotal: 0.6,       // efficiency contribution to total
+/*************** UTILITIES *****************/
 
-  b2bPenaltyAway: -0.7,  // away back-to-back penalty
-  b2bPenaltyHome: -0.5,  // home back-to-back penalty
+// letter -> 0-based index (A -> 0)
+function letterToIndex(letter) {
+  return String(letter).toUpperCase().charCodeAt(0) - 65;
+}
 
-  logisticScale: 8.0,    // scale for win probability logistic
+// Simple CSV parser that respects quoted commas (returns array of rows -> array of cells)
+function parseCsv(text) {
+  if (!text) return [];
+  const lines = text.trim().split(/\r?\n/);
+  return lines.map(line => {
+    const cells = [];
+    let cur = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === "," && !inQuotes) {
+        cells.push(cur);
+        cur = "";
+      } else {
+        cur += ch;
+      }
+    }
+    cells.push(cur);
+    return cells.map(c => c.trim());
+  });
+}
 
-  baseConf: 60,
-  minConf: 50,
-  maxConf: 95,
+// load CSV from public Google "publish as csv" link (or other csv url)
+async function loadCsv(url) {
+  if (!url || !url.trim()) return [];
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} for ${url}`);
+  }
+  const text = await res.text();
+  return parseCsv(text);
+}
 
-  atsMinEdge: 0.7,       // min spread edge to bet
-  totalMinEdge: 2.0,     // min total edge to bet
-};
+function valueFromRow(row, letter) {
+  if (!letter || !row) return "";
+  const idx = letterToIndex(letter);
+  return row[idx] ?? "";
+}
 
-/* =========================
-   Column letters mapping
-   ========================= */
-const COLS = {
-  trgames: { rank: "A", hotness: "B", matchup: "C", time: "D", location: "E", spread: "F", total: "G" },
-  nbastuff: { team: "A", ppg: "F", oppg: "G", pace: "H", offEff: "I", defEff: "J" },
-  lineups: { team: "A", f1: "B", f2: "C", f3: "D", f4: "E", f5: "F" },
-  player: { name: "B", gp: "F", per: "G", usg: "H", min: "I" },
-  league: { ppg: "B", oppg: "C", pace: "D", offEff: "E", defEff: "F" },
-  ranking: { team: "A", wl: "B", modelScore: "C" },
-  ats: { team: "A", record: "B" },
-  ou: { team: "A", record: "B" },
-};
+// Map rows -> objects using a column-letter map
+// colMap: { field1: "A", field2: "B", ... }
+function mapTable(rows, colMap, { skipHeader = true } = {}) {
+  const out = [];
+  const start = skipHeader ? 1 : 0;
+  for (let i = start; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || r.length === 0) continue;
+    const obj = {};
+    for (const key of Object.keys(colMap)) {
+      const letter = colMap[key];
+      obj[key] = valueFromRow(r, letter);
+    }
+    out.push(obj);
+  }
+  return out;
+}
 
-/* =========================
-   State
-   ========================= */
+function parseNumber(v, fallback = NaN) {
+  if (v == null) return fallback;
+  const s = String(v).replace(/[,%]/g, "").trim();
+  if (s === "") return fallback;
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/*************** GLOBAL STATE ****************/
+
 const state = {
-  trgames: [], nbastuff: [], lineups: [], player: [], league: [], ranking: [], ats: [], ou: [],
-  teamOffReb: [], teamDefReb: [], oppOffReb: [], oppDefReb: [],
-  awayTeam: null, homeTeam: null, awayLineup: [], homeLineup: []
+  games: [],
+  players: {},          // name -> { name, g, mp, per, usg }
+  defaultLineups: {},   // teamName -> { g1,g2,f1,f2,c }
+  teamStats: {},        // teamName -> merged stats object
+  leagueAvgPts: typeof LEAGUE_DEFAULT_POINTS !== "undefined" ? LEAGUE_DEFAULT_POINTS : 118,
+  selectedGameIndex: null,
+  currentPrediction: null,
+  nameMapTrToEspn: {},  // mapping table names -> espn
+  nameMapStuffToEspn: {}
 };
 
 /*************** DATA LOAD + INIT ****************/
@@ -251,7 +302,49 @@ async function init() {
       if (hdr.every(h => !h)) {
         trCol = 0; stuffCol = 1; espnCol = 2;
       }
-      return obj;
+
+      // build maps
+      for (let i = 1; i < namesRows.length; i++) {
+        const r = namesRows[i];
+        if (!r) continue;
+        const tr = (r[trCol] || "").toString().trim();
+        const stuff = (r[stuffCol] || "").toString().trim();
+        const espn = (r[espnCol] || "").toString().trim();
+        if (tr && espn) state.nameMapTrToEspn[tr] = espn;
+        if (stuff && espn) state.nameMapStuffToEspn[stuff] = espn;
+      }
+    }
+
+    // team stats merge
+    const statsByTeam = {};
+
+    function ensureTeam(t) {
+      if (!t) return null;
+      if (!statsByTeam[t]) statsByTeam[t] = { team: t };
+      return statsByTeam[t];
+    }
+
+    // NBA Stuffer L5/H-A tab
+    mapTable(nbastuffRows, COLS.nbastuff).forEach(r => {
+      const teamRaw = r.team;
+      if (!teamRaw) return;
+      const team = normalizeTeamName(teamRaw);
+      const t = ensureTeam(team);
+      t.ppg_l5  = parseNumber(r.ppg);
+      t.oppg_l5 = parseNumber(r.oppg);
+      t.pace_l5 = parseNumber(r.pace);
+      t.oeff_l5 = parseNumber(r.oeff);
+      t.deff_l5 = parseNumber(r.deff);
+      t.l5w = parseNumber(r.l5w, 0);
+      t.l5l = parseNumber(r.l5l, 0);
+    });
+
+    // Season PPG
+    mapTable(ppgRows, COLS.ppg).forEach(r => {
+      const team = normalizeTeamName(r.team);
+      const t = ensureTeam(team);
+      t.ppg_szn = parseNumber(r.ppg);
+      t.oppg_szn = parseNumber(r.oppg);
     });
 
     // ATS
@@ -841,36 +934,8 @@ function showPrediction(pred) {
     spreadPill.className = "pill pill-nobet";
     spreadText.textContent = "NO BET";
   }
-  return totalUSG > 0 ? +(totalWeightedPER/totalUSG).toFixed(2) : 0;
 }
 
-/* =========================
-   Extract team stats
-   ========================= */
-function extractTeamStats(teamKey) {
-  const nbRow = teamRowByKey(state.nbastuff, COLS.nbastuff.team, teamKey) || {};
-  const offRow = teamRowByKey(state.teamOffReb, "A", teamKey) || {};
-  const defRow = teamRowByKey(state.teamDefReb, "A", teamKey) || {};
-  const oppOffRow = teamRowByKey(state.oppOffReb, "A", teamKey) || {};
-  const oppDefRow = teamRowByKey(state.oppDefReb, "A", teamKey) || {};
+/*************** STARTUP ***************/
 
-  return {
-    pace: parseFloat(getCol(nbRow, COLS.nbastuff.pace) || 98),
-    offEff: parseFloat(getCol(nbRow, COLS.nbastuff.offEff) || 110),
-    defEff: parseFloat(getCol(nbRow, COLS.nbastuff.defEff) || 110),
-    offRebPct: parseFloat(getCol(offRow, "B") || 0),
-    defRebPct: parseFloat(getCol(defRow, "B") || 0),
-    oppOffRebPct: parseFloat(getCol(oppOffRow, "B") || 0),
-    oppDefRebPct: parseFloat(getCol(oppDefRow, "B") || 0),
-  };
-}
-
-/* =========================
-   Confidence
-   ========================= */
-function computeConfidence(awayPER, homePER, awayStats, homeStats, awayB2B, homeB2B) {
-  const diffPER = (homePER - awayPER) * WEIGHTS.perDiff;
-  const rebAdj =
-    (homeStats.offRebPct - awayStats.offRebPct) * WEIGHTS.rebToPoints +
-    (homeStats.defRebPct - awayStats.defRebPct) * WEIGHTS.rebToPoints +
-    (homeStats.
+document.addEventListener("DOMContentLoaded", init);
