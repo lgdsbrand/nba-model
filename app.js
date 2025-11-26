@@ -65,7 +65,8 @@ const COLS = {
     g2:   "C",
     f1:   "D",
     f2:   "E",
-    c:    "F"
+    c:    "F",
+    PER:  "AA"
   },
 
   // NBA Stuffer L5 / H/A tab (adjust letters if needed)
@@ -124,15 +125,22 @@ const COLS = {
 
 /* 3) MODEL WEIGHTS (tweak later) */
 const WEIGHTS = {
-  lineupPer:  0.40,  // PER / usage / minutes
-  oEff:       0.30,  // offensive efficiency
-  dEff:       0.25,  // defensive efficiency (lower is better)
-  pace:       0.10,
-  rank:       0.15,
-  b2bPenalty: 1.5    // points deducted if back-to-back toggle ON
-};
+  lineupPer:  1.00,  // PER / usage / minutes
+  oEff:       0.70,  // offensive efficiency
+  dEff:       0.60,  // defensive efficiency
+  pace:       0.35,  // pace
+  oreb:       0.50,  // offensive rebounding %
+  dreb:       0.25,  // defensive rebounding %
+}
+
+/*************** CONSTANTS *****************/
 
 const LEAGUE_DEFAULT_POINTS = 118; // fallback if league avg 
+const LINEUP_PER_MIDPOINT = 15; // PER baseline for lineup adjustment
+// For oEff / dEff we treat 1.0 as league average if not provided
+const leagueAvgOffEff = 1.0;
+const leagueAvgDefEff = 1.0;
+const leagueAvgPace   = 100;
 
 /*************** UTILITIES *****************/
 
@@ -280,20 +288,6 @@ async function init() {
       };
     });
 
-    // lineups (team -> starters)
-    const lineups = mapTable(lineupRows, COLS.lineups);
-    lineups.forEach(l => {
-      const team = l.team;
-      if (!team) return;
-      state.defaultLineups[team] = {
-        g1: l.g1 || "",
-        g2: l.g2 || "",
-        f1: l.f1 || "",
-        f2: l.f2 || "",
-        c:  l.c  || ""
-      };
-    });
-
     // build name maps (namesRows expected to include columns for different sources)
     // Expecting a table like: TR_name | Stuff_name | ESPN_name  (you said A/B/C)
     if (namesRows && namesRows.length > 1) {
@@ -383,6 +377,24 @@ async function init() {
       if (label.includes("point") || label.includes("points")) {
         if (!Number.isNaN(value)) state.leagueAvgPts = value;
       }
+    });
+
+    // lineups (team -> starters + adjusted lineup PER)
+    const lineups = mapTable(lineupRows, COLS.lineups);
+    lineups.forEach(l => {
+      const team = l.team;
+      if (!team) return;
+      // starters
+      state.defaultLineups[team] = {
+        g1: l.g1 || "",
+        g2: l.g2 || "",
+        f1: l.f1 || "",
+        f2: l.f2 || "",
+        c:  l.c  || ""
+      };
+      // adjusted lineup PER, column AA
+      const t = ensureTeam(team);
+      t.lineup_per = parseNumber(l.PER);
     });
 
     state.teamStats = statsByTeam;
@@ -493,6 +505,20 @@ function selectGame(index) {
   document.getElementById("prediction-error").textContent = "";
 }
 
+function computeLineupPer(side) {
+  const idx = state.selectedGameIndex;
+  if (idx == null || !state.games[idx]) return 0;
+
+  const game = state.games[idx];
+  const teamName = side === "home" ? game.home : game.away;
+  const normTeamName = normalizeTeamName(teamName);
+
+  const teamStats = state.teamStats[normTeamName];
+  if (!teamStats || typeof teamStats.lineup_per !== "number") return 0;
+
+  return teamStats.lineup_per;
+}
+
 function loadDefaultLineup(side, teamRaw) {
   const team = normalizeTeamName(teamRaw);
   const lineup = state.defaultLineups[team] || { g1: "", g2: "", f1: "", f2: "", c: "" };
@@ -506,59 +532,6 @@ function loadDefaultLineup(side, teamRaw) {
   document.getElementById(`${side}-lineup-per`).textContent = per ? per.toFixed(2) : "—";
 }
 
-/*************** LINEUP + MODEL HELPERS ****************/
-
-function getLineupPlayers(side) {
-  return [
-    document.getElementById(`${side}-g1`).value.trim(),
-    document.getElementById(`${side}-g2`).value.trim(),
-    document.getElementById(`${side}-f1`).value.trim(),
-    document.getElementById(`${side}-f2`).value.trim(),
-    document.getElementById(`${side}-c`).value.trim()
-  ].filter(Boolean);
-}
-
-function computeLineupPer(side) {
-  const playerNames = getLineupPlayers(side);
-  if (!playerNames.length) return 0;
-  let weightedSum = 0;
-  let weightTotal = 0;
-  playerNames.forEach(name => {
-    const p = state.players[name];
-    if (!p) return;
-    const minutes = p.mp || 20;
-    const usage = p.usg || 20;
-    const w = minutes * (usage / 20);
-    weightedSum += (p.per || 15) * w;
-    weightTotal += w;
-  });
-  return weightTotal ? (weightedSum / weightTotal) : 0;
-}
-
-function computeTeamStrength(teamRaw, lineupPer, b2bFlag) {
-  const team = normalizeTeamName(teamRaw);
-  const s = state.teamStats[team] || {};
-
-  // Off/Def efficiencies - use l5 if present else fallbacks
-  const oEff = s.oeff_l5 || (s.ppg_szn ? (s.ppg_szn / (state.leagueAvgPts / 100)) : 1.0);
-  const dEff = s.deff_l5 || 1.0;
-  const pace = s.pace_l5 || 100;
-  const rating = s.rating || 0;
-
-  // convert PER difference (center at 15) to contribution
-  const perDelta = (lineupPer || 15) - 15;
-
-  // strength composition (matching WEIGHTS structure)
-  const strength =
-    (WEIGHTS.lineupPer || 0.4) * perDelta +
-    (WEIGHTS.oEff || 0.3) * ((oEff - 1.0) * 10) +
-    (WEIGHTS.dEff || 0.25) * ((1.0 - dEff) * 10) +
-    (WEIGHTS.pace || 0.1) * ((pace - 100) / 4) +
-    (WEIGHTS.rank || 0.15) * (rating || 0);
-
-  return b2bFlag ? (strength - (WEIGHTS.b2bPenalty || 1.5)) : strength;
-}
-
 /*************** PREDICTION ****************/
 
 function predictCurrentGame() {
@@ -567,52 +540,155 @@ function predictCurrentGame() {
   const game = state.games[idx];
   if (!game) return null;
 
-  const bookSpread = parseNumber(document.getElementById("book-spread").value, game.spread);
-  const bookTotal  = parseNumber(document.getElementById("book-total").value, game.total);
+  // Book lines
+  const bookSpread = parseNumber(
+    document.getElementById("book-spread").value,
+    game.spread
+  );
+  const bookTotal = parseNumber(
+    document.getElementById("book-total").value,
+    game.total
+  );
 
+  // Lineup PER
   const awayPer = computeLineupPer("away");
   const homePer = computeLineupPer("home");
 
-  document.getElementById("away-lineup-per").textContent = awayPer ? awayPer.toFixed(2) : "—";
-  document.getElementById("home-lineup-per").textContent = homePer ? homePer.toFixed(2) : "—";
+  document.getElementById("away-lineup-per").textContent =
+    awayPer ? awayPer.toFixed(2) : "—";
+  document.getElementById("home-lineup-per").textContent =
+    homePer ? homePer.toFixed(2) : "—";
 
-  const awayB2B = document.getElementById("away-b2b").checked;
-  const homeB2B = document.getElementById("home-b2b").checked;
+  // Team stats (L5 if available, else fallbacks)
+  const awayTeam = normalizeTeamName(game.away);
+  const homeTeam = normalizeTeamName(game.home);
 
-  const awayStrength = computeTeamStrength(game.away, awayPer, awayB2B);
-  const homeStrength = computeTeamStrength(game.home, homePer, homeB2B);
+  const awayStats = state.teamStats[awayTeam] || {};
+  const homeStats = state.teamStats[homeTeam] || {};
 
-  const strengthDiff = homeStrength - awayStrength; // positive -> home stronger
+  // League "averages" for formula (use reasonable fallbacks)
+  const leagueAvgPoints = state.leagueAvgPts || LEAGUE_DEFAULT_POINTS;
 
-  // Convert strength into model spread (scale factor tuned by experimentation)
-  const modelSpread = strengthDiff * 1.0; // 1.0 is base scaling; adjust if needed
 
-  // Total: start from team scoring (use L5 PPG or season PPG or league avg)
-  const awayStats = state.teamStats[normalizeTeamName(game.away)] || {};
-  const homeStats = state.teamStats[normalizeTeamName(game.home)] || {};
+  // Per-team inputs for formula
+  function getOffEff(stats) {
+    // if we have an oeff_l5, use it; else derive from PPG vs league avg points
+    if (stats.oeff_l5) return stats.oeff_l5;
+    if (stats.ppg_szn) return stats.ppg_szn / (state.leagueAvgPts / 100);
+    return 1.0;
+  }
 
-  const awayBase = awayStats.ppg_l5 || awayStats.ppg_szn || (state.leagueAvgPts/2);
-  const homeBase = homeStats.ppg_l5 || homeStats.ppg_szn || (state.leagueAvgPts/2);
+  function getDefEff(stats) {
+    if (stats.deff_l5) return stats.deff_l5;
+    if (stats.oppg_szn) return stats.oppg_szn / (state.leagueAvgPts / 100);
+    return 1.0;
+  }
 
-  // combine base and league average with a small weighting towards recent pace signal
-  const paceAvg = (awayStats.pace_l5 || 100 + homeStats.pace_l5 || 100) / 2;
-  const paceAdj = (paceAvg - 100) * 0.5;
+  function getPace(stats) {
+    return stats.pace_l5 || leagueAvgPace;
+  }
 
-  // modelTotal initial guess
-  let modelTotal = (awayBase + homeBase) * 0.5 + paceAdj;
-  // clamp model total to reasonable range
-  if (Number.isNaN(modelTotal)) modelTotal = state.leagueAvgPts;
+  // Rebounding stats:
+  // We assume you have already loaded these into state.teamStats
+  // from OREB_URL, DREB_URL, OPP_OREB_URL, OPP_DREB_URL (not shown here).
+  function getOffRebPerc(stats) {
+    return parseNumber(stats.oreb_pct, leagueAvgOffEff); // fallback neutral
+  }
 
-  // split total based on strength difference (sigmoid to avoid zeros)
-  const homeShare = 1 / (1 + Math.exp(-strengthDiff / 5));
-  const awayShare = 1 - homeShare;
+  function getDefRebPerc(stats) {
+    return parseNumber(stats.dreb_pct, leagueAvgDefEff); // fallback neutral
+  }
 
-  // ensure meaningful scores (scale to total)
-  const homeScore = Math.max(0.1, modelTotal * homeShare);
-  const awayScore = Math.max(0.1, modelTotal * awayShare);
+  function getOppOffRebPerc(stats) {
+    return parseNumber(stats.opp_oreb_pct, leagueAvgOffEff);
+  }
 
-  // convert spread->win prob (use logistic)
-  const homeWinProb = 1 / (1 + Math.exp(-(modelSpread) / 5));
+  function getOppDefRebPerc(stats) {
+    return parseNumber(stats.opp_dreb_pct, leagueAvgDefEff);
+  }
+
+  // Adjust lineup "score" = PER; center at 15 per your formula
+  const awayAdjLineup = awayPer || 15;
+  const homeAdjLineup = homePer || 15;
+
+  const awayOffEff = getOffEff(awayStats);
+  const homeOffEff = getOffEff(homeStats);
+
+  const awayDefEff = getDefEff(awayStats);
+  const homeDefEff = getDefEff(homeStats);
+
+  const awayPace = getPace(awayStats);
+  const homePace = getPace(homeStats);
+
+  const awayOREB = getOffRebPerc(awayStats);
+  const homeOREB = getOffRebPerc(homeStats);
+
+  const awayDREB = getDefRebPerc(awayStats);
+  const homeDREB = getDefRebPerc(homeStats);
+
+  const awayOppOREB = getOppOffRebPerc(awayStats);
+  const homeOppOREB = getOppOffRebPerc(homeStats);
+
+  const awayOppDREB = getOppDefRebPerc(awayStats);
+  const homeOppDREB = getOppDefRebPerc(homeStats);
+
+  // Weights for new scoring formula
+  const W_lineup    = WEIGHTS.lineupPer    ?? 1.00;
+  const W_off_eff   = WEIGHTS.oEff         ?? 0.70;
+  const W_def_eff   = WEIGHTS.dEff         ?? 0.60;
+  const W_pace      = WEIGHTS.pace         ?? 0.35;
+  const W_oreb      = WEIGHTS.oreb         ?? 0.50;
+  const W_dreb      = WEIGHTS.dreb         ?? 0.25; 
+
+  function predictedScore(
+    adjLineup,
+    offEff,
+    defEff,
+    pace,
+    orebPct,
+    drebPct,
+    oppOrebPct,
+    oppDrebPct
+  ) {
+    return (
+      leagueAvgPoints +
+      W_lineup * (adjLineup - 15) +
+      W_off_eff * (offEff - leagueAvgOffEff) -
+      W_def_eff * (defEff - leagueAvgDefEff) +
+      W_pace * (pace - leagueAvgPace) +
+      W_oreb * (orebPct - oppDrebPct) +
+      W_dreb * (drebPct - oppOrebPct)
+    );
+  }
+
+  // Apply formula to each side
+  let awayScore = predictedScore(
+    awayAdjLineup,
+    awayOffEff,
+    awayDefEff,
+    awayPace,
+    awayOREB,
+    awayDREB,
+    awayOppOREB,   // opponent offensive rebound%
+    awayOppDREB  // opponent defensive rebound%
+  );
+
+  let homeScore = predictedScore(
+    homeAdjLineup,
+    homeOffEff,
+    homeDefEff,
+    homePace,
+    homeOREB,
+    homeDREB,
+    homeOppOREB, // opponent offensive rebound%
+    homeOppDREB  // opponent defensive rebound%
+  );
+
+  const modelTotal = awayScore + homeScore;
+  const modelSpread = homeScore - awayScore; // home minus away
+
+  // simple win prob from spread
+  const homeWinProb = 1 / (1 + Math.exp(-modelSpread / 5));
   const awayWinProb = 1 - homeWinProb;
 
   const pred = {
@@ -627,7 +703,7 @@ function predictCurrentGame() {
     awayWinProb
   };
 
-  return pred;
+    return pred;
 }
 
 /*************** STAT COMPARISON ****************/
