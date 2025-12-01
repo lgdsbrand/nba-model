@@ -1,7 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <title>NBA Game Predictor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
@@ -486,127 +486,209 @@
   </style>
 </head>
 <body>
-  <header class="app-header">
+  <div class="page">
     <h1>NBA Game Predictor</h1>
-    <div class="sub">Lineup-driven outcomes with team stat nudges</div>
-  </header>
 
-    <!-- Games top bar -->
+    <!-- TODAY'S GAMES -->
     <section class="card">
-      <h2>Today’s games</h2>
-      <div class="games-top">
-        <div class="games-left">
-          <label class="inline">
-            Select game
-            <select id="game-select"></select>
-          </label>
-          <div class="game-meta">
-            <div><strong>Time:</strong> <span id="meta-time">—</span></div>
-            <div><strong>Location:</strong> <span id="meta-location">—</span></div>
-            <div><strong>Hotness:</strong> <span id="meta-hotness">—</span></div>
-            <div><strong>Rank:</strong> <span id="meta-rank">—</span></div>
+      <div class="card-header">
+        <h2>Today's Games</h2>
+        <span id="games-error" class="error-text"></span>
+      </div>
+
+      <div id="games-bar"></div>
+
+      <!-- Selected game panel -->
+      <div id="selected-game-panel" class="hidden">
+        <div class="sg-row">
+          <div class="sg-main">
+            <div id="sg-matchup" class="sg-main-title"></div>
+            <div id="sg-time" class="sg-main-time"></div>
+          </div>
+          <div class="sg-lines">
+            <span class="tag">
+              Spread (Home = -): <span id="sg-spread">—</span>
+            </span>
+            <span class="tag">
+              Total: <span id="sg-total">—</span>
+            </span>
+            <span class="inline-input">
+              Edit Spread:
+              <input id="book-spread" type="number" step="0.5" />
+            </span>
+            <span class="inline-input">
+              Edit Total:
+              <input id="book-total" type="number" step="0.5" />
+            </span>
           </div>
         </div>
-        <div class="games-right">
-          <label class="inline">
-            Edit spread (home − away)
-            <input id="edit-spread" type="number" step="0.5" value="0" />
-          </label>
-          <label class="inline">
-            Edit total
-            <input id="edit-total" type="number" step="0.5" value="220" />
-          </label>
-          <div class="actions">
-            <button id="btn-predict">Predict game</button>
-            <button id="btn-stat">Stat comparison</button>
-            <button id="btn-lineups">Lineups</button>
-            <button id="btn-save">Save game to table</button>
-          </div>
+
+        <div class="btn-row">
+          <button id="btn-predict" class="btn btn-primary">Predict Game</button>
+          <button id="btn-lineups" class="btn">Lineups</button>
+          <button id="btn-stats" class="btn">Stat Comparison</button>
+          <button id="btn-save" class="btn">Save Game to Table</button>
         </div>
+
+        <div id="prediction-error" class="error-text"></div>
       </div>
     </section>
 
-    <!-- Stat comparison -->
-    <section class="card">
-      <h2>Stat comparison</h2>
-      <div id="stat-comp" class="table-wrap">
-        <!-- Filled by JS -->
+    <!-- LINEUPS -->
+    <section id="lineups-section" class="card hidden">
+      <div class="card-header">
+        <h2>Lineups</h2>
+        <span class="subtle">Adjust starters &amp; back-to-back flags</span>
       </div>
-    </section>
 
-    <!-- Lineups -->
-    <section class="card">
-      <h2>Lineups</h2>
-      <div class="lineups-grid">
+      <datalist id="players-list"></datalist>
+
+      <div class="lineup-grid">
+        <!-- Away -->
         <div class="lineup-card">
-          <div class="lineup-head">
-            <h3>Away lineup — <span id="away-team">—</span></h3>
-            <label class="inline">
-              Away back-to-back
-              <input type="checkbox" id="away-b2b" />
-            </label>
+          <h3>Away Lineup — <span id="away-team-label">Away</span></h3>
+
+          <div class="field">
+            <label for="away-g1">Guard 1</label>
+            <input id="away-g1" type="text" list="players-list" />
           </div>
-          <div class="lineup-fields" id="away-fields">
-            <!-- Player inputs injected here -->
+          <div class="field">
+            <label for="away-g2">Guard 2</label>
+            <input id="away-g2" type="text" list="players-list" />
           </div>
+          <div class="field">
+            <label for="away-f1">Forward 1</label>
+            <input id="away-f1" type="text" list="players-list" />
+          </div>
+          <div class="field">
+            <label for="away-f2">Forward 2</label>
+            <input id="away-f2" type="text" list="players-list" />
+          </div>
+          <div class="field">
+            <label for="away-c">Center</label>
+            <input id="away-c" type="text" list="players-list" />
+          </div>
+
+          <div class="toggle-row">
+            <input id="away-b2b" type="checkbox" />
+            <span class="mini-label">Away Back-to-Back</span>
+          </div>
+
           <div class="lineup-footer">
-            <div><strong>Lineup PER:</strong> <span id="away-lineup-per">0.00</span></div>
-            <div class="actions">
-              <button id="away-save">Save</button>
-              <button id="away-reset">Reset</button>
+            <div>
+              <small>Lineup PER:&nbsp;</small>
+              <strong id="away-lineup-per">—</strong>
+            </div>
+            <div>
+              <button id="btn-save-away" class="btn btn-primary" style="padding:6px 10px;font-size:0.75rem;">Save</button>
+              <button id="btn-reset-away" class="btn btn-ghost" style="padding:6px 10px;font-size:0.75rem;">Reset</button>
             </div>
           </div>
         </div>
+
+        <!-- Home -->
         <div class="lineup-card">
-          <div class="lineup-head">
-            <h3>Home lineup — <span id="home-team">—</span></h3>
-            <label class="inline">
-              Home back-to-back
-              <input type="checkbox" id="home-b2b" />
-            </label>
+          <h3>Home Lineup — <span id="home-team-label">Home</span></h3>
+
+          <div class="field">
+            <label for="home-g1">Guard 1</label>
+            <input id="home-g1" type="text" list="players-list" />
           </div>
-          <div class="lineup-fields" id="home-fields">
-            <!-- Player inputs injected here -->
+          <div class="field">
+            <label for="home-g2">Guard 2</label>
+            <input id="home-g2" type="text" list="players-list" />
           </div>
+          <div class="field">
+            <label for="home-f1">Forward 1</label>
+            <input id="home-f1" type="text" list="players-list" />
+          </div>
+          <div class="field">
+            <label for="home-f2">Forward 2</label>
+            <input id="home-f2" type="text" list="players-list" />
+          </div>
+          <div class="field">
+            <label for="home-c">Center</label>
+            <input id="home-c" type="text" list="players-list" />
+          </div>
+
+          <div class="toggle-row">
+            <input id="home-b2b" type="checkbox" />
+            <span class="mini-label">Home Back-to-Back</span>
+          </div>
+
           <div class="lineup-footer">
-            <div><strong>Lineup PER:</strong> <span id="home-lineup-per">0.00</span></div>
-            <div class="actions">
-              <button id="home-save">Save</button>
-              <button id="home-reset">Reset</button>
+            <div>
+              <small>Lineup PER:&nbsp;</small>
+              <strong id="home-lineup-per">—</strong>
+            </div>
+            <div>
+              <button id="btn-save-home" class="btn btn-primary" style="padding:6px 10px;font-size:0.75rem;">Save</button>
+              <button id="btn-reset-home" class="btn btn-ghost" style="padding:6px 10px;font-size:0.75rem;">Reset</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Prediction output -->
-    <section class="card">
-      <h2>Model output</h2>
+    <!-- PREDICTION -->
+    <section id="prediction-section" class="card hidden">
+      <div class="card-header">
+        <h2>Game Prediction Results</h2>
+      </div>
       <div class="pred-grid">
-        <div class="pred-box">
-          <div class="pred-label">Moneyline edge</div>
-          <div class="pred-value" id="ml-edge">—</div>
+        <div class="pred-scores">
+          <div class="team-score-row">
+            <span id="pred-away-name">Away</span>
+            <span id="pred-away-score">—</span>
+          </div>
+          <div class="team-score-row">
+            <span id="pred-home-name">Home</span>
+            <span id="pred-home-score">—</span>
+          </div>
+          <div class="pred-meta">
+            Predicted Winner:&nbsp;<strong id="pred-winner">—</strong>
+            <br />
+            Win Probability:
+            <br />
+            <span id="pred-away-winprob"></span><br />
+            <span id="pred-home-winprob"></span>
+          </div>
         </div>
-        <div class="pred-box">
-          <div class="pred-label">ATS edge</div>
-          <div class="pred-value" id="ats-edge">—</div>
-        </div>
-        <div class="pred-box">
-          <div class="pred-label">Total edge</div>
-          <div class="pred-value" id="total-edge">—</div>
-        </div>
-        <div class="pred-box">
-          <div class="pred-label">Confidence</div>
-          <div class="pred-value" id="confidence">—</div>
+
+        <div class="pred-picks">
+          <p id="pred-total-line"></p>
+          <p>
+            <span id="pred-total-play-pill" class="pill pill-nobet"></span>
+            <span id="pred-total-play"></span>
+          </p>
+          <hr style="border:none;border-top:1px solid var(--border);margin:8px 0;" />
+          <p id="pred-spread-line"></p>
+          <p>
+            <span id="pred-spread-play-pill" class="pill pill-nobet"></span>
+            <span id="pred-spread-play"></span>
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- Saved games -->
+    <!-- STATS -->
+    <section id="stats-section" class="card hidden">
+      <div class="card-header">
+        <h2>Stat Comparison</h2>
+        <span id="stats-error" class="error-text"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="stats-table"></table>
+      </div>
+    </section>
+
+    <!-- SAVED GAMES -->
     <section class="card">
-      <h2>Saved games</h2>
-      <div class="table-wrap">
-        <table class="table">
+      <div class="card-header">
+        <h2>Saved Games</h2>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="saved-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -614,18 +696,19 @@
               <th>Model Away</th>
               <th>Model Home</th>
               <th>Model Total</th>
+              <th>Book Total</th>
+              <th>Total Edge</th>
+              <th>Model Spread</th>
+              <th>Book Spread</th>
+              <th>Spread Edge</th>
             </tr>
           </thead>
-          <tbody id="saved-table"></tbody>
+          <tbody></tbody>
         </table>
       </div>
     </section>
-  </main>
+  </div>
 
-  <footer class="app-footer">
-    <div>nba-model.vercel.app — vanilla HTML/CSS/JS</div>
-  </footer>
-
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
