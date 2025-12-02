@@ -537,10 +537,8 @@ function computeLineupPer(side) {
 }
 
 function loadDefaultLineup(side, teamRaw) {
-  console.log("loadDefaultLineup", side, teamRaw);
   const team = normalizeTeamName(teamRaw);
   const lineup = state.defaultLineups[team] || { g1: "", g2: "", f1: "", f2: "", c: "" };
-  console.log("  normalized team:", team, "lineup:", lineup);
   document.getElementById(`${side}-g1`).value = lineup.g1 || "";
   document.getElementById(`${side}-g2`).value = lineup.g2 || "";
   document.getElementById(`${side}-f1`).value = lineup.f1 || "";
@@ -549,7 +547,6 @@ function loadDefaultLineup(side, teamRaw) {
   document.getElementById(`${side}-b2b`).checked = false;
   const per = computeLineupPer(side);
   document.getElementById(`${side}-lineup-per`).textContent = per ? per.toFixed(2) : "—";
-  console.log("  loaded lineup PER:", per);
 }
 
 /*************** PREDICTION ****************/
