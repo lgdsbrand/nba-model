@@ -385,7 +385,8 @@ async function init() {
       const team = l.team;
       if (!team) return;
       // starters
-      state.defaultLineups[team] = {
+      const normalizedTeam = normalizeTeamName(team);
+      state.defaultLineups[normalizedTeam] = {
         g1: l.g1 || "",
         g2: l.g2 || "",
         f1: l.f1 || "",
