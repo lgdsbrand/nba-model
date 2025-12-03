@@ -227,6 +227,7 @@ const state = {
   games: [],
   players: {},          // name -> { name, g, mp, per, usg }
   defaultLineups: {},   // teamName -> { g1,g2,f1,f2,c }
+  customLineups: {},     // teamName -> { g1,g2,f1,f2,c }
   teamStats: {},        // teamName -> merged stats object
   leagueAvgPts: typeof LEAGUE_DEFAULT_POINTS !== "undefined" ? LEAGUE_DEFAULT_POINTS : 118,
   selectedGameIndex: null,
@@ -385,7 +386,8 @@ async function init() {
       const team = l.team;
       if (!team) return;
       // starters
-      state.defaultLineups[team] = {
+      const normalizedTeam = normalizeTeamName(team);
+      state.defaultLineups[normalizedTeam] = {
         g1: l.g1 || "",
         g2: l.g2 || "",
         f1: l.f1 || "",
@@ -505,18 +507,33 @@ function selectGame(index) {
   document.getElementById("prediction-error").textContent = "";
 }
 
+/*************** LINEUP + MODEL HELPERS ****************/
+
+function getLineupPlayers(side) {
+  return [
+    document.getElementById(`${side}-g1`).value.trim(),
+    document.getElementById(`${side}-g2`).value.trim(),
+    document.getElementById(`${side}-f1`).value.trim(),
+    document.getElementById(`${side}-f2`).value.trim(),
+    document.getElementById(`${side}-c`).value.trim()
+  ].filter(Boolean);
+}
+
 function computeLineupPer(side) {
-  const idx = state.selectedGameIndex;
-  if (idx == null || !state.games[idx]) return 0;
-
-  const game = state.games[idx];
-  const teamName = side === "home" ? game.home : game.away;
-  const normTeamName = normalizeTeamName(teamName);
-
-  const teamStats = state.teamStats[normTeamName];
-  if (!teamStats || typeof teamStats.lineup_per !== "number") return 0;
-
-  return teamStats.lineup_per;
+  const playerNames = getLineupPlayers(side);
+  if (!playerNames.length) return 0;
+  let weightedSum = 0;
+  let weightTotal = 0;
+  playerNames.forEach(name => {
+    const p = state.players[name];
+    if (!p) return;
+    const minutes = p.mp || 20;
+    const usage = p.usg || 20;
+    const w = minutes * (usage / 20);
+    weightedSum += (p.per || 15) * w;
+    weightTotal += w;
+  });
+  return weightTotal ? (weightedSum / weightTotal) : 0;
 }
 
 function loadDefaultLineup(side, teamRaw) {
@@ -854,7 +871,7 @@ function wireUiHandlers() {
   document.getElementById("btn-save-away").addEventListener("click", () => {
     if (state.selectedGameIndex == null) return;
     const team = normalizeTeamName(state.games[state.selectedGameIndex].away);
-    state.defaultLineups[team] = {
+    state.customLineups[team] = {
       g1: document.getElementById("away-g1").value.trim(),
       g2: document.getElementById("away-g2").value.trim(),
       f1: document.getElementById("away-f1").value.trim(),
@@ -872,7 +889,8 @@ function wireUiHandlers() {
   document.getElementById("btn-save-home").addEventListener("click", () => {
     if (state.selectedGameIndex == null) return;
     const team = normalizeTeamName(state.games[state.selectedGameIndex].home);
-    state.defaultLineups[team] = {
+    // save custom lineups
+    state.customLineups[team] = {
       g1: document.getElementById("home-g1").value.trim(),
       g2: document.getElementById("home-g2").value.trim(),
       f1: document.getElementById("home-f1").value.trim(),
