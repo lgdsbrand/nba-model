@@ -1,0 +1,4 @@
+# The data job and its raw cache are not part of the site; only nba/ is.
+/data/
+/pipeline/
+/.github/
