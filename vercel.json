@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/", "destination": "https://lgdsanalytics.vercel.app/nba", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/", "destination": "/nba/index.html" },
     { "source": "/nba", "destination": "/nba/index.html" }
   ]
 }
