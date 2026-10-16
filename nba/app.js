@@ -2,7 +2,7 @@
  * NBA LINEUP MODEL — static app.js for Vercel
  * - Uses column letters only (no header names required)
  * - Supports:
- *   • Games bar from Apps Script sheet
+ *   • Games bar from nba/data/games.csv (pipeline/nba_data.py)
  *   • Editable lineups with PER/USG weighting
  *   • Back-to-back toggles
  *   • Stat comparison table
@@ -10,24 +10,29 @@
  *   • Name mapping via "names" tab (TR / nbastuffer → ESPN)
  ***********************************************************/
 
-/* 1) PASTE YOUR CSV LINKS HERE */
-const GAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=66182824&single=true&output=csv";
+/* 1) DATA FILES
+   Written twice a day by pipeline/nba_data.py (GitHub Actions) from ESPN's
+   NBA feeds, in place of the Google Sheet tabs this page used to read
+   (2026-10-16): nobody kept the sheet up to date. One file per old tab. */
+const DATA = "/nba/data/";
+const GAMES_URL     = DATA + "games.csv";
 
-const PLAYER_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2033299676&single=true&output=csv";
-const LINEUPS_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=975459408&single=true&output=csv";
-const LEAGUE_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1422185850&single=true&output=csv";
+const PLAYER_URL    = DATA + "players.csv";
+const LINEUPS_URL   = DATA + "lineups.csv";
+const LEAGUE_URL    = DATA + "league.csv";
 
-const OREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1907720061&single=true&output=csv";
-const DREB_URL      = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=957131207&single=true&output=csv";
-const OPP_OREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1902898168&single=true&output=csv";
-const OPP_DREB_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=32364573&single=true&output=csv";
+// Rebounding tabs: never loaded (see getOffRebPerc below), so no files.
+const OREB_URL      = "";
+const DREB_URL      = "";
+const OPP_OREB_URL  = "";
+const OPP_DREB_URL  = "";
 
-const ATS_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1315673353&single=true&output=csv";
-const OU_URL        = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1968724257&single=true&output=csv";
-const RANKING_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=2093071983&single=true&output=csv";
-const PPG_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=1145033141&single=true&output=csv";
-const NBASTUFF_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=837216555&single=true&output=csv";
-const NAMES_URL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBKVlskmdHsujbUSOK_73O32-atb-RXYaWuqZL6THtbkWrYx8DTH3s8vfmsbxN9mxzBd0FiTzz49KI/pub?gid=19771105&single=true&output=csv";
+const ATS_URL       = DATA + "ats.csv";
+const OU_URL        = DATA + "ou.csv";
+const RANKING_URL   = DATA + "ranking.csv";
+const PPG_URL       = DATA + "team_season.csv";
+const NBASTUFF_URL  = DATA + "team_l5.csv";
+const NAMES_URL     = DATA + "names.csv";
 
 
 /* 2) COLUMN LETTER MAP (edit these to match your sheets)
@@ -48,14 +53,14 @@ const COLS = {
     total: "H"
   },
 
-  // Player stats: (use your actual letters)
-  // Example: B = Name, F = Games, H = MP/G, I = PER, T = USG%
+  // players.csv: A Player, B Team, C G, D MP (season TOTAL minutes, as the
+  // sheet's Basketball-Reference copy had them), E PER, F USG%
   players: {
-    name: "B",
-    g:    "F",
-    mp:   "H",
-    per:  "I",
-    usg:  "T"
+    name: "A",
+    g:    "C",
+    mp:   "D",
+    per:  "E",
+    usg:  "F"
   },
 
   // Lineups tab (your screenshot: A team, B–F positions)
@@ -66,28 +71,30 @@ const COLS = {
     f1:   "D",
     f2:   "E",
     c:    "F",
-    PER:  "AA"
+    PER:  ""   // lineups.csv has no lineup PER; computeLineupPer works it out
   },
 
   // NBA Stuffer L5 / H/A tab (adjust letters if needed)
   // B: Team, F: PPG, G: OPPG, H: Pace, J: oEff, K: dEff,
   // L: W (last 5), M: L (last 5)
+  // team_l5.csv: A Team, B PPG, C OPPG, D Pace, E OffEff, F DefEff, G W, H L
   nbastuff: {
-    team:  "B",
-    ppg:   "F",
-    oppg:  "G",
-    pace:  "I",
-    oeff:  "J",
-    deff:  "K",
-    l5w:   "R",
-    l5l:   "S"
+    team:  "A",
+    ppg:   "B",
+    oppg:  "C",
+    pace:  "D",
+    oeff:  "E",
+    deff:  "F",
+    l5w:   "G",
+    l5l:   "H"
   },
 
   // Season PPG / OPPG tab
+  // team_season.csv: A Team, B PPG, C OPPG
   ppg: {
-    team: "B",
-    ppg:  "F",
-    oppg: "G"
+    team: "A",
+    ppg:  "B",
+    oppg: "C"
   },
 
   // ATS tab: A = Team, B = Record (e.g. 8-3-0), C = Cover%
@@ -104,9 +111,10 @@ const COLS = {
   },
 
   // Predictive ranking tab: A = Team, D = Rating
+  // ranking.csv: A Team, B Rating
   ranking: {
     team:   "A",
-    rating: "D"
+    rating: "B"
   },
 
   // Names tab: A = TeamRankings, B = nbastuffer, C = ESPN/mascot
@@ -269,7 +277,7 @@ async function init() {
     ]);
 
     // parse and map
-    state.games = mapTable(gamesRows, COLS.games).map(g => ({
+    state.games = nextGameDay(mapTable(gamesRows, COLS.games)).map(g => ({
       ...g,
       spread: parseNumber(g.spread, 0),
       total: parseNumber(g.total, 0)
@@ -415,6 +423,27 @@ async function init() {
     const gamesErrorEl = document.getElementById("games-error");
     if (gamesErrorEl) gamesErrorEl.textContent = "Load error — check CSV links / permissions.";
   }
+}
+
+/*************** GAME DAY ****************/
+
+// games.csv lists the next few game days. Show the first one that is today or
+// later in Eastern time; when it is not today (the night before opening day,
+// say), each game carries its date so it is not read as tonight's.
+function easternToday() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
+}
+
+function nextGameDay(games) {
+  const today = easternToday();
+  const day = games.map(g => g.date).filter(d => d && d >= today).sort()[0];
+  if (!day) return [];
+  const label = new Date(`${day}T12:00:00Z`).toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric", timeZone: "UTC"
+  });
+  return games
+    .filter(g => g.date === day)
+    .map(g => (day === today ? g : { ...g, time: `${label} · ${g.time}` }));
 }
 
 /*************** NAME NORMALIZATION ****************/

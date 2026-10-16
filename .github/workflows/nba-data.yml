@@ -1,0 +1,45 @@
+# Rebuilds the NBA predictor's data (nba/data/) from ESPN twice a day and
+# commits it; the commit redeploys the page. See pipeline/nba_data.py.
+#   13:00 UTC (9 a.m. ET): last night's games are final, today's lines are up.
+#   21:00 UTC (5 p.m. ET): updated lines before the evening tip-offs.
+# "Run workflow" on the Actions tab runs it on demand.
+name: NBA data
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the data
+        run: python pipeline/nba_data.py
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nba/data data/raw
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "NBA data $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
