@@ -1,13 +1,13 @@
 Team,PPG,OPPG,Pace,OffEff,DefEff,W,L
 Atlanta Hawks,100.0,118.8,98.6,101.6,120.3,2,3
-Boston Celtics,105.2,104.8,95.0,110.3,110.5,2,3
+Boston Celtics,106.2,109.0,96.9,109.3,112.3,1,4
 Brooklyn Nets,104.0,117.8,98.6,106.5,118.9,2,3
 Charlotte Hornets,112.6,108.6,96.1,116.0,114.4,3,2
 Chicago Bulls,117.8,120.4,108.0,108.3,112.3,2,3
 Cleveland Cavaliers,101.8,112.6,97.6,102.7,113.0,1,4
 Dallas Mavericks,122.6,124.6,104.1,118.3,118.8,2,3
 Denver Nuggets,109.4,112.4,102.8,106.1,109.9,2,3
-Detroit Pistons,106.4,109.6,96.3,109.8,114.4,2,3
+Detroit Pistons,108.4,112.0,97.7,109.9,115.9,2,3
 Golden State Warriors,111.4,116.0,96.0,116.0,120.2,1,4
 Houston Rockets,98.8,100.0,93.1,102.8,105.9,2,3
 Indiana Pacers,110.0,114.6,103.8,106.4,110.2,1,4
@@ -18,14 +18,14 @@ Miami Heat,128.8,123.8,103.1,124.5,120.0,3,2
 Milwaukee Bucks,112.6,116.4,97.7,113.3,121.3,2,3
 Minnesota Timberwolves,104.6,124.4,104.8,98.1,121.1,1,4
 New Orleans Pelicans,124.2,128.4,108.7,113.3,118.7,1,4
-New York Knicks,104.4,102.0,97.8,106.4,104.9,4,1
-Oklahoma City Thunder,105.2,110.8,100.0,105.2,110.3,2,3
+New York Knicks,103.4,104.2,98.9,104.1,105.9,3,2
+Oklahoma City Thunder,103.8,110.0,101.2,102.5,108.2,2,3
 Orlando Magic,97.8,103.6,96.6,100.4,108.1,2,3
-Philadelphia 76ers,103.4,119.4,95.9,106.7,125.6,1,4
+Philadelphia 76ers,102.8,119.4,97.5,104.6,122.8,1,4
 Phoenix Suns,111.4,118.8,98.0,112.7,121.8,1,4
 Portland Trail Blazers,100.0,112.4,97.9,101.1,115.3,1,4
 Sacramento Kings,113.0,120.2,100.4,113.1,118.8,2,3
-San Antonio Spurs,102.0,104.4,97.7,104.9,106.4,1,4
+San Antonio Spurs,103.8,106.6,99.0,105.0,107.6,1,4
 Team Stars,41.3,32.7,134.7,119.1,95.7,2,1
 Team Stripes,37.0,44.0,134.2,112.0,130.6,2,1
 Toronto Raptors,110.6,108.4,98.8,108.1,108.9,3,2
