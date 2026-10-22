@@ -1,14 +1,15 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909834,2026-10-21,7:00 PM ET,Atlanta Hawks,Orlando Magic,,,
-401909835,2026-10-21,7:00 PM ET,Milwaukee Bucks,Washington Wizards,,,
-401909091,2026-10-21,7:30 PM ET,Minnesota Timberwolves,Miami Heat,,,
-401909836,2026-10-21,7:30 PM ET,Charlotte Hornets,Brooklyn Nets,,,
-401909837,2026-10-21,7:30 PM ET,Chicago Bulls,Toronto Raptors,,,
-401909838,2026-10-21,8:00 PM ET,Utah Jazz,Memphis Grizzlies,,-1.5,240.5
-401909839,2026-10-21,8:00 PM ET,Indiana Pacers,New Orleans Pelicans,,2.5,238.5
-401909840,2026-10-21,8:30 PM ET,Dallas Mavericks,Houston Rockets,,-9.5,230.5
-401909092,2026-10-21,10:00 PM ET,Golden State Warriors,Los Angeles Lakers,,-6.5,234.5
-401909841,2026-10-21,10:00 PM ET,Phoenix Suns,Portland Trail Blazers,,-2.5,231.5
-401909842,2026-10-21,10:30 PM ET,Sacramento Kings,LA Clippers,,-5.5,226.5
-401909093,2026-10-22,7:00 PM ET,Cleveland Cavaliers,Philadelphia 76ers,,-3.5,235.5
-401909094,2026-10-22,9:30 PM ET,Denver Nuggets,Oklahoma City Thunder,,-7.5,235.5
+401909093,2026-10-22,7:00 PM ET,Cleveland Cavaliers,Philadelphia 76ers,,-2.5,237.5
+401909094,2026-10-22,9:30 PM ET,Denver Nuggets,Oklahoma City Thunder,,-8.5,236.5
+401909848,2026-10-23,4:00 PM ET,Chicago Bulls,Milwaukee Bucks,,-1.5,238.5
+401909095,2026-10-23,7:00 PM ET,New York Knicks,Boston Celtics,,-2.5,223.5
+401909843,2026-10-23,7:00 PM ET,Atlanta Hawks,Charlotte Hornets,,2.5,226.5
+401909844,2026-10-23,7:00 PM ET,Dallas Mavericks,Indiana Pacers,,-5.5,236.5
+401909845,2026-10-23,7:00 PM ET,Minnesota Timberwolves,Orlando Magic,,1.5,238.5
+401909846,2026-10-23,7:00 PM ET,Toronto Raptors,Washington Wizards,,5.5,236.5
+401909847,2026-10-23,8:00 PM ET,Detroit Pistons,Miami Heat,,-1.5,237.5
+401909096,2026-10-23,9:30 PM ET,Houston Rockets,San Antonio Spurs,,-6.5,227.5
+401909849,2026-10-23,9:30 PM ET,New Orleans Pelicans,Utah Jazz,,-3.5,241.5
+401909850,2026-10-23,10:00 PM ET,Memphis Grizzlies,Golden State Warriors,,-3.5,235.5
+401909851,2026-10-23,10:00 PM ET,LA Clippers,Los Angeles Lakers,,-9.5,228.5
+401909852,2026-10-23,10:00 PM ET,Portland Trail Blazers,Sacramento Kings,,7.5,232.5
