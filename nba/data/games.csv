@@ -1,21 +1,16 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909848,2026-10-23,4:00 PM ET,Chicago Bulls,Milwaukee Bucks,,,
-401909095,2026-10-23,7:00 PM ET,New York Knicks,Boston Celtics,,,
-401909843,2026-10-23,7:00 PM ET,Atlanta Hawks,Charlotte Hornets,,,
-401909844,2026-10-23,7:00 PM ET,Dallas Mavericks,Indiana Pacers,,,
-401909845,2026-10-23,7:00 PM ET,Minnesota Timberwolves,Orlando Magic,,,
-401909846,2026-10-23,7:00 PM ET,Toronto Raptors,Washington Wizards,,,
-401909847,2026-10-23,8:00 PM ET,Detroit Pistons,Miami Heat,,1.5,235.5
-401909096,2026-10-23,9:30 PM ET,Houston Rockets,San Antonio Spurs,,-4.5,224.5
-401909849,2026-10-23,9:30 PM ET,New Orleans Pelicans,Utah Jazz,,-1.5,238.5
-401909850,2026-10-23,10:00 PM ET,Memphis Grizzlies,Golden State Warriors,,-4.5,236.5
-401909851,2026-10-23,10:00 PM ET,LA Clippers,Los Angeles Lakers,,-8.5,225.5
-401909852,2026-10-23,10:00 PM ET,Portland Trail Blazers,Sacramento Kings,,9.5,231.5
-401909853,2026-10-24,6:00 PM ET,Miami Heat,Charlotte Hornets,,,
-401909854,2026-10-24,7:30 PM ET,Brooklyn Nets,Cleveland Cavaliers,,,
-401909855,2026-10-24,7:30 PM ET,Milwaukee Bucks,Philadelphia 76ers,,,
-401909857,2026-10-24,8:00 PM ET,Washington Wizards,Chicago Bulls,,,
-401909858,2026-10-24,8:00 PM ET,San Antonio Spurs,Dallas Mavericks,,,
-401909856,2026-10-24,8:30 PM ET,Houston Rockets,Atlanta Hawks,,,
-401909859,2026-10-24,9:00 PM ET,New Orleans Pelicans,Denver Nuggets,,,
-401909860,2026-10-24,10:00 PM ET,Golden State Warriors,Phoenix Suns,,,
+401909853,2026-10-24,6:00 PM ET,Miami Heat,Charlotte Hornets,,3.5,229.5
+401909854,2026-10-24,7:30 PM ET,Brooklyn Nets,Cleveland Cavaliers,,-11.5,228.5
+401909855,2026-10-24,7:30 PM ET,Milwaukee Bucks,Philadelphia 76ers,,-12.5,235.5
+401909857,2026-10-24,8:00 PM ET,Washington Wizards,Chicago Bulls,,-2.5,244.5
+401909858,2026-10-24,8:00 PM ET,San Antonio Spurs,Dallas Mavericks,,12.5,232.5
+401909856,2026-10-24,8:30 PM ET,Houston Rockets,Atlanta Hawks,,-1.5,227.5
+401909859,2026-10-24,9:00 PM ET,New Orleans Pelicans,Denver Nuggets,,-11.5,239.5
+401909860,2026-10-24,10:00 PM ET,Golden State Warriors,Phoenix Suns,,-9.5,221.5
+401909861,2026-10-25,5:00 PM ET,Los Angeles Lakers,Utah Jazz,,,
+401909862,2026-10-25,6:00 PM ET,Indiana Pacers,Brooklyn Nets,,,
+401909863,2026-10-25,7:00 PM ET,Orlando Magic,New York Knicks,,,
+401909864,2026-10-25,7:00 PM ET,Toronto Raptors,Minnesota Timberwolves,,,
+401909865,2026-10-25,7:00 PM ET,LA Clippers,Oklahoma City Thunder,,,
+401909866,2026-10-25,7:30 PM ET,Detroit Pistons,Philadelphia 76ers,,,
+401909867,2026-10-25,9:00 PM ET,Memphis Grizzlies,Sacramento Kings,,,
