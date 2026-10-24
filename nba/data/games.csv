@@ -1,10 +1,10 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909853,2026-10-24,6:00 PM ET,Miami Heat,Charlotte Hornets,,3.5,229.5
+401909853,2026-10-24,6:00 PM ET,Miami Heat,Charlotte Hornets,,,
 401909854,2026-10-24,7:30 PM ET,Brooklyn Nets,Cleveland Cavaliers,,-11.5,228.5
-401909855,2026-10-24,7:30 PM ET,Milwaukee Bucks,Philadelphia 76ers,,-12.5,235.5
-401909857,2026-10-24,8:00 PM ET,Washington Wizards,Chicago Bulls,,-2.5,244.5
-401909858,2026-10-24,8:00 PM ET,San Antonio Spurs,Dallas Mavericks,,12.5,232.5
-401909856,2026-10-24,8:30 PM ET,Houston Rockets,Atlanta Hawks,,-1.5,227.5
+401909855,2026-10-24,7:30 PM ET,Milwaukee Bucks,Philadelphia 76ers,,-12.5,234.5
+401909857,2026-10-24,8:00 PM ET,Washington Wizards,Chicago Bulls,,-1.5,244.5
+401909858,2026-10-24,8:00 PM ET,San Antonio Spurs,Dallas Mavericks,,14.5,229.5
+401909856,2026-10-24,8:30 PM ET,Houston Rockets,Atlanta Hawks,,1.5,227.5
 401909859,2026-10-24,9:00 PM ET,New Orleans Pelicans,Denver Nuggets,,-11.5,239.5
 401909860,2026-10-24,10:00 PM ET,Golden State Warriors,Phoenix Suns,,-9.5,221.5
 401909861,2026-10-25,5:00 PM ET,Los Angeles Lakers,Utah Jazz,,,
