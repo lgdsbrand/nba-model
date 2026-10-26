@@ -641,6 +641,11 @@ def build(today: date) -> None:
                 "last season + this season" if blend else "this season"]])
     print(f"wrote nba/data: {len(players)} players, {len(starters)} lineups, {len(games)} upcoming games")
 
+    # The game cards: projections, lines, records and results for five days.
+    import cards  # imported here: cards imports this module
+    cards.build(today, teams, rows, current, previous, window_teams, every_game, players,
+                starters, ats, ou)
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
