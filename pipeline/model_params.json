@@ -1,0 +1,39 @@
+{
+  "fitted_on": "2026 season, 1157 games, 2025-11-09 to 2026-06-13",
+  "margin": {
+    "names": [
+      "home court",
+      "season matchup",
+      "last-5 matchup",
+      "PER diff"
+    ],
+    "coef": [
+      1.5475,
+      0.6053,
+      0.1235,
+      0.435
+    ],
+    "sd": 14.78
+  },
+  "total": {
+    "names": [
+      "constant",
+      "season matchup",
+      "last-5 matchup",
+      "PER sum"
+    ],
+    "coef": [
+      42.5357,
+      0.6306,
+      0.2456,
+      -0.4163
+    ],
+    "sd": 19.49
+  },
+  "win_stretch": 1.45,
+  "edge_shrink": {
+    "spread": 0.0,
+    "total": 0.0,
+    "moneyline": 0.0
+  }
+}

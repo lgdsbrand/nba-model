@@ -1,14 +1,20 @@
-# Rebuilds the NBA predictor's data (nba/data/) from ESPN twice a day and
+# Rebuilds the NBA predictor's data (nba/data/) from ESPN five times a day and
 # commits it; the commit redeploys the page. See pipeline/nba_data.py.
-#   13:00 UTC (9 a.m. ET): last night's games are final, today's lines are up.
-#   21:00 UTC (5 p.m. ET): updated lines before the evening tip-offs.
+#   14:17 UTC: last night's games are final, today's lines are up.
+#   18:17, 21:43, 23:13, 01:13 UTC: fresher lines; each game's prediction is
+#   frozen at the last run before it tips (pipeline/cards.py).
+# Off the hour on purpose: GitHub delayed the old on-the-hour runs by two to
+# four hours, so the evening run often landed after the 7 p.m. ET tip-offs.
 # "Run workflow" on the Actions tab runs it on demand.
 name: NBA data
 
 on:
   schedule:
-    - cron: "0 13 * * *"
-    - cron: "0 21 * * *"
+    - cron: "17 14 * * *"
+    - cron: "17 18 * * *"
+    - cron: "43 21 * * *"
+    - cron: "13 23 * * *"
+    - cron: "13 1 * * *"
   workflow_dispatch:
 
 permissions:
@@ -41,5 +47,7 @@ jobs:
             echo "No changes."
           else
             git commit -m "NBA data $(date -u +'%Y-%m-%d %H:%M') UTC"
+            # A code change pushed while the job ran would reject a plain push.
+            git pull --rebase
             git push
           fi
