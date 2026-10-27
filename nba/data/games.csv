@@ -6,9 +6,9 @@ GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
 401909872,2026-10-26,8:00 PM ET,Indiana Pacers,Milwaukee Bucks,,,
 401909873,2026-10-26,8:00 PM ET,Phoenix Suns,Oklahoma City Thunder,,,
 401909874,2026-10-26,8:30 PM ET,Atlanta Hawks,Houston Rockets,,,
-401909875,2026-10-26,9:00 PM ET,Memphis Grizzlies,Utah Jazz,,-1.5,237.5
+401909875,2026-10-26,9:00 PM ET,Memphis Grizzlies,Utah Jazz,,,
 401909876,2026-10-26,10:00 PM ET,Golden State Warriors,Denver Nuggets,,-7.5,236.5
-401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,,
-401909878,2026-10-27,8:00 PM ET,Detroit Pistons,New York Knicks,,,
+401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,-11.5,222.5
+401909878,2026-10-27,8:00 PM ET,Detroit Pistons,New York Knicks,,-3.5,218.5
 401909879,2026-10-27,8:00 PM ET,Sacramento Kings,San Antonio Spurs,,,
 401909880,2026-10-27,11:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,,
