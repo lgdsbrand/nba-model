@@ -1,14 +1,17 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909868,2026-10-26,7:00 PM ET,Washington Wizards,Charlotte Hornets,,,
-401909869,2026-10-26,7:00 PM ET,Minnesota Timberwolves,Cleveland Cavaliers,,,
-401909870,2026-10-26,7:30 PM ET,Chicago Bulls,Boston Celtics,,,
-401909871,2026-10-26,7:30 PM ET,Dallas Mavericks,Miami Heat,,,
-401909872,2026-10-26,8:00 PM ET,Indiana Pacers,Milwaukee Bucks,,,
-401909873,2026-10-26,8:00 PM ET,Phoenix Suns,Oklahoma City Thunder,,,
-401909874,2026-10-26,8:30 PM ET,Atlanta Hawks,Houston Rockets,,,
-401909875,2026-10-26,9:00 PM ET,Memphis Grizzlies,Utah Jazz,,,
-401909876,2026-10-26,10:00 PM ET,Golden State Warriors,Denver Nuggets,,-7.5,236.5
-401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,-11.5,222.5
+401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,-12.5,222.5
 401909878,2026-10-27,8:00 PM ET,Detroit Pistons,New York Knicks,,-3.5,218.5
-401909879,2026-10-27,8:00 PM ET,Sacramento Kings,San Antonio Spurs,,,
-401909880,2026-10-27,11:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,,
+401909879,2026-10-27,8:00 PM ET,Sacramento Kings,San Antonio Spurs,,-18.5,230.5
+401909880,2026-10-27,11:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,-2.5,236.5
+401909881,2026-10-28,7:00 PM ET,Miami Heat,Atlanta Hawks,,,
+401909882,2026-10-28,7:00 PM ET,Washington Wizards,Cleveland Cavaliers,,,
+401909883,2026-10-28,7:00 PM ET,Charlotte Hornets,Detroit Pistons,,,
+401909884,2026-10-28,7:00 PM ET,Philadelphia 76ers,Indiana Pacers,,1.5,238.5
+401909885,2026-10-28,7:30 PM ET,Orlando Magic,Toronto Raptors,,,
+401909886,2026-10-28,8:00 PM ET,New York Knicks,Chicago Bulls,,,
+401909887,2026-10-28,8:00 PM ET,Houston Rockets,Milwaukee Bucks,,,
+401909888,2026-10-28,8:00 PM ET,Golden State Warriors,Minnesota Timberwolves,,,
+401909889,2026-10-28,8:00 PM ET,Denver Nuggets,New Orleans Pelicans,,,
+401909890,2026-10-28,9:00 PM ET,San Antonio Spurs,Utah Jazz,,,
+401909891,2026-10-28,9:30 PM ET,Oklahoma City Thunder,Dallas Mavericks,,,
+401909892,2026-10-28,10:30 PM ET,Los Angeles Lakers,LA Clippers,,,
