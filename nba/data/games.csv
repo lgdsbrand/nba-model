@@ -1,17 +1,17 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,-12.5,222.5
-401909878,2026-10-27,8:00 PM ET,Detroit Pistons,New York Knicks,,-4.5,219.5
-401909879,2026-10-27,8:00 PM ET,Sacramento Kings,San Antonio Spurs,,-18.5,232.5
+401909877,2026-10-27,7:30 PM ET,Brooklyn Nets,Boston Celtics,,,
+401909878,2026-10-27,8:00 PM ET,Detroit Pistons,New York Knicks,,,
+401909879,2026-10-27,8:00 PM ET,Sacramento Kings,San Antonio Spurs,,,
 401909880,2026-10-27,11:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,-1.5,233.5
-401909881,2026-10-28,7:00 PM ET,Miami Heat,Atlanta Hawks,,,
-401909882,2026-10-28,7:00 PM ET,Washington Wizards,Cleveland Cavaliers,,,
-401909883,2026-10-28,7:00 PM ET,Charlotte Hornets,Detroit Pistons,,,
+401909881,2026-10-28,7:00 PM ET,Miami Heat,Atlanta Hawks,,-3.5,239.5
+401909882,2026-10-28,7:00 PM ET,Washington Wizards,Cleveland Cavaliers,,-10.5,239.5
+401909883,2026-10-28,7:00 PM ET,Charlotte Hornets,Detroit Pistons,,-7.5,216.5
 401909884,2026-10-28,7:00 PM ET,Philadelphia 76ers,Indiana Pacers,,4.5,237.5
 401909885,2026-10-28,7:30 PM ET,Orlando Magic,Toronto Raptors,,-4.5,223.5
-401909886,2026-10-28,8:00 PM ET,New York Knicks,Chicago Bulls,,,
-401909887,2026-10-28,8:00 PM ET,Houston Rockets,Milwaukee Bucks,,,
-401909888,2026-10-28,8:00 PM ET,Golden State Warriors,Minnesota Timberwolves,,,
-401909889,2026-10-28,8:00 PM ET,Denver Nuggets,New Orleans Pelicans,,,
-401909890,2026-10-28,9:00 PM ET,San Antonio Spurs,Utah Jazz,,,
-401909891,2026-10-28,9:30 PM ET,Oklahoma City Thunder,Dallas Mavericks,,,
-401909892,2026-10-28,10:30 PM ET,Los Angeles Lakers,LA Clippers,,,
+401909886,2026-10-28,8:00 PM ET,New York Knicks,Chicago Bulls,,7.5,234.5
+401909887,2026-10-28,8:00 PM ET,Houston Rockets,Milwaukee Bucks,,8.5,227.5
+401909888,2026-10-28,8:00 PM ET,Golden State Warriors,Minnesota Timberwolves,,-3.5,225.5
+401909889,2026-10-28,8:00 PM ET,Denver Nuggets,New Orleans Pelicans,,4.5,238.5
+401909890,2026-10-28,9:00 PM ET,San Antonio Spurs,Utah Jazz,,12.5,234.5
+401909891,2026-10-28,9:30 PM ET,Oklahoma City Thunder,Dallas Mavericks,,5.5,230.5
+401909892,2026-10-28,10:30 PM ET,Los Angeles Lakers,LA Clippers,,5.5,228.5
