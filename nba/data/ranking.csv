@@ -1,9 +1,9 @@
 Team,Rating
 Oklahoma City Thunder,11.2
-San Antonio Spurs,8.0
-Detroit Pistons,7.8
-Boston Celtics,7.6
-New York Knicks,5.9
+San Antonio Spurs,8.1
+Detroit Pistons,7.6
+Boston Celtics,7.4
+New York Knicks,6.0
 Team Stars,5.3
 Houston Rockets,5.2
 Denver Nuggets,4.6
@@ -12,12 +12,12 @@ Charlotte Hornets,3.8
 Cleveland Cavaliers,3.5
 Atlanta Hawks,2.9
 Toronto Raptors,2.8
-Los Angeles Lakers,2.0
+Los Angeles Lakers,1.9
 Miami Heat,1.8
 Phoenix Suns,1.4
 LA Clippers,1.1
 Orlando Magic,0.7
-Portland Trail Blazers,0.2
+Portland Trail Blazers,0.3
 Philadelphia 76ers,0.0
 Golden State Warriors,-0.4
 World,-1.9
@@ -29,6 +29,6 @@ Chicago Bulls,-5.8
 Milwaukee Bucks,-6.4
 Indiana Pacers,-7.5
 Utah Jazz,-8.1
-Sacramento Kings,-9.7
-Brooklyn Nets,-9.8
+Brooklyn Nets,-9.6
+Sacramento Kings,-9.9
 Washington Wizards,-11.2
