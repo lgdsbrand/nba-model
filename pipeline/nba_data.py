@@ -619,7 +619,9 @@ def build(today: date) -> None:
     write_csv("team_season.csv", ["Team", "PPG", "OPPG"],
               [[t, fmt(sum(r["pts"] for r in g) / len(g)), fmt(sum(r["opp_pts"] for r in g) / len(g))]
                for t, g in sorted(season.items())])
-    ats, ou = records(window_teams)
+    # Records are this season only, even while the model's window still
+    # borrows last season: a 44-25 record four games in is last year's team.
+    ats, ou = records(team_games_with_opponent(regular_cur))
     write_csv("ats.csv", ["Team", "Record", "Cover%"],
               [[t, f"{w}-{l}-{p}", f"{100 * w / (w + l):.1f}%" if w + l else ""]
                for t, (w, l, p) in sorted(ats.items())])
