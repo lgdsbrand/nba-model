@@ -76,6 +76,21 @@
     .panel-head h2 { margin: 0; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
     .panel-head .right { margin-left: auto; font-size: 0.75rem; font-weight: 700; }
     .panel-body { padding: 0 16px 16px; }
+    .panel-body[hidden] { display: none; }
+    .panel-head.toggle {
+      width: 100%; border: 0; background: none; color: var(--text); font: inherit; cursor: pointer; text-align: left;
+    }
+    .panel-head.toggle:hover h2 { color: #fff; }
+    .team-power { font-size: 0.7rem; font-weight: 700; color: var(--muted); margin-top: -4px; letter-spacing: 0.02em; }
+    .game-score {
+      display: flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 999px;
+      background: var(--inset); border: 1px solid var(--border-strong); cursor: help;
+    }
+    .game-score .caption { font-size: 0.55rem; }
+    .game-score b { font-size: 0.95rem; font-weight: 800; }
+    .game-score.good b { color: var(--win); }
+    .game-score.hot { border-color: rgba(245, 166, 35, 0.5); background: var(--amber-soft); }
+    .game-score.hot b { color: var(--amber); }
 
     .tops { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-bottom: 10px; }
     .top { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
