@@ -32,6 +32,16 @@ RECENT_GAMES = 10
 #: Past meetings listed per game (this season and last).
 H2H_GAMES = 10
 
+#: Power rating: last season counts as this many games per team, so it
+#: steadies October and fades as this season's games pile up.
+POWER_LAST_SEASON_GAMES = 10
+#: A this-season game's weight halves every this many days.
+POWER_HALF_LIFE_DAYS = 60
+#: Game score: this share from how good both teams are (power ranks), the
+#: rest from how close the game is (our win %). The same formula is used on
+#: the NHL and football pages.
+GAME_SCORE_STRENGTH = 0.6
+
 
 # ── Lines ─────────────────────────────────────────────────────────────────────
 
@@ -236,6 +246,55 @@ def card(event: dict, frozen: dict, fitted: dict, abbr: dict[str, str]) -> dict 
     return out
 
 
+def power_ratings(last_rows: list[dict], this_rows: list[dict], today: date,
+                  league: set[str]) -> dict[str, float]:
+    """Points per game better than an average team on a neutral floor.
+
+    A simple rating system (average margin plus the average rating of the
+    opponents) with home court taken out of every margin, weighted: this
+    season's games by recency, last season's together worth
+    POWER_LAST_SEASON_GAMES games per team. Unlike the stat comparison's
+    SRS, which uses the model's window, a 0-4 start counts for more than
+    last spring.
+    """
+    # Games between the league's teams only: the All-Star game is filed as a
+    # regular-season game between "Team Stars" and "World".
+    played = [r for r in last_rows + this_rows if r["season_type"] in (nd.REGULAR, nd.POSTSEASON)
+              and r["team"] in league and r["opp"] in league]
+    homes = [r["pts"] - r["opp_pts"] for r in played if r["home"]]
+    if not homes:
+        return {}
+    home_court = sum(homes) / len(homes)
+    last_ids = {id(r) for r in last_rows}
+    last_weight = POWER_LAST_SEASON_GAMES / 82
+    games = defaultdict(list)
+    for r in played:
+        if id(r) in last_ids:
+            w = last_weight
+        else:
+            days_ago = (today - date.fromisoformat(r["date"])).days
+            w = 0.5 ** (max(days_ago, 0) / POWER_HALF_LIFE_DAYS)
+        margin = r["pts"] - r["opp_pts"] + (-home_court if r["home"] else home_court)
+        games[r["team"]].append((r["opp"], margin, w))
+    # Each step is averaged with the last: the plain iteration can swing back
+    # and forth for ever (two teams that only meet each other); the damped
+    # one settles on the same answer.
+    rating = {t: 0.0 for t in games}
+    for _ in range(500):
+        nxt = {t: sum(w * (m + rating.get(o, 0.0)) for o, m, w in g) / sum(w for _, _, w in g)
+               for t, g in games.items()}
+        mean = sum(nxt.values()) / len(nxt)
+        rating = {t: (rating[t] + v - mean) / 2 for t, v in nxt.items()}
+    return rating
+
+
+def game_score(home_rank: int, away_rank: int, teams: int, home_win: float) -> int:
+    """0-100: two highly ranked teams in a close game score highest."""
+    strength = 100 * (1 - ((home_rank + away_rank) / 2 - 1) / (teams - 1))
+    closeness = 100 * (1 - abs(2 * home_win - 1))
+    return round(GAME_SCORE_STRENGTH * strength + (1 - GAME_SCORE_STRENGTH) * closeness)
+
+
 def back_to_back(days: list[dict], every_rows: list[dict], abbr: dict[str, str]) -> None:
     """Flag each side that played the day before (the second night of a back
     to back), from finished games and the scoreboards of the days shown."""
@@ -294,6 +353,19 @@ def build(today: date, meta: list[dict], rows: dict, current: int, previous: int
     head_to_head(days, every_rows, abbr)
     teams = team_blocks(meta, rows[current][0], every_rows, season_eff, window, l5, per,
                         starters, table, ats, ou, rating)
+    power = power_ratings(rows[previous][0], rows[current][0], today, set(abbr))
+    order = sorted(power, key=lambda name: -power[name])
+    for name in order:
+        team = teams.get(abbr.get(name, name))
+        if team:
+            team["power"] = round(power[name], 1)
+            team["power_rank"] = order.index(name) + 1
+    for day in days:
+        for g in day["games"]:
+            h, a = teams.get(g["home"], {}), teams.get(g["away"], {})
+            if g["model"] and h.get("power_rank") and a.get("power_rank"):
+                g["game_score"] = game_score(h["power_rank"], a["power_rank"], len(order),
+                                             g["model"]["home_win"])
     payload = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
         "today": today.isoformat(),

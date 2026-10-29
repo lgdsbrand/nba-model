@@ -21,7 +21,7 @@ const PLAYERS_URL = DATA + "players.csv";
 const TOP_PICKS = 4;
 const SLOTS = ["Guard", "Guard", "Forward", "Forward", "Center"];
 
-const state = { data: null, day: null, players: null };
+const state = { data: null, day: null, players: null, powerOpen: false };
 
 /*************** HELPERS ****************/
 
@@ -208,6 +208,8 @@ function renderBoard() {
     board.appendChild(el("div", "empty", "No NBA games on this day."));
     return;
   }
+  const power = powerPanel();
+  if (power) board.appendChild(power);
   const top = topPanel(day);
   if (top) board.appendChild(top);
   day.games.forEach(g => board.appendChild(gameCard(g)));
@@ -288,6 +290,11 @@ function teamColumn(g, side) {
   const col = el("div", "team");
   add(col, logo(team, abbr), el("div", "team-name", team ? team.name : abbr));
   if (team) col.appendChild(el("div", "team-record", team.record));
+  if (team && team.power_rank) {
+    const power = el("div", "team-power", `Power #${team.power_rank} · ${powerText(team.power)}`);
+    power.title = "Power rating: points per game better than an average team on a neutral floor.";
+    col.appendChild(power);
+  }
   if (g.b2b && g.b2b[side]) {
     const flag = el("span", "pill b2b", "Back to back");
     flag.title = `${abbr} played yesterday: tonight is the second night of a back to back.`;
@@ -316,6 +323,7 @@ function middleColumn(g) {
     mid.appendChild(el("div", "at", "@"));
   }
   if (g.line && g.line.total != null) mid.appendChild(el("div", "ou", `O/U ${g.line.total}`));
+  if (g.game_score != null) mid.appendChild(gameScoreBadge(g.game_score));
 
   const away = state.data.teams[g.away], home = state.data.teams[g.home];
   if (away && home) {
@@ -329,6 +337,50 @@ function middleColumn(g) {
     mid.appendChild(table);
   }
   return mid;
+}
+
+// Game score 0-100 (pipeline/cards.py game_score): 60% how good both teams
+// are by power rank, 40% how close our win % makes the game.
+function gameScoreBadge(score) {
+  const tier = score >= 80 ? "hot" : score >= 65 ? "good" : "";
+  const badge = el("div", "game-score " + tier);
+  add(badge, el("span", "caption", "Game score"), el("b", "num", String(score)));
+  badge.title = "0-100: two highly ranked teams in a close game score highest (60% team strength by power rank, 40% closeness by our win %).";
+  return badge;
+}
+
+// A power rating with its sign and one decimal: "+8.0", "-0.7".
+function powerText(p) {
+  return p == null ? "—" : `${p > 0 ? "+" : ""}${Number(p).toFixed(1)}`;
+}
+
+function powerPanel() {
+  const teams = Object.values(state.data.teams).filter(t => t.power_rank)
+    .sort((a, b) => a.power_rank - b.power_rank);
+  if (!teams.length) return null;
+  const panel = el("section", "panel");
+  const btn = el("button", "panel-head toggle");
+  btn.type = "button";
+  const arrow = el("span", "right muted");
+  add(btn, el("span", "bar"), el("h2", null, "📈 Power rankings"), arrow);
+  const body = el("div", "panel-body");
+  const show = (open) => {
+    // Kept open across date changes, which rebuild the board.
+    state.powerOpen = open;
+    body.hidden = !open;
+    btn.setAttribute("aria-expanded", String(open));
+    arrow.textContent = open ? "Hide ▴" : "Show ▾";
+  };
+  show(state.powerOpen);
+  const rows = teams.map(t => {
+    const name = el("td");
+    add(name, el("b", null, t.abbr), el("span", "muted", ` ${t.short}`));
+    return [t.power_rank, name, powerText(t.power), t.record, t.last10_record, t.ats];
+  });
+  add(body, table(["#", "Team", "Power", "Record", "Last 10", "ATS"], rows),
+    el("p", "tiny", "Power: points per game better than an average team on a neutral floor, adjusted for the schedule. This season's games count most, recent ones more; last season counts as about ten games, so it fades by mid-November."));
+  btn.addEventListener("click", () => show(body.hidden));
+  return add(panel, btn, body);
 }
 
 function numbersBand(g) {
