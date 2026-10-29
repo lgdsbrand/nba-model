@@ -288,6 +288,11 @@ function teamColumn(g, side) {
   const col = el("div", "team");
   add(col, logo(team, abbr), el("div", "team-name", team ? team.name : abbr));
   if (team) col.appendChild(el("div", "team-record", team.record));
+  if (g.b2b && g.b2b[side]) {
+    const flag = el("span", "pill b2b", "Back to back");
+    flag.title = `${abbr} played yesterday: tonight is the second night of a back to back.`;
+    col.appendChild(flag);
+  }
   const price = g.line ? (side === "home" ? g.line.ml_home : g.line.ml_away) : null;
   const other = g.line ? (side === "home" ? g.line.ml_away : g.line.ml_home) : null;
   if (price != null) {
@@ -352,21 +357,44 @@ function numbersBand(g) {
   return band;
 }
 
+// How far our line sits from the book's before the box is coloured: about the
+// widest quarter (mid) and tenth (big) of this season's games. A gap is a
+// disagreement, not a value signal: in last season's backtest, games where we
+// were furthest from DraftKings did no better against its line.
+const GAP = { spread: { mid: 3, big: 5 }, total: { mid: 6, big: 9 } };
+
+function gapLevel(market, ours, book) {
+  if (ours == null || book == null) return null;
+  const gap = Math.abs(Number(ours) - Number(book));
+  const t = GAP[market];
+  return { gap, level: gap >= t.big ? "big" : gap >= t.mid ? "mid" : null };
+}
+
 function linesRow(g) {
   const m = g.model, l = g.line || {};
   const wrap = el("div", "lines");
-  const box = (title, bookText, ourText) => {
-    const b = el("div", "line-box");
+  const box = (title, bookText, ourText, gap) => {
+    const b = el("div", "line-box" + (gap && gap.level ? ` gap-${gap.level}` : ""));
     b.appendChild(el("div", "caption", title));
     const r1 = el("div", "line-row");
     add(r1, el("span", "muted", l.book || "DraftKings"), el("b", "num", bookText));
     const r2 = el("div", "line-row");
     add(r2, el("span", "muted", "Our line"), el("b", "num", ourText));
-    return add(b, r1, r2);
+    add(b, r1, r2);
+    if (gap && gap.level) {
+      const r3 = el("div", "line-row gap-row");
+      add(r3, el("span", null, gap.level === "big" ? "Big difference" : "Difference"),
+        el("b", "num", `${gap.gap.toFixed(1)} pts`));
+      b.appendChild(r3);
+      b.title = "Our line and the book's are far apart. That is a disagreement, not a value signal.";
+    }
+    return b;
   };
   add(wrap,
-    box("Spread", spreadLabel(l.spread, g.home, g.away), spreadLabel(m.fair_spread, g.home, g.away)),
-    box("Total", l.total != null ? String(l.total) : "—", m.fair_total.toFixed(1)));
+    box("Spread", spreadLabel(l.spread, g.home, g.away), spreadLabel(m.fair_spread, g.home, g.away),
+      gapLevel("spread", m.fair_spread, l.spread)),
+    box("Total", l.total != null ? String(l.total) : "—", m.fair_total.toFixed(1),
+      gapLevel("total", m.fair_total, l.total)));
   return wrap;
 }
 
@@ -395,14 +423,24 @@ function gameCard(g) {
   btn.setAttribute("aria-expanded", "false");
   const details = el("div", "details");
   details.hidden = true;
-  btn.addEventListener("click", () => {
-    const open = details.hidden;
+  // A second button at the bottom of the open details closes them without
+  // scrolling back up, and brings the card's top back into view.
+  const bottom = el("button", "details-btn bottom", "Hide matchup details ▴");
+  bottom.type = "button";
+  bottom.hidden = true;
+  const toggle = (open) => {
     if (open && !details.childNodes.length) buildDetails(details, g);
     details.hidden = !open;
+    bottom.hidden = !open;
     btn.setAttribute("aria-expanded", String(open));
     btn.textContent = open ? "Hide matchup details ▴" : "View matchup details ▾";
+  };
+  btn.addEventListener("click", () => toggle(details.hidden));
+  bottom.addEventListener("click", () => {
+    toggle(false);
+    if (card.getBoundingClientRect().top < 0) card.scrollIntoView({ block: "start" });
   });
-  add(card, btn, details);
+  add(card, btn, details, bottom);
   return card;
 }
 
@@ -441,9 +479,64 @@ function movement(g) {
   ]));
 }
 
+// A team's league rank in one figure: 1 = best (for pace, 1 = fastest).
+function leagueRank(key, value, higherBetter) {
+  if (value == null) return null;
+  const v = Number(Number(value).toFixed(1));
+  const better = Object.values(state.data.teams).filter(t => t[key] != null
+    && (higherBetter === false ? Number(Number(t[key]).toFixed(1)) < v : Number(Number(t[key]).toFixed(1)) > v));
+  return better.length + 1;
+}
+
+// Which side the comparison favours: the team better in at least
+// VERDICT_MARGIN more categories than the other, otherwise "pretty even".
+const VERDICT_MARGIN = 3;
+
+function verdict(g, wins) {
+  const [aw, hw] = wins;
+  const counted = aw + hw;
+  if (!counted) return null;
+  const box = el("div", "verdict");
+  if (Math.abs(aw - hw) >= VERDICT_MARGIN) {
+    const leader = aw > hw ? g.away : g.home;
+    add(box, el("span", "caption", "Stats favour"), el("b", "win", leader),
+      el("span", "muted", ` better in ${Math.max(aw, hw)} of ${counted} categories`));
+  } else {
+    add(box, el("span", "caption", "Pretty even"),
+      el("span", "muted", ` ${g.away} better in ${aw}, ${g.home} in ${hw} of ${counted} categories`));
+  }
+  return box;
+}
+
+// Fast and slow by league pace rank: top ten and bottom ten of thirty.
+const PACE_BAND = 10;
+
+function paceNote(g, a, h) {
+  if (a.pace == null || h.pace == null) return null;
+  const teams = Object.values(state.data.teams).filter(t => t.pace != null).length;
+  const ra = leagueRank("pace", a.pace, null), rh = leagueRank("pace", h.pace, null);
+  const fast = r => r <= PACE_BAND, slow = r => r > teams - PACE_BAND;
+  const ranks = `pace ranks ${g.away} ${ra}, ${g.home} ${rh} of ${teams}`;
+  let text;
+  if (fast(ra) && fast(rh)) text = `⚡ Two fast teams (${ranks}): more possessions, expect a high-scoring game.`;
+  else if (slow(ra) && slow(rh)) text = `🐢 Two slow teams (${ranks}): fewer possessions, expect a low-scoring game.`;
+  else if ((fast(ra) && slow(rh)) || (slow(ra) && fast(rh))) {
+    const quick = fast(ra) ? g.away : g.home;
+    text = `↔ Fast against slow (${ranks}): ${quick} wants to run; the tempo, and the score, likely land in between.`;
+  } else if (fast(ra) || fast(rh)) text = `Slightly up-tempo (${ranks}): one fast team, one average.`;
+  else if (slow(ra) || slow(rh)) text = `Slightly slow (${ranks}): one slow team, one average.`;
+  else text = `Average pace for both (${ranks}): no strong pace lean.`;
+  const lg = state.data.model && state.data.model.league;
+  if (g.model && lg && lg.pts) {
+    text += ` Our projected total ${g.model.fair_total.toFixed(1)} against a league-average game of ${(2 * lg.pts).toFixed(1)}.`;
+  }
+  return el("p", "pace-note", text);
+}
+
 function comparison(g) {
   const a = state.data.teams[g.away], h = state.data.teams[g.home];
   if (!a || !h) return null;
+  const wins = [0, 0];
   const rows = [
     ["Points per game", "ppg", true], ["Points allowed", "oppg", false],
     ["Offensive efficiency", "off_eff", true], ["Defensive efficiency", "def_eff", false],
@@ -455,16 +548,42 @@ function comparison(g) {
     // One decimal, as shown, decides which side is better.
     const av = a[key] == null ? null : Number(a[key]).toFixed(1);
     const hv = h[key] == null ? null : Number(h[key]).toFixed(1);
-    const cell = (v, other) => {
+    const cell = (v, other, side) => {
       const better = higherBetter != null && v != null && other != null && v !== other
         && ((Number(v) > Number(other)) === higherBetter);
-      return el("td", better ? "better" : null, v == null ? "—" : v);
+      if (better) wins[side] += 1;
+      const td = el("td", better ? "better" : null, v == null ? "—" : v);
+      const rank = leagueRank(key, v, higherBetter);
+      if (rank != null) td.appendChild(el("span", "rank", ` (${rank})`));
+      return td;
     };
-    return [label, cell(av, hv), cell(hv, av)];
+    return [label, cell(av, hv, 0), cell(hv, av, 1)];
   });
   rows.push(["ATS record", a.ats, h.ats], ["Over/under record", a.ou, h.ou]);
-  return section("Stat comparison", table(["", g.away, g.home], rows),
-    el("p", "tiny", "Efficiency is points per 100 possessions. Season figures blend in last season until each team has played 10 games."));
+  return section("Stat comparison", verdict(g, wins), table(["", g.away, g.home], rows),
+    paceNote(g, a, h),
+    el("p", "tiny", "League rank in brackets: 1 is best (for pace, the fastest). Efficiency is points per 100 possessions. Season figures blend in last season until each team has played 10 games."));
+}
+
+function headToHead(g) {
+  const games = g.h2h || [];
+  const title = "Head to head";
+  if (!games.length) return section(title, el("p", "tiny", "No meetings this season or last."));
+  let homeWins = 0;
+  const rows = games.map(r => {
+    // r is the meeting from this game's home team's side.
+    if (r.result === "W") homeWins += 1;
+    const winner = r.result === "W" ? g.home : g.away;
+    const hi = Math.max(r.pts, r.opp_pts), lo = Math.min(r.pts, r.opp_pts);
+    const covered = r.ats === "W" ? g.home : r.ats === "L" ? g.away : r.ats === "P" ? "Push" : null;
+    return [
+      shortDate(r.date), r.home ? `${g.away} @ ${g.home}` : `${g.home} @ ${g.away}`,
+      `${winner} ${hi}-${lo}`, covered, chip(r.ou),
+    ];
+  });
+  return section(`${title} (${g.home} ${homeWins}-${games.length - homeWins})`,
+    table(["Date", "Game", "Winner", "Covered", "O/U"], rows),
+    el("p", "tiny", "Meetings this season and last, newest first."));
 }
 
 function chip(value) {
@@ -563,7 +682,7 @@ function lineups(g) {
 function buildDetails(container, g) {
   const tens = el("div", "two");
   add(tens, lastTen(g.away), lastTen(g.home));
-  add(container, movement(g), comparison(g), tens, lineups(g));
+  add(container, movement(g), comparison(g), tens, headToHead(g), lineups(g));
 }
 
 /*************** INIT ****************/
@@ -590,7 +709,8 @@ async function init() {
   }) + " ET";
   document.getElementById("footnote").textContent =
     `Updated ${when}. Lines: DraftKings via ESPN. Predictions lock at tip-off. ` +
-    "Win % is calibrated on last season's games; the projection uses each team's season and last five games and its starters." +
+    "Win % is calibrated on last season's games; the projection uses each team's season and last five games and its starters. " +
+    `Amber line boxes: our line is ${GAP.spread.mid}+ points from the book's on the spread or ${GAP.total.mid}+ on the total, a disagreement worth a look, not a bet on its own.` +
     (early ? " Early season: until teams have played 10 games, season figures still lean on last season, so offseason roster moves show up slowly. Weigh them against the book." : "");
 }
 
