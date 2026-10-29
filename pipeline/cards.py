@@ -276,12 +276,15 @@ def power_ratings(last_rows: list[dict], this_rows: list[dict], today: date,
             w = 0.5 ** (max(days_ago, 0) / POWER_HALF_LIFE_DAYS)
         margin = r["pts"] - r["opp_pts"] + (-home_court if r["home"] else home_court)
         games[r["team"]].append((r["opp"], margin, w))
+    # Each step is averaged with the last: the plain iteration can swing back
+    # and forth for ever (two teams that only meet each other); the damped
+    # one settles on the same answer.
     rating = {t: 0.0 for t in games}
-    for _ in range(300):
+    for _ in range(500):
         nxt = {t: sum(w * (m + rating.get(o, 0.0)) for o, m, w in g) / sum(w for _, _, w in g)
                for t, g in games.items()}
         mean = sum(nxt.values()) / len(nxt)
-        rating = {t: v - mean for t, v in nxt.items()}
+        rating = {t: (rating[t] + v - mean) / 2 for t, v in nxt.items()}
     return rating
 
 
