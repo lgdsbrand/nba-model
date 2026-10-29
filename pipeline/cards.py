@@ -29,6 +29,8 @@ import nba_data as nd
 DAYS_BACK, DAYS_AHEAD = 2, 2
 #: Recent games listed per team.
 RECENT_GAMES = 10
+#: Past meetings listed per game (this season and last).
+H2H_GAMES = 10
 
 
 # ── Lines ─────────────────────────────────────────────────────────────────────
@@ -234,6 +236,30 @@ def card(event: dict, frozen: dict, fitted: dict, abbr: dict[str, str]) -> dict 
     return out
 
 
+def back_to_back(days: list[dict], every_rows: list[dict], abbr: dict[str, str]) -> None:
+    """Flag each side that played the day before (the second night of a back
+    to back), from finished games and the scoreboards of the days shown."""
+    played = {(abbr.get(r["team"], r["team"]), r["date"]) for r in every_rows}
+    for day in days:
+        for g in day["games"]:
+            played.update({(g["home"], day["date"]), (g["away"], day["date"])})
+    for day in days:
+        before = (date.fromisoformat(day["date"]) - timedelta(days=1)).isoformat()
+        for g in day["games"]:
+            g["b2b"] = {side: (g[side], before) in played for side in ("away", "home")}
+
+
+def head_to_head(days: list[dict], every_rows: list[dict], abbr: dict[str, str]) -> None:
+    """Each game's past meetings, newest first, from the home team's side."""
+    meetings = defaultdict(list)
+    for r in sorted(every_rows, key=lambda r: (r["date"], r["event_id"]), reverse=True):
+        meetings[(abbr.get(r["team"], r["team"]), abbr.get(r["opp"], r["opp"]))].append(r)
+    for day in days:
+        for g in day["games"]:
+            past = [r for r in meetings.get((g["home"], g["away"]), []) if r["date"] < day["date"]]
+            g["h2h"] = [recent_game(r, abbr) for r in past[:H2H_GAMES]]
+
+
 # ── Build ─────────────────────────────────────────────────────────────────────
 
 def frozen_path(season: int):
@@ -264,6 +290,8 @@ def build(today: date, meta: list[dict], rows: dict, current: int, previous: int
     path.write_text(json.dumps(frozen, indent=1, sort_keys=True) + "\n", encoding="utf-8")
 
     every_rows = rows[previous][0] + rows[current][0]
+    back_to_back(days, every_rows, abbr)
+    head_to_head(days, every_rows, abbr)
     teams = team_blocks(meta, rows[current][0], every_rows, season_eff, window, l5, per,
                         starters, table, ats, ou, rating)
     payload = {

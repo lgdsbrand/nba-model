@@ -22,6 +22,8 @@
       --win-soft: rgba(34, 197, 94, 0.1);
       --loss: #f43f5e;
       --loss-soft: rgba(244, 63, 94, 0.1);
+      --amber: #f5a623;
+      --amber-soft: rgba(245, 166, 35, 0.1);
       --radius: 14px;
     }
 
@@ -109,6 +111,10 @@
     }
     .pill.live { color: var(--loss); border-color: rgba(244, 63, 94, 0.4); }
     .pill.final { color: var(--muted); }
+    .pill.b2b {
+      color: var(--amber); border-color: rgba(245, 166, 35, 0.45); background: var(--amber-soft);
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: help;
+    }
     .at { font-size: 1.3rem; font-weight: 800; color: var(--dim); line-height: 1; }
     .ou { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); }
     .final-score { font-size: 1.6rem; font-weight: 800; }
@@ -136,6 +142,10 @@
     .line-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
     .line-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; margin-top: 4px; }
     .line-row b { font-weight: 800; }
+    .line-box.gap-mid { border-color: rgba(245, 166, 35, 0.45); }
+    .line-box.gap-big { border-color: var(--amber); background: var(--amber-soft); }
+    .gap-row { color: var(--amber); font-size: 0.75rem; }
+    .line-box.gap-big .gap-row { font-weight: 700; }
     .note { margin: 12px 16px 0; font-size: 0.8rem; color: var(--muted); }
 
     .details-btn {
@@ -144,6 +154,8 @@
       letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
     }
     .details-btn:hover { background: #1d2742; }
+    .details-btn.bottom { margin-top: 0; }
+    .details-btn[hidden] { display: none; }
     .details { padding: 16px; border-top: 1px solid var(--border); display: grid; gap: 20px; }
     .details[hidden] { display: none; }
     .details h3 { margin: 0 0 8px; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -154,6 +166,16 @@
     table.grid th { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); font-weight: 700; }
     table.grid td:first-child, table.grid th:first-child { text-align: left; }
     table.grid td.better { color: var(--win); font-weight: 700; }
+    table.grid td .rank { color: var(--dim); font-weight: 500; font-size: 0.7rem; }
+    .verdict {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin-bottom: 8px;
+      padding: 8px 10px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--border); font-size: 0.82rem;
+    }
+    .verdict b { font-size: 0.95rem; }
+    .pace-note {
+      margin: 10px 0 6px; padding: 8px 10px; border-radius: 8px; font-size: 0.8rem; line-height: 1.45;
+      background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .chip { display: inline-block; min-width: 20px; padding: 1px 5px; border-radius: 5px; font-size: 0.68rem; font-weight: 800; }
     .chip.W, .chip.O { background: var(--win-soft); color: var(--win); }
