@@ -135,7 +135,14 @@ def fetch_json(url: str) -> dict:
 
 
 def scoreboard(day: date) -> list[dict]:
-    return fetch_json(f"{API}/scoreboard?dates={day:%Y%m%d}").get("events", [])
+    # ESPN's CDN can hold an empty 200 for one exact URL (?dates=20261029 on
+    # 2026-10-29, every retry) while the same query with &limit=100 answers in
+    # full, so the day is asked both ways before the run gives up.
+    url = f"{API}/scoreboard?dates={day:%Y%m%d}"
+    try:
+        return fetch_json(url + "&limit=100").get("events", [])
+    except RuntimeError:
+        return fetch_json(url).get("events", [])
 
 
 def event_line(competition: dict) -> tuple[str, str]:
