@@ -210,6 +210,8 @@ function renderBoard() {
   }
   const power = powerPanel();
   if (power) board.appendChild(power);
+  const best = bestPanel(day);
+  if (best) board.appendChild(best);
   const top = topPanel(day);
   if (top) board.appendChild(top);
   day.games.forEach(g => board.appendChild(gameCard(g)));
@@ -252,6 +254,7 @@ function topPanel(day) {
     .forEach(({ g, f }) => {
       const result = wonOrLost(g);
       const box = el("div", "top" + (result ? " " + result : ""));
+      if ((g.best || []).some(p => p.market === "win")) box.appendChild(el("span", "pill best", "⭐ Best bet"));
       add(box,
         el("div", "caption", `${g.away} @ ${g.home}`),
         el("div", "pick", `${f.abbr} to win`));
@@ -263,6 +266,66 @@ function topPanel(day) {
     });
   add(body, tops, el("p", "tiny",
     "Our chance of each pick, not an edge. Fair is the price that chance is worth; a price only pays over time when your book offers better than fair."));
+  panel.appendChild(body);
+  return panel;
+}
+
+// ── Best bets (the client's rules, pipeline/cards.py best_bets) ───────────────
+// A play's name as a bettor reads it: "BOS -3.5", "Over 224.5", "BOS to win".
+function playLabel(g, p) {
+  const team = p.side === "home" ? g.home : g.away;
+  if (p.market === "spread") return `${team} ${signed(p.line)}`;
+  if (p.market === "total") return `${p.side === "over" ? "Over" : "Under"} ${p.line}`;
+  return `${team} to win`;
+}
+
+function playDetail(g, p) {
+  const team = p.side === "home" ? g.home : g.away;
+  if (p.market === "spread") return `Ours ${team} ${signed(p.ours)} · ${p.gap} pts off · DK ${odds(p.price)}`;
+  if (p.market === "total") return `Ours ${p.ours} · ${p.gap} pts off · DK ${odds(p.price)}`;
+  return `${pct(p.p)} · DK ${odds(p.price)}`;
+}
+
+function resultText(result) {
+  return result === "won" ? "✓ Won" : result === "lost" ? "✗ Lost" : "Push";
+}
+
+function bestPanel(day) {
+  const bb = state.data.best_bets;
+  if (!bb) return null;
+  const plays = [];
+  day.games.forEach(g => (g.best || []).filter(p => p.market !== "win").forEach(p => plays.push({ g, p })));
+  const panel = el("section", "panel");
+  panel.appendChild(add(el("div", "panel-head"), el("span", "bar"), el("h2", null, "⭐ Best bets")));
+  const body = el("div", "panel-body");
+  if (plays.length) {
+    const tops = el("div", "tops");
+    plays.forEach(({ g, p }) => {
+      const box = el("div", "top" + (p.result === "won" || p.result === "lost" ? " " + p.result : ""));
+      add(box,
+        el("div", "caption", `${g.away} @ ${g.home} · ${p.market === "spread" ? "Spread" : "Total"}`),
+        el("div", "pick", playLabel(g, p)),
+        el("div", "tiny", playDetail(g, p)));
+      if (p.result) box.appendChild(el("div", "tiny " + (p.result === "won" ? "win" : p.result === "lost" ? "loss" : "muted"), resultText(p.result)));
+      tops.appendChild(box);
+    });
+    body.appendChild(tops);
+  } else {
+    body.appendChild(el("p", "tiny", `No spread ${bb.rules.spread_gap}+ or total ${bb.rules.total_gap}+ points off DraftKings on this day.`));
+  }
+  const r = bb.record;
+  const row = (name, rec) => {
+    const n = rec.won + rec.lost;
+    return [name, `${rec.won}-${rec.lost}` + (rec.push ? `-${rec.push}` : ""),
+      n ? pct(rec.won / n) : "—", n ? `${rec.units > 0 ? "+" : ""}${rec.units.toFixed(2)}u` : "—"];
+  };
+  add(body,
+    table(["Season record", "W-L", "Won", "Units"], [
+      row(`Spread ${bb.rules.spread_gap}+ off`, r.spread),
+      row(`Total ${bb.rules.total_gap}+ off`, r.total),
+      row(`Top ${bb.rules.win_picks} win %`, r.win),
+    ]),
+    el("p", "tiny", `Rules: our spread ${bb.rules.spread_gap}+ points from DraftKings', our total ${bb.rules.total_gap}+ from theirs, and each day's top ${bb.rules.win_picks} win % (marked ⭐ in Highest probability). Every pick is locked at tip-off and graded at the DraftKings price it was made against, one unit each (a win % pick made before DraftKings had a price counts in W-L only)` + (bb.since ? `, since ${shortDate(bb.since)}.` : ".")));
   panel.appendChild(body);
   return panel;
 }
@@ -471,6 +534,11 @@ function gameCard(g) {
       card.appendChild(el("p", "note " + (result === "won" ? "win" : "loss"),
         `${result === "won" ? "✓" : "✗"} Our favourite ${f.abbr} (${pct(f.p)}) ${result === "won" ? "won" : "lost"}.`));
     }
+    (g.best || []).filter(p => p.market !== "win").forEach(p => {
+      const cls = p.result === "won" ? " win" : p.result === "lost" ? " loss" : "";
+      card.appendChild(el("p", "note" + cls,
+        `⭐ Best bet: ${playLabel(g, p)} (${p.gap} pts off DraftKings)` + (p.result ? ` · ${resultText(p.result)}` : "")));
+    });
   } else {
     card.appendChild(el("p", "note", g.state === "pre"
       ? "No prediction yet: a team has no figures this season."

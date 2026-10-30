@@ -42,6 +42,15 @@ POWER_HALF_LIFE_DAYS = 60
 #: the NHL and football pages.
 GAME_SCORE_STRENGTH = 0.6
 
+#: Best bets, the client's rules (2026-10-30): our spread this many points or
+#: more from DraftKings', our total this many or more from theirs, and the
+#: day's top win % picks. Each is graded at the price the frozen pick was made
+#: against (-110 when ESPN showed none).
+BEST_SPREAD_GAP = 5.0
+BEST_TOTAL_GAP = 10.0
+BEST_WIN_PICKS = 3
+STANDARD_PRICE = -110
+
 
 # ── Lines ─────────────────────────────────────────────────────────────────────
 
@@ -351,6 +360,122 @@ def head_to_head(days: list[dict], every_rows: list[dict], abbr: dict[str, str])
             g["h2h"] = [recent_game(r, abbr) for r in past[:H2H_GAMES]]
 
 
+# ── Best bets ─────────────────────────────────────────────────────────────────
+#
+# Tested before they went up (2026-10-30), walk-forward on 1,004 games of
+# 2025-26 from December against DraftKings' closing lines at -110 (break-even
+# 52.4%): spread 5+ off went 116-132 (46.8%), total 10+ off 55-64 (46.2%);
+# the day's top 3 win % won 73.6% of the time (said 75.2%), 95% of them
+# DraftKings' favourite too. The client chose to show them, with this record
+# kept from the frozen picks.
+
+def rule_plays(pred: dict) -> list[dict]:
+    """The spread and total plays a frozen prediction makes against the line it
+    was made with: our side when ours is far enough from DraftKings'."""
+    line = pred.get("line") or {}
+    plays = []
+    if line.get("spread") is not None:
+        gap = line["spread"] - pred["fair_spread"]  # > 0: we rate the home side higher
+        if abs(gap) >= BEST_SPREAD_GAP:
+            home = gap > 0
+            plays.append({"market": "spread", "side": "home" if home else "away",
+                          "line": line["spread"] if home else -line["spread"],
+                          "price": line.get("spread_home_price" if home else "spread_away_price"),
+                          "ours": pred["fair_spread"] if home else -pred["fair_spread"],
+                          "gap": round(abs(gap), 1)})
+    if line.get("total") is not None:
+        gap = pred["fair_total"] - line["total"]
+        if abs(gap) >= BEST_TOTAL_GAP:
+            over = gap > 0
+            plays.append({"market": "total", "side": "over" if over else "under",
+                          "line": line["total"], "price": line.get("over_price" if over else "under_price"),
+                          "ours": pred["fair_total"], "gap": round(abs(gap), 1)})
+    return plays
+
+
+def win_play(pred: dict) -> dict:
+    home = pred["home_win"] >= 0.5
+    line = pred.get("line") or {}
+    return {"market": "win", "side": "home" if home else "away",
+            "p": pred["home_win"] if home else pred["away_win"],
+            "price": line.get("ml_home" if home else "ml_away")}
+
+
+def top_win(preds: dict[str, dict]) -> set[str]:
+    """The ids of the BEST_WIN_PICKS games with the highest favourite win %."""
+    ranked = sorted(preds, key=lambda i: -max(preds[i]["home_win"], preds[i]["away_win"]))
+    return set(ranked[:BEST_WIN_PICKS])
+
+
+def grade(play: dict, home_pts: int, away_pts: int) -> str:
+    if play["market"] == "spread":
+        diff = home_pts - away_pts if play["side"] == "home" else away_pts - home_pts
+        result = diff + play["line"]
+    elif play["market"] == "total":
+        result = (home_pts + away_pts - play["line"]) * (1 if play["side"] == "over" else -1)
+    else:
+        result = (home_pts - away_pts) * (1 if play["side"] == "home" else -1)
+    return "won" if result > 0 else "lost" if result < 0 else "push"
+
+
+def units(play: dict, result: str) -> float | None:
+    """Profit on a one-unit stake at the play's price; None for a win pick
+    frozen with no moneyline (ESPN showed none yet), which counts in the
+    W-L only: a moneyline has no standard price to assume."""
+    if play["market"] == "win" and play.get("price") is None:
+        return None
+    if result == "push":
+        return 0.0
+    if result == "lost":
+        return -1.0
+    price = play.get("price") or STANDARD_PRICE
+    return 100 / -price if price < 0 else price / 100
+
+
+def best_bets(days: list[dict], frozen: dict, this_rows: list[dict]) -> dict:
+    """Mark each shown game's best bets (g["best"]) and grade the season's.
+
+    The season record comes from every frozen prediction this season with a
+    final score in the season's rows, so it reaches back past the five days
+    on the page. The top win % picks are chosen per Eastern day among that
+    day's predicted games.
+    """
+    finals = {r["event_id"]: r for r in this_rows
+              if r["home"] and r["season_type"] in (nd.REGULAR, nd.POSTSEASON)}
+    by_day = defaultdict(dict)
+    for event_id, pred in frozen.items():
+        if event_id in finals:
+            by_day[finals[event_id]["date"]][event_id] = pred
+    record = {m: {"won": 0, "lost": 0, "push": 0, "units": 0.0} for m in ("spread", "total", "win")}
+    for preds in by_day.values():
+        tops = top_win(preds)
+        for event_id, pred in preds.items():
+            plays = rule_plays(pred) + ([win_play(pred)] if event_id in tops else [])
+            final = finals[event_id]
+            for play in plays:
+                result = grade(play, final["pts"], final["opp_pts"])
+                rec = record[play["market"]]
+                rec[result] += 1
+                rec["units"] += units(play, result) or 0.0
+    for rec in record.values():
+        rec["units"] = round(rec["units"], 2)
+
+    for day in days:
+        preds = {g["id"]: frozen[g["id"]] for g in day["games"] if g["id"] in frozen}
+        tops = top_win(preds)
+        for g in day["games"]:
+            pred = preds.get(g["id"])
+            if not pred:
+                continue
+            plays = rule_plays(pred) + ([win_play(pred)] if g["id"] in tops else [])
+            if g["state"] == "post" and g["home_score"] != g["away_score"]:
+                for play in plays:
+                    play["result"] = grade(play, g["home_score"], g["away_score"])
+            g["best"] = plays
+    return {"rules": {"spread_gap": BEST_SPREAD_GAP, "total_gap": BEST_TOTAL_GAP, "win_picks": BEST_WIN_PICKS},
+            "since": min(by_day) if by_day else None, "record": record}
+
+
 # ── Build ─────────────────────────────────────────────────────────────────────
 
 def frozen_path(season: int):
@@ -383,7 +508,8 @@ def build(today: date, meta: list[dict], rows: dict, current: int, previous: int
     every_rows = rows[previous][0] + rows[current][0]
     back_to_back(days, every_rows, abbr)
     head_to_head(days, every_rows, abbr)
-    teams = team_blocks(meta, rows[current][0], every_rows, season_eff, window, l5, per,
+    best = best_bets(days, frozen, rows[current][0])
+    teams =team_blocks(meta, rows[current][0], every_rows, season_eff, window, l5, per,
                         starters, table, ats, ou, rating)
     power = power_ratings(rows[previous][0], rows[current][0], today, set(abbr))
     order = sorted(power, key=lambda name: -power[name]["power"])
@@ -416,6 +542,7 @@ def build(today: date, meta: list[dict], rows: dict, current: int, previous: int
                   "league": {k: round(v, 6) for k, v in fitted["league"].items()}},
         "days": days,
         "teams": teams,
+        "best_bets": best,
     }
     nd.OUT.mkdir(parents=True, exist_ok=True)
     (nd.OUT / "cards.json").write_text(json.dumps(payload, separators=(",", ":")) + "\n", encoding="utf-8")
