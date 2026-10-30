@@ -294,6 +294,11 @@ function teamColumn(g, side) {
     const power = el("div", "team-power", `Power #${team.power_rank} · ${powerText(team.power)}`);
     power.title = "Power rating: points per game better than an average team on a neutral floor.";
     col.appendChild(power);
+    if (team.offense_rank) {
+      const ends = el("div", "team-power", `Off #${team.offense_rank} · Def #${team.defense_rank}`);
+      ends.title = `Offense ${team.offense} and defense ${team.defense} points per 100 possessions, adjusted for the schedule (league ranks of 30).`;
+      col.appendChild(ends);
+    }
   }
   if (g.b2b && g.b2b[side]) {
     const flag = el("span", "pill b2b", "Back to back");
@@ -375,10 +380,12 @@ function powerPanel() {
   const rows = teams.map(t => {
     const name = el("td");
     add(name, el("b", null, t.abbr), el("span", "muted", ` ${t.short}`));
-    return [t.power_rank, name, powerText(t.power), t.record, t.last10_record, t.ats];
+    const end = (value, rank) => (value == null ? null : `${Number(value).toFixed(1)} (${rank})`);
+    return [t.power_rank, name, powerText(t.power), end(t.offense, t.offense_rank),
+      end(t.defense, t.defense_rank), t.record, t.last10_record, t.ats];
   });
-  add(body, table(["#", "Team", "Power", "Record", "Last 10", "ATS"], rows),
-    el("p", "tiny", "Power: points per game better than an average team on a neutral floor, adjusted for the schedule. This season's games count most, recent ones more; last season counts as about ten games, so it fades by mid-November."));
+  add(body, table(["#", "Team", "Power", "Off", "Def", "Record", "Last 10", "ATS"], rows),
+    el("p", "tiny", "Off and Def: points scored and allowed per 100 possessions, adjusted for the schedule, league rank in brackets (a low Def is a good defense). Power is the two together: points per game better than an average team on a neutral floor. This season's games count most, recent ones more; last season counts as about ten games, so it fades by mid-November."));
   btn.addEventListener("click", () => show(body.hidden));
   return add(panel, btn, body);
 }
