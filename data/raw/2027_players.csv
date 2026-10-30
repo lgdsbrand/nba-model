@@ -1525,3 +1525,69 @@ event_id,date,season_type,team,player_id,player,pos,starter,min,fgm,fga,tpm,tpa,
 401909892,2026-10-28,2,Los Angeles Lakers,4397014,Quentin Grimes,G,1,38,7,15,0,3,9,11,1,2,5,4,0,3,2,23
 401909892,2026-10-28,2,Los Angeles Lakers,4278580,Sandro Mamukelashvili,F,0,30,6,15,0,5,1,1,4,4,3,2,1,2,4,13
 401909892,2026-10-28,2,Los Angeles Lakers,4433136,Walker Kessler,C,1,26,4,7,0,0,3,5,2,7,1,2,1,0,2,11
+401909893,2026-10-29,2,Atlanta Hawks,4397183,Aaron Wiggins,G,0,24,8,14,4,7,0,0,1,6,3,0,1,1,0,20
+401909893,2026-10-29,2,Atlanta Hawks,2490149,CJ McCollum,G,1,31,1,8,0,4,3,4,0,3,8,2,0,4,2,5
+401909893,2026-10-29,2,Atlanta Hawks,4869342,Dyson Daniels,G,1,32,2,8,0,1,0,0,2,4,5,1,0,0,2,4
+401909893,2026-10-29,2,Atlanta Hawks,4701230,Jalen Johnson,F,1,34,7,16,2,5,1,1,1,7,7,0,0,4,3,17
+401909893,2026-10-29,2,Atlanta Hawks,3146557,Jock Landale,C,0,15,2,6,2,4,0,2,4,6,1,0,0,0,3,6
+401909893,2026-10-29,2,Atlanta Hawks,5149077,Kingston Flemings,G,0,16,1,4,0,1,0,0,0,1,5,0,0,0,3,2
+401909893,2026-10-29,2,Atlanta Hawks,4397020,Luguentz Dort,G,0,22,2,5,1,3,1,2,0,3,2,0,0,1,2,6
+401909893,2026-10-29,2,Atlanta Hawks,4278039,Nickeil Alexander-Walker,G,1,31,8,17,4,12,5,5,2,1,1,0,1,0,3,25
+401909893,2026-10-29,2,Atlanta Hawks,4431680,Onyeka Okongwu,F,1,33,11,17,4,6,3,4,5,7,2,1,1,1,4,29
+401909893,2026-10-29,2,Cleveland Cavaliers,4701233,Craig Porter Jr.,G,0,4,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+401909893,2026-10-29,2,Cleveland Cavaliers,3908809,Donovan Mitchell,G,1,33,7,19,1,9,7,8,1,2,3,1,0,0,2,22
+401909893,2026-10-29,2,Cleveland Cavaliers,4432158,Evan Mobley,C,1,33,4,9,0,3,3,4,1,3,7,0,1,1,0,11
+401909893,2026-10-29,2,Cleveland Cavaliers,3992,James Harden,G,1,36,7,14,3,8,7,9,0,5,4,0,0,3,4,24
+401909893,2026-10-29,2,Cleveland Cavaliers,4066328,Jarrett Allen,C,1,30,5,8,1,1,3,4,3,5,1,0,2,1,1,14
+401909893,2026-10-29,2,Cleveland Cavaliers,4683747,Jaylon Tyson,G,0,18,1,7,1,5,0,0,0,6,1,0,0,0,1,3
+401909893,2026-10-29,2,Cleveland Cavaliers,2995706,Mario Hezonja,F,0,17,4,6,2,3,0,0,1,5,2,1,0,0,1,10
+401909893,2026-10-29,2,Cleveland Cavaliers,4576087,Peyton Watson,G,1,22,1,8,0,3,2,4,1,3,3,0,2,2,5,4
+401909893,2026-10-29,2,Cleveland Cavaliers,4066757,Sam Merrill,G,0,27,6,11,4,8,0,0,1,1,3,1,0,2,4,16
+401909893,2026-10-29,2,Cleveland Cavaliers,5023693,Tyrese Proctor,G,0,20,3,5,1,2,0,0,1,5,2,0,0,0,1,7
+401909894,2026-10-29,2,New Orleans Pelicans,4683634,Bennedict Mathurin,G,0,19,3,6,2,4,2,2,1,2,2,0,0,2,0,10
+401909894,2026-10-29,2,New Orleans Pelicans,4576086,Bryce McGowens,G,0,6,2,3,0,1,0,0,0,1,2,1,0,1,0,4
+401909894,2026-10-29,2,New Orleans Pelicans,4869780,Derik Queen,C,0,22,4,7,1,2,0,0,0,2,3,1,0,4,0,9
+401909894,2026-10-29,2,New Orleans Pelicans,4277813,Herbert Jones,F,1,32,7,12,0,3,2,3,0,4,1,2,0,3,4,16
+401909894,2026-10-29,2,New Orleans Pelicans,5144091,Jeremiah Fears,G,1,29,9,16,3,5,1,3,1,7,13,2,4,3,2,22
+401909894,2026-10-29,2,New Orleans Pelicans,4997538,Karlo Matkovic,F,1,28,4,7,1,4,3,4,0,4,1,3,1,2,2,12
+401909894,2026-10-29,2,New Orleans Pelicans,4397136,Saddiq Bey,G,0,24,3,6,1,2,3,3,2,2,3,0,0,1,0,10
+401909894,2026-10-29,2,New Orleans Pelicans,4431675,Trendon Watford,F,0,17,2,3,0,1,4,5,0,1,2,3,0,1,3,8
+401909894,2026-10-29,2,New Orleans Pelicans,4397688,Trey Murphy III,F,1,32,6,12,2,7,5,8,1,4,3,1,0,0,2,19
+401909894,2026-10-29,2,New Orleans Pelicans,4395628,Zion Williamson,F,1,31,10,12,0,0,2,4,0,6,2,5,1,3,0,22
+401909894,2026-10-29,2,Sacramento Kings,4917149,Alex Karaban,F,0,12,2,3,2,3,0,0,0,0,0,1,0,3,3,6
+401909894,2026-10-29,2,Sacramento Kings,5142620,Darius Acuff Jr.,G,1,41,13,26,3,11,5,5,1,5,14,1,0,6,4,34
+401909894,2026-10-29,2,Sacramento Kings,4065732,De'Andre Hunter,F,1,37,7,13,4,8,6,6,0,5,1,0,0,3,1,24
+401909894,2026-10-29,2,Sacramento Kings,3155942,Domantas Sabonis,F,1,40,4,7,0,0,1,2,2,13,7,2,1,7,4,9
+401909894,2026-10-29,2,Sacramento Kings,5106058,Emanuel Sharp,G,0,18,0,2,0,2,0,0,0,0,0,1,0,0,2,0
+401909894,2026-10-29,2,Sacramento Kings,4066262,Malik Monk,G,0,8,1,3,0,1,0,0,0,1,1,0,0,2,0,2
+401909894,2026-10-29,2,Sacramento Kings,4702384,Nique Clifford,G,0,4,0,0,0,0,0,0,0,0,1,0,0,0,1,0
+401909894,2026-10-29,2,Sacramento Kings,4431679,Precious Achiuwa,F,1,41,12,17,0,2,0,1,2,7,2,4,0,1,5,24
+401909894,2026-10-29,2,Sacramento Kings,3064440,Zach LaVine,G,1,39,7,17,3,10,4,6,2,1,5,3,0,3,2,21
+401909895,2026-10-29,2,Memphis Grizzlies,4433083,Cam Spencer,G,0,23,3,6,1,2,1,1,2,4,8,2,0,1,4,8
+401909895,2026-10-29,2,Memphis Grizzlies,5041935,Cameron Boozer,F,1,28,6,10,4,5,2,2,2,10,12,0,0,2,1,18
+401909895,2026-10-29,2,Memphis Grizzlies,4903027,Cedric Coward,F,1,27,7,14,3,5,0,0,1,6,4,3,0,2,5,17
+401909895,2026-10-29,2,Memphis Grizzlies,5105550,GG Jackson,F,0,21,4,12,2,4,2,2,2,5,2,0,0,0,0,12
+401909895,2026-10-29,2,Memphis Grizzlies,4432810,Isaiah Stewart,C,0,16,7,10,2,4,2,2,1,2,0,0,1,1,3,18
+401909895,2026-10-29,2,Memphis Grizzlies,5112087,Jaylen Wells,F,1,25,4,9,2,7,0,0,0,1,0,0,0,0,3,10
+401909895,2026-10-29,2,Memphis Grizzlies,2991070,Jerami Grant,F,0,27,1,8,0,3,0,0,1,0,3,0,0,1,0,2
+401909895,2026-10-29,2,Memphis Grizzlies,5231919,Karim Lopez,F,0,3,0,1,0,1,0,0,1,0,0,0,0,0,0,0
+401909895,2026-10-29,2,Memphis Grizzlies,4594326,Kris Murray,F,0,3,0,1,0,1,0,0,1,0,0,0,0,0,0,0
+401909895,2026-10-29,2,Memphis Grizzlies,4595400,Olivier-Maxence Prosper,F,0,3,2,4,0,0,0,0,0,1,0,0,0,0,0,4
+401909895,2026-10-29,2,Memphis Grizzlies,4593016,Quinten Post,C,0,7,3,5,2,3,2,2,2,2,0,0,0,0,2,10
+401909895,2026-10-29,2,Memphis Grizzlies,4431785,Scotty Pippen Jr.,G,0,14,1,1,0,0,0,0,0,0,0,0,0,0,0,2
+401909895,2026-10-29,2,Memphis Grizzlies,4684806,Taylor Hendricks,F,0,3,0,1,0,1,0,0,0,1,0,0,0,0,0,0
+401909895,2026-10-29,2,Memphis Grizzlies,4065733,Ty Jerome,G,1,24,3,12,1,5,3,3,0,2,3,2,0,3,1,10
+401909895,2026-10-29,2,Memphis Grizzlies,4600663,Zach Edey,C,1,19,6,8,1,1,0,0,2,5,0,0,0,0,4,13
+401909895,2026-10-29,2,Portland Trail Blazers,4592435,Branden Carlson,C,0,12,1,2,0,1,0,0,1,1,1,0,2,3,2,2
+401909895,2026-10-29,2,Portland Trail Blazers,6606,Damian Lillard,G,1,30,3,13,1,9,2,4,0,2,2,0,0,1,0,9
+401909895,2026-10-29,2,Portland Trail Blazers,4683021,Deni Avdija,F,1,32,8,16,0,4,8,12,1,8,7,0,1,0,1,24
+401909895,2026-10-29,2,Portland Trail Blazers,5105565,Donovan Clingan,C,1,29,5,9,1,3,0,1,4,4,1,1,5,2,2,11
+401909895,2026-10-29,2,Portland Trail Blazers,4279888,Ja Morant,G,1,23,6,14,2,5,0,0,1,1,3,0,0,1,1,14
+401909895,2026-10-29,2,Portland Trail Blazers,4593043,John Tonje,F,0,5,1,2,1,2,2,2,0,0,0,0,0,0,1,5
+401909895,2026-10-29,2,Portland Trail Blazers,3995,Jrue Holiday,G,0,24,2,7,2,5,0,0,1,5,4,1,0,2,0,6
+401909895,2026-10-29,2,Portland Trail Blazers,4066399,Micah Potter,C,0,9,0,2,0,1,1,1,0,2,0,0,0,2,1,1
+401909895,2026-10-29,2,Portland Trail Blazers,4683678,Scoot Henderson,G,0,19,3,8,1,5,2,2,1,3,0,0,0,2,2,9
+401909895,2026-10-29,2,Portland Trail Blazers,5081727,Sidy Cissoko,G,0,19,2,5,0,3,0,2,4,2,2,1,0,1,3,4
+401909895,2026-10-29,2,Portland Trail Blazers,4431736,Toumani Camara,F,1,26,5,10,3,8,0,0,0,2,1,2,2,2,1,13
+401909895,2026-10-29,2,Portland Trail Blazers,4578893,Vit Krejci,G,0,8,0,2,0,2,2,2,0,0,1,0,0,0,0,2
+401909895,2026-10-29,2,Portland Trail Blazers,5217746,Yang Hansen,C,0,5,1,1,1,1,0,0,0,2,1,0,1,0,0,3
