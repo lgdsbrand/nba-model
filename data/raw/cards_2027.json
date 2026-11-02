@@ -1271,7 +1271,7 @@
  "401909905": {
   "away_pts": 111.8,
   "away_win": 0.3744,
-  "book_home_win": 0.5427435387673957,
+  "book_home_win": 0.5324675324675325,
   "fair_ml_away": 167,
   "fair_ml_home": -167,
   "fair_spread": -3.3,
@@ -1280,25 +1280,25 @@
   "home_win": 0.6256,
   "line": {
    "book": "DraftKings",
-   "ml_away": 110.0,
-   "ml_home": -130.0,
+   "ml_away": 105.0,
+   "ml_home": -125.0,
    "open_ml_away": 110.0,
    "open_ml_home": -130.0,
    "open_spread": -2.5,
    "open_total": 219.5,
    "over_price": -112.0,
-   "spread": -2.5,
-   "spread_away_price": -118.0,
-   "spread_home_price": -102.0,
+   "spread": -1.5,
+   "spread_away_price": -105.0,
+   "spread_home_price": -115.0,
    "total": 220.5,
    "under_price": -108.0
   },
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909906": {
   "away_pts": 110.9,
   "away_win": 0.3853,
-  "book_home_win": 0.5720596355604638,
+  "book_home_win": 0.593369754159424,
   "fair_ml_away": 160,
   "fair_ml_home": -160,
   "fair_spread": -3.0,
@@ -1307,44 +1307,74 @@
   "home_win": 0.6147,
   "line": {
    "book": "DraftKings",
-   "ml_away": 124.0,
-   "ml_home": -148.0,
+   "ml_away": 136.0,
+   "ml_home": -162.0,
    "open_ml_away": 145.0,
    "open_ml_home": -175.0,
    "open_spread": -4.5,
    "open_total": 227.5,
-   "over_price": -110.0,
-   "spread": -2.5,
-   "spread_away_price": -105.0,
-   "spread_home_price": -115.0,
-   "total": 224.5,
-   "under_price": -110.0
+   "over_price": -112.0,
+   "spread": -3.5,
+   "spread_away_price": -115.0,
+   "spread_home_price": -105.0,
+   "total": 223.5,
+   "under_price": -108.0
   },
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909907": {
   "away_pts": 112.2,
   "away_win": 0.5745,
+  "book_home_win": 0.6164383561643836,
   "fair_ml_away": -135,
   "fair_ml_home": 135,
   "fair_spread": 1.9,
   "fair_total": 222.5,
   "home_pts": 110.3,
   "home_win": 0.4255,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 150.0,
+   "ml_home": -180.0,
+   "open_ml_away": 154.0,
+   "open_ml_home": -185.0,
+   "open_spread": -4.5,
+   "open_total": 226.5,
+   "over_price": -110.0,
+   "spread": -4.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 227.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909908": {
   "away_pts": 110.3,
   "away_win": 0.6922,
+  "book_home_win": 0.39076376554174075,
   "fair_ml_away": -225,
   "fair_ml_home": 225,
   "fair_spread": 5.1,
   "fair_total": 215.4,
   "home_pts": 105.1,
   "home_win": 0.3078,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": -175.0,
+   "ml_home": 145.0,
+   "open_ml_away": -180.0,
+   "open_ml_home": 150.0,
+   "open_spread": 4.5,
+   "open_total": 208.5,
+   "over_price": -110.0,
+   "spread": 4.5,
+   "spread_away_price": -105.0,
+   "spread_home_price": -115.0,
+   "total": 209.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909909": {
   "away_pts": 118.1,
@@ -1356,43 +1386,88 @@
   "home_pts": 114.0,
   "home_win": 0.3421,
   "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909910": {
   "away_pts": 103.4,
   "away_win": 0.1081,
+  "book_home_win": 0.8579439252336449,
   "fair_ml_away": 825,
   "fair_ml_home": -825,
   "fair_spread": -13.0,
   "fair_total": 219.9,
   "home_pts": 116.5,
   "home_win": 0.8919,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 575.0,
+   "ml_home": -850.0,
+   "open_ml_away": 575.0,
+   "open_ml_home": -850.0,
+   "open_spread": -14.5,
+   "open_total": 222.5,
+   "over_price": -110.0,
+   "spread": -14.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 222.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909911": {
   "away_pts": 110.5,
   "away_win": 0.2776,
+  "book_home_win": 0.5217391304347826,
   "fair_ml_away": 260,
   "fair_ml_home": -260,
   "fair_spread": -6.1,
   "fair_total": 227.0,
   "home_pts": 116.5,
   "home_win": 0.7224,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 100.0,
+   "ml_home": -120.0,
+   "open_ml_away": 100.0,
+   "open_ml_home": -120.0,
+   "open_spread": -1.5,
+   "open_total": 226.5,
+   "over_price": -110.0,
+   "spread": -1.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 225.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909912": {
   "away_pts": 111.2,
   "away_win": 0.2401,
+  "book_home_win": 0.8316498316498315,
   "fair_ml_away": 316,
   "fair_ml_home": -316,
   "fair_spread": -7.3,
   "fair_total": 229.7,
   "home_pts": 118.5,
   "home_win": 0.7599,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 470.0,
+   "ml_home": -650.0,
+   "open_ml_away": 470.0,
+   "open_ml_home": -650.0,
+   "open_spread": -11.5,
+   "open_total": 239.5,
+   "over_price": -110.0,
+   "spread": -11.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 238.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909913": {
   "away_pts": 111.6,
@@ -1404,67 +1479,142 @@
   "home_pts": 119.8,
   "home_win": 0.7869,
   "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909914": {
   "away_pts": 115.2,
   "away_win": 0.4379,
+  "book_home_win": 0.6636481241914618,
   "fair_ml_away": 128,
   "fair_ml_home": -128,
   "fair_spread": -1.6,
   "fair_total": 232.0,
   "home_pts": 116.8,
   "home_win": 0.5621,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 185.0,
+   "ml_home": -225.0,
+   "open_ml_away": 205.0,
+   "open_ml_home": -250.0,
+   "open_spread": -6.5,
+   "open_total": 235.5,
+   "over_price": -110.0,
+   "spread": -6.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 235.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909915": {
   "away_pts": 109.4,
   "away_win": 0.1532,
+  "book_home_win": 0.7571884984025559,
   "fair_ml_away": 553,
   "fair_ml_home": -553,
   "fair_spread": -10.7,
   "fair_total": 229.5,
   "home_pts": 120.1,
   "home_win": 0.8468,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 295.0,
+   "ml_home": -375.0,
+   "open_ml_away": 275.0,
+   "open_ml_home": -345.0,
+   "open_spread": -10.5,
+   "open_total": 233.5,
+   "over_price": -110.0,
+   "spread": -11.5,
+   "spread_away_price": -115.0,
+   "spread_home_price": -105.0,
+   "total": 233.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909916": {
   "away_pts": 111.2,
   "away_win": 0.4443,
+  "book_home_win": 0.6164383561643836,
   "fair_ml_away": 125,
   "fair_ml_home": -125,
   "fair_spread": -1.4,
   "fair_total": 223.9,
   "home_pts": 112.7,
   "home_win": 0.5557,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 150.0,
+   "ml_home": -180.0,
+   "open_ml_away": 154.0,
+   "open_ml_home": -185.0,
+   "open_spread": -5.5,
+   "open_total": 218.5,
+   "over_price": -115.0,
+   "spread": -5.5,
+   "spread_away_price": -110.0,
+   "spread_home_price": -110.0,
+   "total": 218.5,
+   "under_price": -105.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909917": {
   "away_pts": 107.7,
   "away_win": 0.0768,
+  "book_home_win": 0.8524590163934427,
   "fair_ml_away": 1202,
   "fair_ml_home": -1202,
   "fair_spread": -15.2,
   "fair_total": 230.6,
   "home_pts": 122.9,
   "home_win": 0.9232,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 550.0,
+   "ml_home": -800.0,
+   "open_ml_away": 550.0,
+   "open_ml_home": -800.0,
+   "open_spread": -15.5,
+   "open_total": 229.5,
+   "over_price": -115.0,
+   "spread": -15.5,
+   "spread_away_price": -105.0,
+   "spread_home_price": -115.0,
+   "total": 229.5,
+   "under_price": -105.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909918": {
   "away_pts": 111.9,
   "away_win": 0.2779,
+  "book_home_win": 0.6037569709421778,
   "fair_ml_away": 260,
   "fair_ml_home": -260,
   "fair_spread": -6.1,
   "fair_total": 229.8,
   "home_pts": 117.9,
   "home_win": 0.7221,
-  "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "line": {
+   "book": "DraftKings",
+   "ml_away": 142.0,
+   "ml_home": -170.0,
+   "open_ml_away": 136.0,
+   "open_ml_home": -162.0,
+   "open_spread": -4.5,
+   "open_total": 231.5,
+   "over_price": -110.0,
+   "spread": -4.5,
+   "spread_away_price": -115.0,
+   "spread_home_price": -105.0,
+   "total": 229.5,
+   "under_price": -110.0
+  },
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909919": {
   "away_pts": 113.9,
@@ -1476,7 +1626,7 @@
   "home_pts": 116.5,
   "home_win": 0.6008,
   "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909920": {
   "away_pts": 112.3,
@@ -1488,7 +1638,7 @@
   "home_pts": 109.4,
   "home_win": 0.3859,
   "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  },
  "401909921": {
   "away_pts": 114.5,
@@ -1500,6 +1650,6 @@
   "home_pts": 119.2,
   "home_win": 0.6767,
   "line": null,
-  "made_at": "2026-11-01T22:04Z"
+  "made_at": "2026-11-02T01:02Z"
  }
 }
