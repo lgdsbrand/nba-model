@@ -1,17 +1,12 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909922,2026-11-04,7:00 PM ET,Philadelphia 76ers,Detroit Pistons,,,
-401909923,2026-11-04,7:00 PM ET,Atlanta Hawks,Washington Wizards,,,
-401909924,2026-11-04,7:30 PM ET,Milwaukee Bucks,Boston Celtics,,,
-401909925,2026-11-04,7:30 PM ET,Charlotte Hornets,Brooklyn Nets,,,
-401909926,2026-11-04,7:30 PM ET,Chicago Bulls,New York Knicks,,,
-401909927,2026-11-04,8:00 PM ET,Indiana Pacers,Memphis Grizzlies,,,
-401909928,2026-11-04,8:00 PM ET,Utah Jazz,New Orleans Pelicans,,,
-401909929,2026-11-04,8:00 PM ET,Cleveland Cavaliers,Oklahoma City Thunder,,,
-401909930,2026-11-04,8:30 PM ET,Minnesota Timberwolves,Houston Rockets,,,
-401909931,2026-11-04,9:00 PM ET,Toronto Raptors,Denver Nuggets,,,
-401909932,2026-11-04,9:00 PM ET,Portland Trail Blazers,Phoenix Suns,,,
-401909933,2026-11-04,9:30 PM ET,Dallas Mavericks,San Antonio Spurs,,,
-401909934,2026-11-04,10:00 PM ET,Los Angeles Lakers,Sacramento Kings,,,
-401909935,2026-11-04,10:30 PM ET,Miami Heat,LA Clippers,,6.5,233.5
-401909936,2026-11-05,9:00 PM ET,Orlando Magic,Phoenix Suns,,,
-401909937,2026-11-05,10:00 PM ET,Miami Heat,Golden State Warriors,,,
+401909936,2026-11-05,9:00 PM ET,Orlando Magic,Phoenix Suns,,-1.5,223.5
+401909937,2026-11-05,10:00 PM ET,Miami Heat,Golden State Warriors,,-7.5,236.5
+401909287,2026-11-06,7:00 PM ET,Washington Wizards,Atlanta Hawks,,,
+401909288,2026-11-06,7:00 PM ET,Boston Celtics,Charlotte Hornets,,,
+401909289,2026-11-06,7:30 PM ET,Philadelphia 76ers,Cleveland Cavaliers,,,
+401909290,2026-11-06,8:00 PM ET,Utah Jazz,Dallas Mavericks,,,
+401909291,2026-11-06,8:00 PM ET,Oklahoma City Thunder,Memphis Grizzlies,,,
+401909292,2026-11-06,8:00 PM ET,Toronto Raptors,Milwaukee Bucks,,,
+401909293,2026-11-06,8:00 PM ET,Minnesota Timberwolves,New Orleans Pelicans,,,
+401909294,2026-11-06,10:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,,
+401909295,2026-11-06,10:00 PM ET,San Antonio Spurs,Sacramento Kings,,,
