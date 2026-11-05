@@ -279,7 +279,7 @@
   "home_pts": 117.3,
   "home_win": 0.7365,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909288": {
   "away_pts": 111.9,
@@ -291,7 +291,7 @@
   "home_pts": 107.4,
   "home_win": 0.3312,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909289": {
   "away_pts": 110.5,
@@ -303,7 +303,7 @@
   "home_pts": 114.8,
   "home_win": 0.6629,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909290": {
   "away_pts": 112.7,
@@ -315,7 +315,7 @@
   "home_pts": 117.3,
   "home_win": 0.6726,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909291": {
   "away_pts": 116.7,
@@ -327,7 +327,7 @@
   "home_pts": 108.2,
   "home_win": 0.2046,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909292": {
   "away_pts": 117.3,
@@ -339,7 +339,7 @@
   "home_pts": 110.8,
   "home_win": 0.2652,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909293": {
   "away_pts": 117.1,
@@ -351,7 +351,7 @@
   "home_pts": 113.3,
   "home_win": 0.3554,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909294": {
   "away_pts": 112.2,
@@ -363,7 +363,7 @@
   "home_pts": 118.2,
   "home_win": 0.7205,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909295": {
   "away_pts": 121.8,
@@ -375,7 +375,7 @@
   "home_pts": 107.4,
   "home_win": 0.087,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909868": {
   "away_pts": 110.9,
@@ -2205,13 +2205,13 @@
    "open_spread": 4.5,
    "open_total": 233.5,
    "over_price": -108.0,
-   "spread": 5.5,
-   "spread_away_price": -115.0,
-   "spread_home_price": -105.0,
+   "spread": 6.5,
+   "spread_away_price": -107.0,
+   "spread_home_price": -113.0,
    "total": 233.5,
    "under_price": -112.0
   },
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909936": {
   "away_pts": 111.6,
@@ -2223,7 +2223,7 @@
   "home_pts": 114.1,
   "home_win": 0.5999,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  },
  "401909937": {
   "away_pts": 116.7,
@@ -2235,6 +2235,6 @@
   "home_pts": 118.0,
   "home_win": 0.5503,
   "line": null,
-  "made_at": "2026-11-05T01:49Z"
+  "made_at": "2026-11-05T03:29Z"
  }
 }
