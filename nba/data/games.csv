@@ -1,12 +1,17 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909936,2026-11-05,9:00 PM ET,Orlando Magic,Phoenix Suns,,,
-401909937,2026-11-05,10:00 PM ET,Miami Heat,Golden State Warriors,,,
-401909287,2026-11-06,7:00 PM ET,Washington Wizards,Atlanta Hawks,,,
-401909288,2026-11-06,7:00 PM ET,Boston Celtics,Charlotte Hornets,,,
-401909289,2026-11-06,7:30 PM ET,Philadelphia 76ers,Cleveland Cavaliers,,1.5,229.5
+401909287,2026-11-06,7:00 PM ET,Washington Wizards,Atlanta Hawks,,-6.5,230.5
+401909288,2026-11-06,7:00 PM ET,Boston Celtics,Charlotte Hornets,,8.5,210.5
+401909289,2026-11-06,7:30 PM ET,Philadelphia 76ers,Cleveland Cavaliers,,2.5,228.5
 401909290,2026-11-06,8:00 PM ET,Utah Jazz,Dallas Mavericks,,-7.5,226.5
 401909291,2026-11-06,8:00 PM ET,Oklahoma City Thunder,Memphis Grizzlies,,3.5,225.5
-401909292,2026-11-06,8:00 PM ET,Toronto Raptors,Milwaukee Bucks,,7.5,230.5
-401909293,2026-11-06,8:00 PM ET,Minnesota Timberwolves,New Orleans Pelicans,,4.5,229.5
-401909294,2026-11-06,10:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,-2.5,233.5
-401909295,2026-11-06,10:00 PM ET,San Antonio Spurs,Sacramento Kings,,15.5,228.5
+401909292,2026-11-06,8:00 PM ET,Toronto Raptors,Milwaukee Bucks,,6.5,230.5
+401909293,2026-11-06,8:00 PM ET,Minnesota Timberwolves,New Orleans Pelicans,,4.5,230.5
+401909294,2026-11-06,10:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,-2.5,231.5
+401909295,2026-11-06,10:00 PM ET,San Antonio Spurs,Sacramento Kings,,15.5,229.5
+401909938,2026-11-07,5:00 PM ET,Denver Nuggets,Indiana Pacers,,,
+401909939,2026-11-07,7:30 PM ET,Brooklyn Nets,Atlanta Hawks,,,
+401909940,2026-11-07,8:00 PM ET,New York Knicks,Cleveland Cavaliers,,,
+401909941,2026-11-07,8:00 PM ET,Washington Wizards,Oklahoma City Thunder,,,
+401909942,2026-11-07,8:30 PM ET,Orlando Magic,Golden State Warriors,,,
+401909943,2026-11-07,9:00 PM ET,Houston Rockets,Phoenix Suns,,,
+401909944,2026-11-07,10:00 PM ET,San Antonio Spurs,Portland Trail Blazers,,,
