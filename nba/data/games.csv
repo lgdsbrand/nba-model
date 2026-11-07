@@ -1,11 +1,11 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909287,2026-11-06,7:00 PM ET,Washington Wizards,Atlanta Hawks,,-8.5,227.5
-401909288,2026-11-06,7:00 PM ET,Boston Celtics,Charlotte Hornets,,10.5,207.5
-401909289,2026-11-06,7:30 PM ET,Philadelphia 76ers,Cleveland Cavaliers,,2.5,231.5
-401909290,2026-11-06,8:00 PM ET,Utah Jazz,Dallas Mavericks,,-6.5,225.5
-401909291,2026-11-06,8:00 PM ET,Oklahoma City Thunder,Memphis Grizzlies,,4.5,223.5
-401909292,2026-11-06,8:00 PM ET,Toronto Raptors,Milwaukee Bucks,,4.5,229.5
-401909293,2026-11-06,8:00 PM ET,Minnesota Timberwolves,New Orleans Pelicans,,3.5,230.5
+401909287,2026-11-06,7:00 PM ET,Washington Wizards,Atlanta Hawks,,,
+401909288,2026-11-06,7:00 PM ET,Boston Celtics,Charlotte Hornets,,,
+401909289,2026-11-06,7:30 PM ET,Philadelphia 76ers,Cleveland Cavaliers,,,
+401909290,2026-11-06,8:00 PM ET,Utah Jazz,Dallas Mavericks,,,
+401909291,2026-11-06,8:00 PM ET,Oklahoma City Thunder,Memphis Grizzlies,,,
+401909292,2026-11-06,8:00 PM ET,Toronto Raptors,Milwaukee Bucks,,,
+401909293,2026-11-06,8:00 PM ET,Minnesota Timberwolves,New Orleans Pelicans,,,
 401909294,2026-11-06,10:00 PM ET,Portland Trail Blazers,Los Angeles Lakers,,-3.5,231.5
 401909295,2026-11-06,10:00 PM ET,San Antonio Spurs,Sacramento Kings,,17.5,231.5
 401909938,2026-11-07,5:00 PM ET,Denver Nuggets,Indiana Pacers,,,
