@@ -1,16 +1,15 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909945,2026-11-08,3:30 PM ET,Philadelphia 76ers,Chicago Bulls,,,
-401909946,2026-11-08,6:00 PM ET,Los Angeles Lakers,Detroit Pistons,,,
-401909947,2026-11-08,7:00 PM ET,Utah Jazz,Minnesota Timberwolves,,,
-401909948,2026-11-08,7:30 PM ET,Brooklyn Nets,Dallas Mavericks,,,
-401909949,2026-11-08,8:00 PM ET,Boston Celtics,Milwaukee Bucks,,,
-401909950,2026-11-08,9:00 PM ET,New Orleans Pelicans,LA Clippers,,,
-401909951,2026-11-08,9:00 PM ET,Miami Heat,Sacramento Kings,,,
-401909952,2026-11-09,7:00 PM ET,Los Angeles Lakers,Atlanta Hawks,,,
-401909953,2026-11-09,7:00 PM ET,Cleveland Cavaliers,Charlotte Hornets,,8.5,216.5
-401909954,2026-11-09,7:00 PM ET,Washington Wizards,Detroit Pistons,,-11.5,217.5
-401909955,2026-11-09,7:30 PM ET,Memphis Grizzlies,Toronto Raptors,,,
-401909956,2026-11-09,8:00 PM ET,Indiana Pacers,Dallas Mavericks,,,
+401909952,2026-11-09,7:00 PM ET,Los Angeles Lakers,Atlanta Hawks,,2.5,235.5
+401909953,2026-11-09,7:00 PM ET,Cleveland Cavaliers,Charlotte Hornets,,8.5,214.5
+401909954,2026-11-09,7:00 PM ET,Washington Wizards,Detroit Pistons,,-10.5,218.5
+401909955,2026-11-09,7:30 PM ET,Memphis Grizzlies,Toronto Raptors,,-3.5,230.5
+401909956,2026-11-09,8:00 PM ET,Indiana Pacers,Dallas Mavericks,,-3.5,222.5
 401909957,2026-11-09,8:30 PM ET,Denver Nuggets,Houston Rockets,,-8.5,217.5
-401909958,2026-11-09,9:00 PM ET,San Antonio Spurs,Phoenix Suns,,8.5,226.5
-401909959,2026-11-09,10:00 PM ET,New Orleans Pelicans,Golden State Warriors,,,
+401909958,2026-11-09,9:00 PM ET,San Antonio Spurs,Phoenix Suns,,8.5,228.5
+401909959,2026-11-09,10:00 PM ET,New Orleans Pelicans,Golden State Warriors,,-8.5,231.5
+401909960,2026-11-10,7:30 PM ET,Milwaukee Bucks,New York Knicks,,,
+401909961,2026-11-10,8:00 PM ET,Boston Celtics,Philadelphia 76ers,,1.5,215.5
+401909962,2026-11-10,9:00 PM ET,LA Clippers,Phoenix Suns,,,
+401909963,2026-11-10,9:00 PM ET,Miami Heat,Utah Jazz,,,
+401909964,2026-11-10,10:00 PM ET,Orlando Magic,Sacramento Kings,,,
+401909965,2026-11-10,11:00 PM ET,Oklahoma City Thunder,Portland Trail Blazers,,,
