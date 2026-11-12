@@ -7,9 +7,9 @@ GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
 401909971,2026-11-11,8:00 PM ET,Los Angeles Lakers,Milwaukee Bucks,,,
 401909972,2026-11-11,8:00 PM ET,Brooklyn Nets,New Orleans Pelicans,,,
 401909973,2026-11-11,9:00 PM ET,Orlando Magic,Utah Jazz,,,
-401909974,2026-11-11,9:30 PM ET,Golden State Warriors,Houston Rockets,,-6.5,219.5
-401909975,2026-11-11,10:00 PM ET,Oklahoma City Thunder,Portland Trail Blazers,,-2.5,224.5
+401909974,2026-11-11,9:30 PM ET,Golden State Warriors,Houston Rockets,,,
+401909975,2026-11-11,10:00 PM ET,Oklahoma City Thunder,Portland Trail Blazers,,,
 401909976,2026-11-12,7:00 PM ET,Toronto Raptors,Philadelphia 76ers,,,
-401909977,2026-11-12,7:00 PM ET,Detroit Pistons,Washington Wizards,,,
+401909977,2026-11-12,7:00 PM ET,Detroit Pistons,Washington Wizards,,9.5,220.5
 401909978,2026-11-12,8:00 PM ET,Dallas Mavericks,Minnesota Timberwolves,,-5.5,226.5
 401909979,2026-11-12,9:00 PM ET,Charlotte Hornets,Phoenix Suns,,-7.5,213.5
