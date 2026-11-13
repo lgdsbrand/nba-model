@@ -1,14 +1,15 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909976,2026-11-12,7:00 PM ET,Toronto Raptors,Philadelphia 76ers,,,
-401909977,2026-11-12,7:00 PM ET,Detroit Pistons,Washington Wizards,,,
-401909978,2026-11-12,8:00 PM ET,Dallas Mavericks,Minnesota Timberwolves,,,
-401909979,2026-11-12,9:00 PM ET,Charlotte Hornets,Phoenix Suns,,,
-401909296,2026-11-13,7:00 PM ET,New York Knicks,Indiana Pacers,,6.5,220.5
-401909297,2026-11-13,7:00 PM ET,Milwaukee Bucks,Orlando Magic,,-9.5,222.5
+401909296,2026-11-13,7:00 PM ET,New York Knicks,Indiana Pacers,,6.5,219.5
+401909297,2026-11-13,7:00 PM ET,Milwaukee Bucks,Orlando Magic,,-9.5,223.5
 401909298,2026-11-13,8:00 PM ET,Cleveland Cavaliers,Miami Heat,,-2.5,236.5
-401909299,2026-11-13,8:00 PM ET,Atlanta Hawks,Chicago Bulls,,6.5,246.5
-401909300,2026-11-13,8:00 PM ET,Memphis Grizzlies,New Orleans Pelicans,,3.5,234.5
-401909301,2026-11-13,8:30 PM ET,Utah Jazz,Houston Rockets,,-17.5,217.5
-401909302,2026-11-13,9:30 PM ET,Golden State Warriors,San Antonio Spurs,,-13.5,218.5
+401909299,2026-11-13,8:00 PM ET,Atlanta Hawks,Chicago Bulls,,7.5,245.5
+401909300,2026-11-13,8:00 PM ET,Memphis Grizzlies,New Orleans Pelicans,,3.5,235.5
+401909301,2026-11-13,8:30 PM ET,Utah Jazz,Houston Rockets,,-16.5,219.5
+401909302,2026-11-13,9:30 PM ET,Golden State Warriors,San Antonio Spurs,,-12.5,220.5
 401909303,2026-11-13,10:00 PM ET,Portland Trail Blazers,Sacramento Kings,,10.5,229.5
-401909304,2026-11-13,10:30 PM ET,Oklahoma City Thunder,LA Clippers,,7.5,221.5
+401909304,2026-11-13,10:30 PM ET,Oklahoma City Thunder,LA Clippers,,6.5,222.5
+401909980,2026-11-14,7:00 PM ET,Denver Nuggets,New Orleans Pelicans,,,
+401909981,2026-11-14,7:30 PM ET,Dallas Mavericks,Cleveland Cavaliers,,,
+401909982,2026-11-14,8:00 PM ET,Detroit Pistons,Miami Heat,,,
+401909983,2026-11-14,8:00 PM ET,Brooklyn Nets,Memphis Grizzlies,,,
+401909984,2026-11-14,8:00 PM ET,Chicago Bulls,Minnesota Timberwolves,,,
