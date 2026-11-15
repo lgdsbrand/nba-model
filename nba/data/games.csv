@@ -1,15 +1,18 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909980,2026-11-14,7:00 PM ET,Denver Nuggets,New Orleans Pelicans,,,
-401909981,2026-11-14,7:30 PM ET,Dallas Mavericks,Cleveland Cavaliers,,,
-401909982,2026-11-14,8:00 PM ET,Detroit Pistons,Miami Heat,,,
-401909983,2026-11-14,8:00 PM ET,Brooklyn Nets,Memphis Grizzlies,,,
-401909984,2026-11-14,8:00 PM ET,Chicago Bulls,Minnesota Timberwolves,,,
-401909985,2026-11-15,1:00 PM ET,Indiana Pacers,Philadelphia 76ers,,-6.5,222.5
-401909986,2026-11-15,4:00 PM ET,Los Angeles Lakers,Phoenix Suns,,,
-401909987,2026-11-15,4:30 PM ET,Charlotte Hornets,LA Clippers,,,
+401909985,2026-11-15,1:00 PM ET,Indiana Pacers,Philadelphia 76ers,,-7.5,224.5
+401909986,2026-11-15,4:00 PM ET,Los Angeles Lakers,Phoenix Suns,,2.5,226.5
+401909987,2026-11-15,4:30 PM ET,Charlotte Hornets,LA Clippers,,-1.5,215.5
 401909988,2026-11-15,5:00 PM ET,San Antonio Spurs,Utah Jazz,,17.5,224.5
-401909989,2026-11-15,6:00 PM ET,Dallas Mavericks,Boston Celtics,,,
+401909989,2026-11-15,6:00 PM ET,Dallas Mavericks,Boston Celtics,,-13.5,217.5
 401909990,2026-11-15,6:00 PM ET,New York Knicks,Toronto Raptors,,4.5,217.5
-401909991,2026-11-15,7:00 PM ET,Houston Rockets,Washington Wizards,,8.5,222.5
-401909992,2026-11-15,8:00 PM ET,Atlanta Hawks,Milwaukee Bucks,,6.5,232.5
-401909993,2026-11-15,9:00 PM ET,Oklahoma City Thunder,Sacramento Kings,,,
+401909991,2026-11-15,7:00 PM ET,Houston Rockets,Washington Wizards,,9.5,222.5
+401909992,2026-11-15,8:00 PM ET,Atlanta Hawks,Milwaukee Bucks,,7.5,234.5
+401909993,2026-11-15,9:00 PM ET,Oklahoma City Thunder,Sacramento Kings,,10.5,222.5
+401909994,2026-11-16,7:00 PM ET,Orlando Magic,Boston Celtics,,,
+401909995,2026-11-16,7:00 PM ET,Chicago Bulls,Cleveland Cavaliers,,,
+401909996,2026-11-16,7:00 PM ET,Memphis Grizzlies,Washington Wizards,,,
+401909997,2026-11-16,7:30 PM ET,Philadelphia 76ers,Brooklyn Nets,,,
+401909998,2026-11-16,7:30 PM ET,Houston Rockets,Miami Heat,,,
+401909999,2026-11-16,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,,
+401910000,2026-11-16,8:00 PM ET,Golden State Warriors,New Orleans Pelicans,,,
+401910001,2026-11-16,9:00 PM ET,Phoenix Suns,Denver Nuggets,,,
