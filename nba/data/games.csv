@@ -1,18 +1,14 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909985,2026-11-15,1:00 PM ET,Indiana Pacers,Philadelphia 76ers,,,
-401909986,2026-11-15,4:00 PM ET,Los Angeles Lakers,Phoenix Suns,,,
-401909987,2026-11-15,4:30 PM ET,Charlotte Hornets,LA Clippers,,,
-401909988,2026-11-15,5:00 PM ET,San Antonio Spurs,Utah Jazz,,,
-401909989,2026-11-15,6:00 PM ET,Dallas Mavericks,Boston Celtics,,,
-401909990,2026-11-15,6:00 PM ET,New York Knicks,Toronto Raptors,,,
-401909991,2026-11-15,7:00 PM ET,Houston Rockets,Washington Wizards,,,
-401909992,2026-11-15,8:00 PM ET,Atlanta Hawks,Milwaukee Bucks,,,
-401909993,2026-11-15,9:00 PM ET,Oklahoma City Thunder,Sacramento Kings,,,
-401909994,2026-11-16,7:00 PM ET,Orlando Magic,Boston Celtics,,-9.5,211.5
-401909995,2026-11-16,7:00 PM ET,Chicago Bulls,Cleveland Cavaliers,,-10.5,241.5
-401909996,2026-11-16,7:00 PM ET,Memphis Grizzlies,Washington Wizards,,,
-401909997,2026-11-16,7:30 PM ET,Philadelphia 76ers,Brooklyn Nets,,,
-401909998,2026-11-16,7:30 PM ET,Houston Rockets,Miami Heat,,,
-401909999,2026-11-16,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,-2.5,228.5
-401910000,2026-11-16,8:00 PM ET,Golden State Warriors,New Orleans Pelicans,,2.5,226.5
-401910001,2026-11-16,9:00 PM ET,Phoenix Suns,Denver Nuggets,,,
+401909994,2026-11-16,7:00 PM ET,Orlando Magic,Boston Celtics,,-8.5,212.5
+401909995,2026-11-16,7:00 PM ET,Chicago Bulls,Cleveland Cavaliers,,-9.5,242.5
+401909996,2026-11-16,7:00 PM ET,Memphis Grizzlies,Washington Wizards,,4.5,229.5
+401909997,2026-11-16,7:30 PM ET,Philadelphia 76ers,Brooklyn Nets,,5.5,225.5
+401909998,2026-11-16,7:30 PM ET,Houston Rockets,Miami Heat,,2.5,230.5
+401909999,2026-11-16,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,-1.5,228.5
+401910000,2026-11-16,8:00 PM ET,Golden State Warriors,New Orleans Pelicans,,3.5,225.5
+401910001,2026-11-16,9:00 PM ET,Phoenix Suns,Denver Nuggets,,-10.5,227.5
+401910002,2026-11-17,7:30 PM ET,New York Knicks,Toronto Raptors,,,
+401910003,2026-11-17,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,,
+401910004,2026-11-17,8:00 PM ET,Detroit Pistons,San Antonio Spurs,,,
+401910006,2026-11-17,10:30 PM ET,Utah Jazz,LA Clippers,,,
+401910005,2026-11-17,11:00 PM ET,Charlotte Hornets,Los Angeles Lakers,,,
