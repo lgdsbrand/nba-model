@@ -6,9 +6,9 @@ GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
 401909998,2026-11-16,7:30 PM ET,Houston Rockets,Miami Heat,,,
 401909999,2026-11-16,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,,
 401910000,2026-11-16,8:00 PM ET,Golden State Warriors,New Orleans Pelicans,,,
-401910001,2026-11-16,9:00 PM ET,Phoenix Suns,Denver Nuggets,,-9.5,229.5
+401910001,2026-11-16,9:00 PM ET,Phoenix Suns,Denver Nuggets,,,
 401910002,2026-11-17,7:30 PM ET,New York Knicks,Toronto Raptors,,3.5,216.5
-401910003,2026-11-17,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,,
+401910003,2026-11-17,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,-2.5,226.5
 401910004,2026-11-17,8:00 PM ET,Detroit Pistons,San Antonio Spurs,,-8.5,220.5
 401910006,2026-11-17,10:30 PM ET,Utah Jazz,LA Clippers,,-5.5,223.5
-401910005,2026-11-17,11:00 PM ET,Charlotte Hornets,Los Angeles Lakers,,-8.5,218.5
+401910005,2026-11-17,11:00 PM ET,Charlotte Hornets,Los Angeles Lakers,,-7.5,218.5
