@@ -1,18 +1,18 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401910002,2026-11-17,7:30 PM ET,New York Knicks,Toronto Raptors,,4.5,214.5
-401910003,2026-11-17,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,-2.5,225.5
+401910002,2026-11-17,7:30 PM ET,New York Knicks,Toronto Raptors,,,
+401910003,2026-11-17,8:00 PM ET,Portland Trail Blazers,Minnesota Timberwolves,,-4.5,225.5
 401910004,2026-11-17,8:00 PM ET,Detroit Pistons,San Antonio Spurs,,-9.5,221.5
-401910006,2026-11-17,10:30 PM ET,Utah Jazz,LA Clippers,,-6.5,225.5
-401910005,2026-11-17,11:00 PM ET,Charlotte Hornets,Los Angeles Lakers,,-7.5,222.5
+401910006,2026-11-17,10:30 PM ET,Utah Jazz,LA Clippers,,-5.5,226.5
+401910005,2026-11-17,11:00 PM ET,Charlotte Hornets,Los Angeles Lakers,,-7.5,223.5
 401910007,2026-11-18,7:00 PM ET,Memphis Grizzlies,Cleveland Cavaliers,,,
 401910008,2026-11-18,7:00 PM ET,Houston Rockets,Indiana Pacers,,,
-401910009,2026-11-18,7:00 PM ET,Milwaukee Bucks,Miami Heat,,,
-401910010,2026-11-18,7:00 PM ET,Philadelphia 76ers,Orlando Magic,,,
-401910011,2026-11-18,7:30 PM ET,Chicago Bulls,Brooklyn Nets,,,
+401910009,2026-11-18,7:00 PM ET,Milwaukee Bucks,Miami Heat,,-12.5,236.5
+401910010,2026-11-18,7:00 PM ET,Philadelphia 76ers,Orlando Magic,,1.5,223.5
+401910011,2026-11-18,7:30 PM ET,Chicago Bulls,Brooklyn Nets,,-2.5,237.5
 401910012,2026-11-18,7:30 PM ET,Washington Wizards,Toronto Raptors,,,
 401910013,2026-11-18,8:00 PM ET,Detroit Pistons,New Orleans Pelicans,,,
 401910014,2026-11-18,8:00 PM ET,Atlanta Hawks,Oklahoma City Thunder,,,
 401910016,2026-11-18,8:00 PM ET,Golden State Warriors,Dallas Mavericks,,,
-401910015,2026-11-18,9:30 PM ET,Boston Celtics,Denver Nuggets,,,
+401910015,2026-11-18,9:30 PM ET,Boston Celtics,Denver Nuggets,,2.5,219.5
 401910017,2026-11-18,10:00 PM ET,Utah Jazz,Los Angeles Lakers,,,
 401910018,2026-11-18,10:00 PM ET,Phoenix Suns,Sacramento Kings,,,
