@@ -1,11 +1,11 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
 401910023,2026-11-21,1:00 PM ET,Milwaukee Bucks,Philadelphia 76ers,,,
-401910024,2026-11-21,7:30 PM ET,Portland Trail Blazers,New York Knicks,,-3.5,215.5
+401910024,2026-11-21,7:30 PM ET,Portland Trail Blazers,New York Knicks,,1.5,213.5
 401910025,2026-11-21,8:00 PM ET,LA Clippers,Dallas Mavericks,,-4.5,230.5
-401910026,2026-11-21,8:00 PM ET,Memphis Grizzlies,Minnesota Timberwolves,,-6.5,228.5
-401910027,2026-11-21,8:00 PM ET,New Orleans Pelicans,San Antonio Spurs,,-18.5,228.5
-401910028,2026-11-21,10:00 PM ET,Boston Celtics,Sacramento Kings,,13.5,217.5
-401910029,2026-11-22,3:30 PM ET,Detroit Pistons,Atlanta Hawks,,,
+401910026,2026-11-21,8:00 PM ET,Memphis Grizzlies,Minnesota Timberwolves,,-5.5,228.5
+401910027,2026-11-21,8:00 PM ET,New Orleans Pelicans,San Antonio Spurs,,-18.5,229.5
+401910028,2026-11-21,10:00 PM ET,Boston Celtics,Sacramento Kings,,12.5,215.5
+401910029,2026-11-22,3:30 PM ET,Detroit Pistons,Atlanta Hawks,,2.5,227.5
 401910030,2026-11-22,6:00 PM ET,Oklahoma City Thunder,Miami Heat,,,
 401910031,2026-11-22,7:00 PM ET,Orlando Magic,Washington Wizards,,,
 401910032,2026-11-22,7:00 PM ET,Denver Nuggets,Chicago Bulls,,,
