@@ -519,3 +519,5 @@ event_id,date,season_type,team,opp,home,pts,opp_pts,min,fgm,fga,tpm,tpa,ftm,fta,
 401909314,2026-11-24,2,Orlando Magic,Detroit Pistons,1,86,104,239,34,83,12,36,6,8,10,31,22,8,4,20,24,-3.5,210.5
 401909315,2026-11-24,2,Boston Celtics,Washington Wizards,0,131,116,240,46,100,22,51,17,25,13,33,30,8,6,10,24,10.5,218.5
 401909315,2026-11-24,2,Washington Wizards,Boston Celtics,1,116,131,241,41,92,12,36,22,26,14,34,25,5,3,13,23,10.5,218.5
+401909316,2026-11-24,2,Dallas Mavericks,Denver Nuggets,0,120,101,239,48,98,11,37,13,20,14,34,31,13,7,12,17,-7.5,234.5
+401909316,2026-11-24,2,Denver Nuggets,Dallas Mavericks,1,101,120,240,34,85,12,39,21,24,12,29,22,6,6,18,18,-7.5,234.5
