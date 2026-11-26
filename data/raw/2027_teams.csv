@@ -535,3 +535,7 @@ event_id,date,season_type,team,opp,home,pts,opp_pts,min,fgm,fga,tpm,tpa,ftm,fta,
 401909322,2026-11-25,2,Milwaukee Bucks,Brooklyn Nets,1,97,104,242,38,89,11,44,10,16,13,31,26,7,5,14,21,-1.5,233.5
 401909323,2026-11-25,2,Houston Rockets,Phoenix Suns,1,116,104,241,44,90,12,36,16,30,20,31,30,6,7,12,23,-8.5,222.5
 401909323,2026-11-25,2,Phoenix Suns,Houston Rockets,0,104,116,240,38,91,5,32,23,28,13,25,25,8,3,8,23,-8.5,222.5
+401909324,2026-11-25,2,Golden State Warriors,Sacramento Kings,1,129,110,241,49,92,20,44,11,14,12,28,37,9,7,15,23,-8.5,216.5
+401909324,2026-11-25,2,Sacramento Kings,Golden State Warriors,0,110,129,241,41,87,14,40,14,19,12,27,31,6,2,18,17,-8.5,216.5
+401909325,2026-11-25,2,Portland Trail Blazers,San Antonio Spurs,1,116,111,239,37,94,19,50,23,31,14,36,29,8,3,8,19,3.5,224.5
+401909325,2026-11-25,2,San Antonio Spurs,Portland Trail Blazers,0,111,116,241,39,90,10,36,23,29,14,41,21,5,5,12,20,3.5,224.5

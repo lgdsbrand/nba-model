@@ -5973,3 +5973,44 @@ event_id,date,season_type,team,player_id,player,pos,starter,min,fgm,fga,tpm,tpa,
 401909323,2026-11-25,2,Phoenix Suns,4066383,Miles Bridges,F,1,25,1,8,0,6,0,0,2,6,4,0,0,0,3,2
 401909323,2026-11-25,2,Phoenix Suns,4601023,Oso Ighodaro,F,1,20,6,8,0,0,1,3,0,2,2,1,1,0,6,13
 401909323,2026-11-25,2,Phoenix Suns,4888725,Ryan Dunn,F,0,10,0,0,0,0,0,0,2,0,1,0,0,0,0,0
+401909324,2026-11-25,2,Golden State Warriors,3213,Al Horford,C,0,13,1,3,0,1,0,0,0,2,2,0,1,1,0,2
+401909324,2026-11-25,2,Golden State Warriors,4709138,Brandin Podziemski,G,1,32,5,9,3,6,0,1,0,2,6,1,1,0,3,13
+401909324,2026-11-25,2,Golden State Warriors,4397040,Brandon Williams,G,0,13,7,14,0,2,0,1,0,2,3,0,1,1,2,14
+401909324,2026-11-25,2,Golden State Warriors,4397886,Charles Bassey,C,1,22,4,9,0,1,2,2,2,5,1,0,2,2,3,10
+401909324,2026-11-25,2,Golden State Warriors,4066436,De'Anthony Melton,G,1,27,8,14,8,12,0,0,1,3,7,1,1,4,1,24
+401909324,2026-11-25,2,Golden State Warriors,6589,Draymond Green,F,1,26,2,5,2,5,0,0,1,3,11,0,0,2,1,6
+401909324,2026-11-25,2,Golden State Warriors,3134903,Gary Payton II,G,0,17,3,6,1,2,2,2,2,1,1,1,0,0,0,9
+401909324,2026-11-25,2,Golden State Warriors,2990969,Georges Niang,F,0,19,4,8,3,6,0,0,1,2,2,0,0,1,3,11
+401909324,2026-11-25,2,Golden State Warriors,4997536,Gui Santos,F,0,24,8,11,2,4,4,4,2,1,1,2,0,0,4,22
+401909324,2026-11-25,2,Golden State Warriors,4897262,Will Richard,G,0,17,1,2,1,2,0,0,1,1,1,1,0,0,2,3
+401909324,2026-11-25,2,Golden State Warriors,5175737,Yaxel Lendeborg,F,1,31,6,11,0,3,3,4,2,6,2,3,1,4,4,15
+401909324,2026-11-25,2,Sacramento Kings,4917149,Alex Karaban,F,0,2,0,0,0,0,0,0,1,0,0,0,0,1,1,0
+401909324,2026-11-25,2,Sacramento Kings,5142620,Darius Acuff Jr.,G,1,37,9,24,3,12,1,2,2,2,9,0,0,5,1,22
+401909324,2026-11-25,2,Sacramento Kings,4065732,De'Andre Hunter,F,1,39,5,10,3,6,2,4,1,6,3,1,0,0,0,15
+401909324,2026-11-25,2,Sacramento Kings,3155942,Domantas Sabonis,F,1,37,8,9,1,1,10,12,3,7,6,1,0,1,3,27
+401909324,2026-11-25,2,Sacramento Kings,4433174,Dylan Cardwell,C,0,9,0,1,0,0,0,0,0,3,0,0,2,2,1,0
+401909324,2026-11-25,2,Sacramento Kings,5106058,Emanuel Sharp,G,1,25,3,6,3,6,0,0,0,2,3,1,0,3,6,9
+401909324,2026-11-25,2,Sacramento Kings,4594327,Keegan Murray,F,1,42,8,19,2,6,0,0,3,1,2,1,0,2,1,18
+401909324,2026-11-25,2,Sacramento Kings,4395650,Leaky Black,F,0,20,1,6,1,5,0,0,2,2,2,0,0,1,2,3
+401909324,2026-11-25,2,Sacramento Kings,4066262,Malik Monk,G,0,13,2,5,0,2,1,1,0,0,4,1,0,1,1,5
+401909324,2026-11-25,2,Sacramento Kings,4431679,Precious Achiuwa,F,0,17,5,7,1,2,0,0,0,4,2,1,0,2,1,11
+401909325,2026-11-25,2,Portland Trail Blazers,6606,Damian Lillard,G,1,34,7,20,5,12,10,10,0,3,7,2,0,2,0,29
+401909325,2026-11-25,2,Portland Trail Blazers,4683021,Deni Avdija,F,1,36,11,21,5,8,6,8,2,10,7,2,0,2,4,33
+401909325,2026-11-25,2,Portland Trail Blazers,5105565,Donovan Clingan,C,1,21,2,5,0,0,1,2,4,4,2,0,1,0,6,5
+401909325,2026-11-25,2,Portland Trail Blazers,4703889,Jayson Kent,G,0,6,0,2,0,2,0,2,1,2,0,0,0,0,0,0
+401909325,2026-11-25,2,Portland Trail Blazers,3995,Jrue Holiday,G,0,32,4,14,3,9,0,0,3,3,7,0,0,2,1,11
+401909325,2026-11-25,2,Portland Trail Blazers,4066211,Robert Williams III,C,0,21,2,2,0,0,0,1,0,3,0,1,1,0,2,4
+401909325,2026-11-25,2,Portland Trail Blazers,4683678,Scoot Henderson,G,0,23,3,9,1,5,3,4,0,5,1,0,0,1,2,10
+401909325,2026-11-25,2,Portland Trail Blazers,5081727,Sidy Cissoko,G,1,30,6,14,4,10,0,0,1,3,2,2,1,0,2,16
+401909325,2026-11-25,2,Portland Trail Blazers,4431736,Toumani Camara,F,1,31,2,6,1,4,3,4,1,3,2,1,0,1,2,8
+401909325,2026-11-25,2,Portland Trail Blazers,5217746,Yang Hansen,C,0,5,0,1,0,0,0,0,2,0,1,0,0,0,0,0
+401909325,2026-11-25,2,San Antonio Spurs,5061568,Carter Bryant,F,0,14,1,3,0,2,0,0,1,5,1,0,1,1,3,2
+401909325,2026-11-25,2,San Antonio Spurs,4395630,Devin Vassell,G,1,38,6,16,3,6,3,4,0,3,1,2,1,1,3,18
+401909325,2026-11-25,2,San Antonio Spurs,6578,Harrison Barnes,F,1,15,2,2,1,1,0,0,0,0,1,0,0,0,1,5
+401909325,2026-11-25,2,San Antonio Spurs,5107968,Ja'Kobi Gillespie,G,0,7,0,2,0,1,0,0,1,0,0,0,0,0,0,0
+401909325,2026-11-25,2,San Antonio Spurs,3134916,Jordan McLaughlin,G,0,15,2,3,0,1,0,0,0,2,0,0,0,0,2,4
+401909325,2026-11-25,2,San Antonio Spurs,4592479,Julian Champagnie,F,1,37,4,12,1,7,2,3,1,3,1,1,1,1,3,11
+401909325,2026-11-25,2,San Antonio Spurs,4395723,Keldon Johnson,F,0,33,0,3,0,2,3,4,5,7,2,1,0,3,4,3
+401909325,2026-11-25,2,San Antonio Spurs,3064560,Luke Kornet,C,0,13,1,1,0,0,2,2,3,2,3,0,0,0,1,4
+401909325,2026-11-25,2,San Antonio Spurs,4845367,Stephon Castle,G,1,34,6,18,2,7,6,6,1,5,9,0,0,3,2,20
+401909325,2026-11-25,2,San Antonio Spurs,5104157,Victor Wembanyama,F,1,35,17,30,3,9,7,10,2,14,3,1,2,3,1,44
