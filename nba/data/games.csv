@@ -1,17 +1,17 @@
 GameID,Date,Time,Away,Home,Label,Spread (Home = -),Total
-401909326,2026-11-27,7:00 PM ET,Miami Heat,New York Knicks,,-2.5,221.5
-401909327,2026-11-27,7:30 PM ET,Milwaukee Bucks,Detroit Pistons,,-9.5,219.5
-401909328,2026-11-27,7:30 PM ET,Philadelphia 76ers,Indiana Pacers,,3.5,228.5
-401909329,2026-11-27,7:30 PM ET,Brooklyn Nets,Toronto Raptors,,-9.5,219.5
-401909330,2026-11-27,8:00 PM ET,Atlanta Hawks,Boston Celtics,,-8.5,223.5
-401909331,2026-11-27,8:30 PM ET,Memphis Grizzlies,Minnesota Timberwolves,,-2.5,220.5
-401909332,2026-11-27,9:00 PM ET,Dallas Mavericks,Phoenix Suns,,-3.5,225.5
-401909333,2026-11-27,9:30 PM ET,Los Angeles Lakers,San Antonio Spurs,,-5.5,226.5
+401909326,2026-11-27,7:00 PM ET,Miami Heat,New York Knicks,,,
+401909327,2026-11-27,7:30 PM ET,Milwaukee Bucks,Detroit Pistons,,,
+401909328,2026-11-27,7:30 PM ET,Philadelphia 76ers,Indiana Pacers,,,
+401909329,2026-11-27,7:30 PM ET,Brooklyn Nets,Toronto Raptors,,,
+401909330,2026-11-27,8:00 PM ET,Atlanta Hawks,Boston Celtics,,,
+401909331,2026-11-27,8:30 PM ET,Memphis Grizzlies,Minnesota Timberwolves,,-2.5,219.5
+401909332,2026-11-27,9:00 PM ET,Dallas Mavericks,Phoenix Suns,,-4.5,225.5
+401909333,2026-11-27,9:30 PM ET,Los Angeles Lakers,San Antonio Spurs,,-6.5,226.5
 401909334,2026-11-27,9:30 PM ET,Denver Nuggets,Utah Jazz,,9.5,232.5
 401909335,2026-11-27,9:30 PM ET,New Orleans Pelicans,LA Clippers,,-2.5,229.5
-401909336,2026-11-27,9:30 PM ET,Golden State Warriors,Portland Trail Blazers,,-7.5,217.5
-401910046,2026-11-28,5:00 PM ET,Orlando Magic,Washington Wizards,,,
-401910047,2026-11-28,6:00 PM ET,Brooklyn Nets,Charlotte Hornets,,,
+401909336,2026-11-27,9:30 PM ET,Golden State Warriors,Portland Trail Blazers,,-8.5,216.5
+401910046,2026-11-28,5:00 PM ET,Orlando Magic,Washington Wizards,,3.5,218.5
+401910047,2026-11-28,6:00 PM ET,Brooklyn Nets,Charlotte Hornets,,-5.5,213.5
 401910048,2026-11-28,8:00 PM ET,Indiana Pacers,Chicago Bulls,,,
 401910049,2026-11-28,8:00 PM ET,Oklahoma City Thunder,Milwaukee Bucks,,,
 401910050,2026-11-28,8:30 PM ET,Philadelphia 76ers,Houston Rockets,,,
